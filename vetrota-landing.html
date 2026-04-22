@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VetRota — İnternet olmasa da klinik cebinizde</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 100'%3E%3Cpath d='M40 4 C58 4 72 18 72 36 C72 54 52 78 40 94 C28 78 8 54 8 36 C8 18 22 4 40 4 Z' stroke='%232E7D32' stroke-width='5' fill='none' stroke-linejoin='round'/%3E%3Cpath d='M28 24 L28 36 C28 44 34 50 40 50 C46 50 52 44 52 36 L52 24' stroke='%232E7D32' stroke-width='4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='28' cy='22' r='3' fill='%232E7D32'/%3E%3Ccircle cx='52' cy='22' r='3' fill='%232E7D32'/%3E%3Cpath d='M40 50 L40 60' stroke='%232E7D32' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle cx='40' cy='66' r='6' stroke='%232E7D32' stroke-width='4' fill='none'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,400&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          forest: { DEFAULT: '#2E7D32', dark: '#1B5E20', light: '#E8F5E9' },
+          amber: { DEFAULT: '#FF9800', dark: '#E65100', light: '#FFF3E0' },
+          cream: '#FAF7F0',
+          ink: '#1A1F1B',
+        },
+        fontFamily: {
+          sans: ['DM Sans', 'system-ui', 'sans-serif'],
+          display: ['Fraunces', 'Georgia', 'serif'],
+        },
+      }
+    }
+  }
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #FAF7F0;
+    color: #1A1F1B;
+  }
+  .font-display { font-family: 'Fraunces', serif; }
+
+  /* Noise texture overlay */
+  .noise::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+    opacity: 0.08;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+  }
+
+  /* Subtle grid background */
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(46,125,50,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(46,125,50,0.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  /* Entrance animation */
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .rise { animation: rise 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+
+  /* Signal pulse */
+  @keyframes pulse-signal {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+  .pulse-signal { animation: pulse-signal 2s ease-in-out infinite; }
+
+  /* Cloud drift */
+  @keyframes drift {
+    from { transform: translateX(-10px); }
+    to { transform: translateX(10px); }
+  }
+  .drift { animation: drift 6s ease-in-out infinite alternate; }
+
+  /* Sync spin */
+  @keyframes sync-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .sync-spin { animation: sync-spin 4s linear infinite; transform-origin: center; }
+
+  /* Stagger delays */
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.2s; }
+  .delay-3 { animation-delay: 0.3s; }
+  .delay-4 { animation-delay: 0.4s; }
+  .delay-5 { animation-delay: 0.5s; }
+
+  /* Accordion */
+  .faq-item[open] summary svg { transform: rotate(45deg); }
+  .faq-item summary { list-style: none; }
+  .faq-item summary::-webkit-details-marker { display: none; }
+
+  /* Highlight marker */
+  .highlight {
+    background: linear-gradient(120deg, transparent 0%, #FFE0B2 0%, #FFE0B2 100%, transparent 100%);
+    background-repeat: no-repeat;
+    background-size: 100% 40%;
+    background-position: 0 85%;
+    padding: 0 4px;
+  }
+
+  /* Button styles */
+  .btn-primary {
+    background: #2E7D32;
+    color: white;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.05), 0 4px 0 #1B5E20, 0 8px 24px -4px rgba(46,125,50,0.4);
+    transition: all 0.15s ease;
+  }
+  .btn-primary:hover { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.05), 0 2px 0 #1B5E20, 0 4px 12px -2px rgba(46,125,50,0.3); }
+  .btn-primary:active { transform: translateY(4px); box-shadow: 0 1px 0 rgba(0,0,0,0.05), 0 0 0 #1B5E20; }
+
+  .btn-ghost {
+    border: 2px solid #1A1F1B;
+    color: #1A1F1B;
+    background: transparent;
+    transition: all 0.15s ease;
+  }
+  .btn-ghost:hover { background: #1A1F1B; color: #FAF7F0; }
+
+  /* Stamp effect */
+  .stamp {
+    transform: rotate(-3deg);
+    border: 2px dashed #E65100;
+    color: #E65100;
+  }
+
+  /* Modal */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(26,31,27,0.6); backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center; z-index: 50;
+  }
+  .modal-backdrop.active { display: flex; }
+  @keyframes pop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+  .modal-card { animation: pop 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+  /* Card hover */
+  .feature-card {
+    transition: all 0.25s ease;
+    border: 2px solid transparent;
+  }
+  .feature-card:hover {
+    border-color: #1A1F1B;
+    transform: translate(-3px, -3px);
+    box-shadow: 6px 6px 0 #1A1F1B;
+  }
+
+  /* Problem card */
+  .problem-card {
+    transition: transform 0.3s ease;
+  }
+  .problem-card:nth-child(1) { transform: rotate(-1.5deg); }
+  .problem-card:nth-child(2) { transform: rotate(1deg); }
+  .problem-card:nth-child(3) { transform: rotate(-0.5deg); }
+  .problem-card:hover { transform: rotate(0) scale(1.02); }
+
+  /* Timeline dot */
+  .timeline-dot {
+    box-shadow: 0 0 0 4px #FAF7F0, 0 0 0 6px #2E7D32;
+  }
+</style>
+</head>
+<body class="antialiased">
+
+<!-- NAV -->
+<nav class="sticky top-0 z-40 border-b-2 border-ink/10 bg-cream/80 backdrop-blur">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="#" class="flex items-center gap-2.5">
+      <!-- VetRota logo: map pin + stethoscope -->
+      <svg width="34" height="40" viewBox="0 0 80 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Pin outline -->
+        <path d="M40 4 C58 4 72 18 72 36 C72 54 52 78 40 94 C28 78 8 54 8 36 C8 18 22 4 40 4 Z"
+              stroke="#2E7D32" stroke-width="5" fill="none" stroke-linejoin="round"/>
+        <!-- Stethoscope earpieces -->
+        <path d="M28 24 L28 36 C28 44 34 50 40 50 C46 50 52 44 52 36 L52 24"
+              stroke="#2E7D32" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Earpiece tips -->
+        <circle cx="28" cy="22" r="3" fill="#2E7D32"/>
+        <circle cx="52" cy="22" r="3" fill="#2E7D32"/>
+        <!-- Stethoscope tube -->
+        <path d="M40 50 L40 60" stroke="#2E7D32" stroke-width="4" stroke-linecap="round"/>
+        <!-- Chest piece (bell) -->
+        <circle cx="40" cy="66" r="6" stroke="#2E7D32" stroke-width="4" fill="none"/>
+      </svg>
+      <span class="font-display font-black text-2xl tracking-tight text-forest">VetRota</span>
+    </a>
+    <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+      <a href="#ozellikler" class="hover:text-forest transition">Özellikler</a>
+      <a href="#nasil" class="hover:text-forest transition">Nasıl Çalışır</a>
+      <a href="#gun" class="hover:text-forest transition">Bir Günde</a>
+      <a href="#sss" class="hover:text-forest transition">SSS</a>
+    </div>
+    <button onclick="openModal()" class="btn-primary rounded-full px-5 py-2.5 text-sm font-semibold">
+      Ücretsiz Dene
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="relative overflow-hidden grid-bg">
+  <div class="max-w-7xl mx-auto px-6 pt-16 pb-24 md:pt-24 md:pb-32 grid md:grid-cols-12 gap-12 items-center">
+    <div class="md:col-span-6 relative z-10">
+      <div class="rise inline-flex items-center gap-2 bg-amber-light border-2 border-amber text-amber-dark rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider mb-6">
+        <span class="w-2 h-2 rounded-full bg-amber pulse-signal"></span>
+        Erken Erişim Açık
+      </div>
+      <h1 class="rise delay-1 font-display font-black text-5xl md:text-7xl leading-[0.95] tracking-tight mb-6">
+        İnternet olmasa da <span class="highlight">klinik</span> cebinizde.
+      </h1>
+      <p class="rise delay-2 text-lg md:text-xl text-ink/70 max-w-xl mb-8 leading-relaxed">
+        Gezici veterinerler için offline-first saha yönetimi.
+        Ahırda çalışır, sinyal gelince kendi kendine senkronize olur.
+        Akşam eve gelip Excel'e işlemek yok.
+      </p>
+      <div class="rise delay-3 flex flex-wrap gap-4">
+        <button onclick="openModal()" class="btn-primary rounded-full px-7 py-3.5 font-semibold inline-flex items-center gap-2">
+          Ücretsiz Dene
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <a href="#nasil" class="btn-ghost rounded-full px-7 py-3.5 font-semibold inline-flex items-center gap-2">
+          Nasıl Çalışır?
+        </a>
+      </div>
+      <div class="rise delay-4 mt-10 flex items-center gap-6 text-sm text-ink/60">
+        <div class="flex items-center gap-2">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" stroke="#2E7D32" stroke-width="2"/></svg>
+          KVKK uyumlu
+        </div>
+        <div class="flex items-center gap-2">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" stroke="#2E7D32" stroke-width="2"/></svg>
+          E-fatura entegre
+        </div>
+      </div>
+    </div>
+
+    <!-- HERO SVG — Veteriner + koyun + telefon sahne -->
+    <div class="md:col-span-6 rise delay-2 relative">
+      <svg viewBox="0 0 600 520" class="w-full h-auto" xmlns="http://www.w3.org/2000/svg">
+        <!-- Sky / background circle -->
+        <defs>
+          <radialGradient id="sky" cx="50%" cy="40%" r="70%">
+            <stop offset="0%" stop-color="#FFF3E0"/>
+            <stop offset="100%" stop-color="#E8F5E9"/>
+          </radialGradient>
+          <linearGradient id="hill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#2E7D32"/>
+            <stop offset="100%" stop-color="#1B5E20"/>
+          </linearGradient>
+        </defs>
+
+        <circle cx="300" cy="260" r="240" fill="url(#sky)"/>
+
+        <!-- Sun -->
+        <circle cx="430" cy="130" r="40" fill="#FF9800" opacity="0.9"/>
+        <circle cx="430" cy="130" r="55" fill="#FF9800" opacity="0.2"/>
+
+        <!-- Clouds -->
+        <g class="drift" opacity="0.9">
+          <ellipse cx="140" cy="120" rx="40" ry="12" fill="#FAF7F0"/>
+          <ellipse cx="160" cy="115" rx="25" ry="10" fill="#FAF7F0"/>
+        </g>
+        <g class="drift" style="animation-delay: -3s" opacity="0.7">
+          <ellipse cx="480" cy="200" rx="30" ry="10" fill="#FAF7F0"/>
+        </g>
+
+        <!-- No signal bars — sad -->
+        <g transform="translate(80, 80)" opacity="0.9">
+          <rect x="0" y="20" width="6" height="6" fill="#E65100" opacity="0.3"/>
+          <rect x="10" y="15" width="6" height="11" fill="#E65100" opacity="0.3"/>
+          <rect x="20" y="10" width="6" height="16" fill="#E65100" opacity="0.3"/>
+          <rect x="30" y="5" width="6" height="21" fill="#E65100" opacity="0.3"/>
+          <line x1="-2" y1="28" x2="38" y2="-2" stroke="#E65100" stroke-width="2.5" stroke-linecap="round"/>
+          <text x="0" y="48" font-family="DM Sans" font-size="11" font-weight="700" fill="#E65100">SİNYAL YOK</text>
+        </g>
+
+        <!-- Hills -->
+        <path d="M0 400 Q150 340 300 380 T600 370 L600 520 L0 520 Z" fill="url(#hill)"/>
+        <path d="M0 440 Q200 400 400 420 T600 430 L600 520 L0 520 Z" fill="#1B5E20" opacity="0.7"/>
+
+        <!-- Barn in background -->
+        <g transform="translate(420, 330)">
+          <rect x="0" y="20" width="80" height="50" fill="#8B4513" opacity="0.9"/>
+          <polygon points="0,20 40,0 80,20" fill="#E65100"/>
+          <rect x="32" y="40" width="16" height="30" fill="#1A1F1B" opacity="0.8"/>
+        </g>
+
+        <!-- Grass tufts -->
+        <g fill="#2E7D32">
+          <path d="M60 450 l3 -8 l3 8 z"/>
+          <path d="M90 455 l3 -8 l3 8 z"/>
+          <path d="M520 445 l3 -8 l3 8 z"/>
+          <path d="M550 450 l3 -8 l3 8 z"/>
+        </g>
+
+        <!-- SHEEP -->
+        <g transform="translate(180, 360)">
+          <!-- body -->
+          <ellipse cx="60" cy="50" rx="55" ry="35" fill="#FAF7F0"/>
+          <circle cx="25" cy="45" r="18" fill="#FAF7F0"/>
+          <circle cx="45" cy="30" r="16" fill="#FAF7F0"/>
+          <circle cx="70" cy="28" r="17" fill="#FAF7F0"/>
+          <circle cx="95" cy="35" r="16" fill="#FAF7F0"/>
+          <circle cx="100" cy="55" r="15" fill="#FAF7F0"/>
+          <!-- head -->
+          <ellipse cx="15" cy="55" rx="15" ry="13" fill="#1A1F1B"/>
+          <!-- ears -->
+          <ellipse cx="8" cy="45" rx="4" ry="6" fill="#1A1F1B" transform="rotate(-30 8 45)"/>
+          <!-- eye -->
+          <circle cx="10" cy="53" r="2" fill="#FAF7F0"/>
+          <!-- legs -->
+          <rect x="30" y="78" width="5" height="15" fill="#1A1F1B"/>
+          <rect x="55" y="80" width="5" height="13" fill="#1A1F1B"/>
+          <rect x="80" y="80" width="5" height="13" fill="#1A1F1B"/>
+          <rect x="100" y="78" width="5" height="15" fill="#1A1F1B"/>
+        </g>
+
+        <!-- VETERINARIAN -->
+        <g transform="translate(310, 200)">
+          <!-- shadow -->
+          <ellipse cx="40" cy="250" rx="50" ry="8" fill="#1A1F1B" opacity="0.15"/>
+
+          <!-- legs -->
+          <rect x="20" y="180" width="18" height="65" rx="4" fill="#1A1F1B"/>
+          <rect x="45" y="180" width="18" height="65" rx="4" fill="#1A1F1B"/>
+
+          <!-- boots -->
+          <ellipse cx="29" cy="248" rx="14" ry="6" fill="#1A1F1B"/>
+          <ellipse cx="54" cy="248" rx="14" ry="6" fill="#1A1F1B"/>
+
+          <!-- body / coat -->
+          <path d="M 8 100 Q 8 90 20 88 L 60 88 Q 72 90 72 100 L 75 190 Q 75 195 70 195 L 10 195 Q 5 195 5 190 Z" fill="#FAF7F0" stroke="#1A1F1B" stroke-width="2"/>
+          <!-- coat pocket -->
+          <rect x="20" y="140" width="20" height="20" rx="2" fill="none" stroke="#1A1F1B" stroke-width="1.5"/>
+          <!-- badge (mini VetRota pin logo) -->
+          <path d="M58 110 C61 110 63 112 63 115 C63 118 60 122 58 125 C56 122 53 118 53 115 C53 112 55 110 58 110 Z" fill="#2E7D32"/>
+          <circle cx="58" cy="115" r="1.8" fill="#FAF7F0"/>
+
+          <!-- left arm holding phone -->
+          <path d="M 8 100 Q -5 120 0 155 L 15 180 L 28 175 L 18 150 Q 14 125 22 108 Z" fill="#FAF7F0" stroke="#1A1F1B" stroke-width="2"/>
+
+          <!-- right arm -->
+          <path d="M 72 100 Q 88 115 92 145 L 82 180 L 68 175 L 75 150 Q 72 125 65 110 Z" fill="#FAF7F0" stroke="#1A1F1B" stroke-width="2"/>
+
+          <!-- hand -->
+          <circle cx="9" cy="178" r="7" fill="#FFCC80"/>
+          <circle cx="75" cy="178" r="7" fill="#FFCC80"/>
+
+          <!-- head -->
+          <circle cx="40" cy="60" r="28" fill="#FFCC80"/>
+          <!-- hair -->
+          <path d="M 14 52 Q 20 28 40 30 Q 60 28 66 52 Q 66 40 40 36 Q 14 40 14 52 Z" fill="#1A1F1B"/>
+          <!-- eyes -->
+          <circle cx="32" cy="60" r="2" fill="#1A1F1B"/>
+          <circle cx="48" cy="60" r="2" fill="#1A1F1B"/>
+          <!-- smile -->
+          <path d="M 33 72 Q 40 77 47 72" stroke="#1A1F1B" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <!-- neck -->
+          <rect x="35" y="85" width="10" height="8" fill="#FFCC80"/>
+          <!-- stethoscope -->
+          <path d="M 22 100 Q 22 115 30 118 Q 40 122 50 118 Q 58 115 58 100" stroke="#2E7D32" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <circle cx="58" cy="100" r="5" fill="#2E7D32"/>
+
+          <!-- PHONE in left hand -->
+          <g transform="translate(-30, 155) rotate(-8)">
+            <rect x="0" y="0" width="55" height="90" rx="8" fill="#1A1F1B"/>
+            <rect x="3" y="10" width="49" height="72" rx="3" fill="#FAF7F0"/>
+            <!-- app UI -->
+            <rect x="6" y="14" width="43" height="8" rx="2" fill="#2E7D32"/>
+            <rect x="6" y="26" width="43" height="4" rx="1" fill="#E8F5E9"/>
+            <rect x="6" y="34" width="30" height="4" rx="1" fill="#E8F5E9"/>
+            <!-- check mark (saved offline) -->
+            <circle cx="27" cy="55" r="12" fill="#2E7D32"/>
+            <path d="M 22 55 l 4 4 l 7 -8" stroke="#FAF7F0" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="6" y="72" width="43" height="3" rx="1" fill="#E8F5E9"/>
+            <!-- speaker -->
+            <rect x="22" y="5" width="11" height="2" rx="1" fill="#FAF7F0" opacity="0.3"/>
+          </g>
+        </g>
+
+        <!-- "OFFLINE OK" floating badge -->
+        <g transform="translate(100, 230)" class="rise delay-4">
+          <rect x="-5" y="-5" width="130" height="40" rx="20" fill="#FAF7F0" stroke="#2E7D32" stroke-width="2"/>
+          <circle cx="15" cy="15" r="7" fill="#2E7D32"/>
+          <path d="M 11 15 l 3 3 l 5 -6" stroke="#FAF7F0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="30" y="20" font-family="DM Sans" font-size="13" font-weight="700" fill="#1A1F1B">Offline kayıt</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="relative py-20 md:py-28 bg-ink text-cream overflow-hidden">
+  <div class="noise absolute inset-0"></div>
+  <div class="max-w-7xl mx-auto px-6 relative">
+    <div class="max-w-3xl mb-16">
+      <div class="text-amber font-bold text-sm uppercase tracking-widest mb-4">01 — Sorun</div>
+      <h2 class="font-display font-black text-4xl md:text-6xl leading-[1] tracking-tight">
+        Tanıdık geliyor mu?
+      </h2>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="problem-card bg-cream text-ink rounded-2xl p-8 border-4 border-cream">
+        <div class="text-5xl mb-6">📵</div>
+        <h3 class="font-display font-black text-2xl mb-3 leading-tight">Ahırda sinyal yok.</h3>
+        <p class="text-ink/70 leading-relaxed">Kağıda yazıyorsunuz, akşam eve gelip tekrar Excel'e işliyorsunuz. İki kere iş, iki kere hata.</p>
+      </div>
+      <div class="problem-card bg-amber-light text-ink rounded-2xl p-8 border-4 border-amber-light">
+        <div class="text-5xl mb-6">💊</div>
+        <h3 class="font-display font-black text-2xl mb-3 leading-tight">Hangi hayvana ne verdiniz?</h3>
+        <p class="text-ink/70 leading-relaxed">Aşı takvimi, ilaç dozu, son müdahale… Hepsi farklı defterde. Aradığınızda bulamıyorsunuz.</p>
+      </div>
+      <div class="problem-card bg-forest-light text-ink rounded-2xl p-8 border-4 border-forest-light">
+        <div class="text-5xl mb-6">📋</div>
+        <h3 class="font-display font-black text-2xl mb-3 leading-tight">Çiftçi arıyor, "o kağıdı ver".</h3>
+        <p class="text-ink/70 leading-relaxed">Rapor, reçete, fatura… Her birini ayrı yerde tutuyor, ayrı ayrı arıyorsunuz. Zamanınız buharlaşıyor.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="nasil" class="py-20 md:py-28 relative overflow-hidden">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="max-w-3xl mb-16">
+      <div class="text-forest font-bold text-sm uppercase tracking-widest mb-4">02 — Çözüm</div>
+      <h2 class="font-display font-black text-4xl md:text-6xl leading-[1] tracking-tight">
+        Dört adımda <span class="italic font-light">halloluyor.</span>
+      </h2>
+    </div>
+
+    <div class="grid md:grid-cols-4 gap-6">
+      <!-- Step 1 -->
+      <div class="relative">
+        <div class="absolute -top-3 -left-3 w-12 h-12 bg-forest text-cream rounded-full flex items-center justify-center font-display font-black text-xl z-10">1</div>
+        <div class="bg-forest-light rounded-2xl p-6 pt-10 h-full border-2 border-forest/10">
+          <svg viewBox="0 0 100 100" class="w-24 h-24 mb-4">
+            <rect x="30" y="15" width="40" height="65" rx="6" fill="#FAF7F0" stroke="#2E7D32" stroke-width="2.5"/>
+            <rect x="35" y="25" width="30" height="4" fill="#2E7D32"/>
+            <rect x="35" y="34" width="20" height="3" fill="#2E7D32" opacity="0.5"/>
+            <rect x="35" y="41" width="25" height="3" fill="#2E7D32" opacity="0.5"/>
+            <circle cx="50" cy="60" r="8" fill="#FF9800"/>
+            <path d="M 46 60 l 3 3 l 6 -7" stroke="#FAF7F0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <h3 class="font-display font-black text-xl mb-2">Sahada kayıt girin</h3>
+          <p class="text-sm text-ink/70">İnternete ihtiyacınız yok. Hayvan bilgisi, müdahale, fotoğraf — hepsi anında.</p>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="relative md:mt-8">
+        <div class="absolute -top-3 -left-3 w-12 h-12 bg-forest text-cream rounded-full flex items-center justify-center font-display font-black text-xl z-10">2</div>
+        <div class="bg-amber-light rounded-2xl p-6 pt-10 h-full border-2 border-amber/20">
+          <svg viewBox="0 0 100 100" class="w-24 h-24 mb-4">
+            <rect x="20" y="30" width="60" height="45" rx="6" fill="#FAF7F0" stroke="#1A1F1B" stroke-width="2.5"/>
+            <path d="M 50 30 L 50 15 L 45 20 M 50 15 L 55 20" stroke="#FF9800" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="30" y="45" width="40" height="3" fill="#1A1F1B" opacity="0.3"/>
+            <rect x="30" y="52" width="30" height="3" fill="#1A1F1B" opacity="0.3"/>
+            <rect x="30" y="59" width="35" height="3" fill="#1A1F1B" opacity="0.3"/>
+            <circle cx="75" cy="35" r="5" fill="#FF9800"/>
+          </svg>
+          <h3 class="font-display font-black text-xl mb-2">Cihazda güvende</h3>
+          <p class="text-sm text-ink/70">Veriler şifreli olarak telefonunuzda saklanır. Kaybolmaz, silinmez.</p>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="relative">
+        <div class="absolute -top-3 -left-3 w-12 h-12 bg-forest text-cream rounded-full flex items-center justify-center font-display font-black text-xl z-10">3</div>
+        <div class="bg-forest-light rounded-2xl p-6 pt-10 h-full border-2 border-forest/10">
+          <svg viewBox="0 0 100 100" class="w-24 h-24 mb-4">
+            <g class="sync-spin" style="transform-origin: 50px 50px;">
+              <path d="M 50 20 A 30 30 0 0 1 80 50" stroke="#2E7D32" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <path d="M 72 30 L 80 50 L 60 42" fill="#2E7D32"/>
+              <path d="M 50 80 A 30 30 0 0 1 20 50" stroke="#2E7D32" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <path d="M 28 70 L 20 50 L 40 58" fill="#2E7D32"/>
+            </g>
+            <circle cx="50" cy="50" r="6" fill="#FF9800"/>
+          </svg>
+          <h3 class="font-display font-black text-xl mb-2">Sinyal geldiğinde…</h3>
+          <p class="text-sm text-ink/70">Otomatik senkron başlar. Siz farkında bile olmadan veriler bulutla buluşur.</p>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="relative md:mt-8">
+        <div class="absolute -top-3 -left-3 w-12 h-12 bg-forest text-cream rounded-full flex items-center justify-center font-display font-black text-xl z-10">4</div>
+        <div class="bg-amber-light rounded-2xl p-6 pt-10 h-full border-2 border-amber/20">
+          <svg viewBox="0 0 100 100" class="w-24 h-24 mb-4">
+            <rect x="20" y="25" width="60" height="55" rx="4" fill="#FAF7F0" stroke="#1A1F1B" stroke-width="2.5"/>
+            <rect x="20" y="25" width="60" height="12" fill="#FF9800"/>
+            <rect x="25" y="43" width="50" height="3" fill="#1A1F1B" opacity="0.3"/>
+            <rect x="25" y="50" width="40" height="3" fill="#1A1F1B" opacity="0.3"/>
+            <rect x="25" y="57" width="45" height="3" fill="#1A1F1B" opacity="0.3"/>
+            <rect x="25" y="68" width="20" height="8" fill="#2E7D32"/>
+            <rect x="50" y="68" width="20" height="8" fill="#1A1F1B" opacity="0.2"/>
+          </svg>
+          <h3 class="font-display font-black text-xl mb-2">Her şey hazır</h3>
+          <p class="text-sm text-ink/70">Raporlar, e-faturalar, randevular, stok — panele girdiğinizde düzenli duruyor.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="ozellikler" class="py-20 md:py-28 bg-cream relative">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="max-w-3xl mb-16">
+      <div class="text-forest font-bold text-sm uppercase tracking-widest mb-4">03 — Özellikler</div>
+      <h2 class="font-display font-black text-4xl md:text-6xl leading-[1] tracking-tight mb-6">
+        Sahada ne lazımsa, <span class="italic font-light">orada.</span>
+      </h2>
+      <p class="text-lg text-ink/70">Veterinerlik pratiğinin her köşesi için tasarlandı. Fazlalık yok, eksik yok.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="feature-card bg-white rounded-2xl p-6">
+        <div class="w-12 h-12 bg-forest-light rounded-xl flex items-center justify-center mb-4">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 12h18M3 6h18M3 18h18" stroke="#2E7D32" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="10" stroke="#2E7D32" stroke-width="2"/></svg>
+        </div>
+        <h3 class="font-display font-black text-xl mb-2">Offline-First</h3>
+        <p class="text-sm text-ink/70">İnternetsiz tam işlevsel. Sinyal dönünce otomatik senkron.</p>
+      </div>
+
+      <div class="feature-card bg-white rounded-2xl p-6">
+        <div class="w-12 h-12 bg-amber-light rounded-xl flex items-center justify-center mb-4">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M8 2v4M16 2v4M3 10h18M5 6h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" stroke="#FF9800" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <h3 class="font-display font-black text-xl mb-2">Randevu</h3>
+        <p class="text-sm text-ink/70">Takvim, hatırlatma, rota planlaması tek yerde.</p>
+      </div>
+
+      <div class="feature-card bg-white rounded-2xl p-6">
+        <div class="w-12 h-12 bg-forest-light rounded-xl flex items-center justify-center mb-4">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 2a1 1 0 0 0-1 1v1H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V3a1 1 0 0 0-1-1Zm1 10h4m-4 4h4" stroke="#2E7D32" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <h3 class="font-display font-black text-xl mb-2">Hayvan Dosyası</h3>
+        <p class="text-sm text-ink/70">Her hayvan için tam geçmiş, aşı takvimi, notlar.</p>
+      </div>
+
+      <div class="feature-card bg-white rounded-2xl p-6">
+        <div class="w-12 h-12 bg-amber-light rounded-xl flex items-center justify-center mb-4">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M20 7h-4V3m4 4-4-4m4 4-8 8m-2-2H6v4m0-4-4 4m4-4 8-8" stroke="#FF9800" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <h3 class="font-display font-black text-xl mb-2">Stok & İlaç</h3>
+        <p class="text-sm text-ink/70">Miat takibi, azalan stok uyarısı, otomatik sipariş notu.</p>
+      </div>
+
+      <div class="feature-card bg-white rounded-2xl p-6">
+        <div class="w-12 h-12 bg-forest-light rounded-xl flex items-center justify-center mb-4">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="font-display font-black text-xl mb-2">Çiftçi Portalı</h3>
+        <p class="text-sm text-ink/70">SMS linki ile çiftçi kayıt olmadan hayvanını görür.</p>
+      </div>
+
+      <div class="feature-card bg-white rounded-2xl p-6">
+        <div class="w-12 h-12 bg-amber-light rounded-xl flex items-center justify-center mb-4">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8m-6-6 6 6m-6-6v6h6M9 15l2 2 4-4" stroke="#FF9800" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="font-display font-black text-xl mb-2">E-Fatura</h3>
+        <p class="text-sm text-ink/70">Türkiye regülasyonuna uyumlu, tek tıkla gönderim.</p>
+      </div>
+
+      <div class="feature-card bg-white rounded-2xl p-6">
+        <div class="w-12 h-12 bg-forest-light rounded-xl flex items-center justify-center mb-4">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="font-display font-black text-xl mb-2">KVKK Uyumlu</h3>
+        <p class="text-sm text-ink/70">Veriler Türkiye'de, şifreli. Silme ve veri taşıma hakkı.</p>
+      </div>
+
+      <div class="feature-card bg-white rounded-2xl p-6">
+        <div class="w-12 h-12 bg-amber-light rounded-xl flex items-center justify-center mb-4">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="5" y="2" width="14" height="20" rx="2" stroke="#FF9800" stroke-width="2"/><path d="M10 18h4" stroke="#FF9800" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <h3 class="font-display font-black text-xl mb-2">Mobil + Web</h3>
+        <p class="text-sm text-ink/70">Sahada telefon, klinikte web. Aynı veri, aynı anda.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AHMET'IN GÜNÜ -->
+<section id="gun" class="py-20 md:py-28 bg-forest text-cream relative overflow-hidden">
+  <div class="noise absolute inset-0"></div>
+  <div class="max-w-7xl mx-auto px-6 relative">
+    <div class="max-w-3xl mb-16">
+      <div class="text-amber font-bold text-sm uppercase tracking-widest mb-4">04 — Pratikte</div>
+      <h2 class="font-display font-black text-4xl md:text-6xl leading-[1] tracking-tight mb-6">
+        Ahmet'in <span class="italic font-light">bir günü.</span>
+      </h2>
+      <p class="text-lg text-cream/80">38 yaşında, Kayseri kırsalında 6 yıldır gezici veteriner. Günde ortalama 14 durak.</p>
+    </div>
+
+    <div class="relative">
+      <!-- Vertical line -->
+      <div class="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-amber/30 md:-translate-x-0.5"></div>
+
+      <div class="space-y-10">
+        <!-- 07:00 -->
+        <div class="relative pl-14 md:pl-0 md:grid md:grid-cols-2 md:gap-12 items-center">
+          <div class="absolute left-4 md:left-1/2 md:-translate-x-1/2 w-4 h-4 rounded-full bg-amber timeline-dot"></div>
+          <div class="md:text-right md:pr-12">
+            <div class="font-display font-black text-3xl text-amber">07:00</div>
+            <div class="text-sm text-cream/60 uppercase tracking-wider">Kahvaltı</div>
+          </div>
+          <div class="mt-2 md:mt-0 md:pl-12">
+            <p class="text-lg leading-relaxed">Telefonu açıyor, günün rotasını görüyor. 14 durak, 3 aşı, 2 doğum kontrolü. Çay tamamlanmadan hepsini planlamış.</p>
+          </div>
+        </div>
+
+        <!-- 09:30 -->
+        <div class="relative pl-14 md:pl-0 md:grid md:grid-cols-2 md:gap-12 items-center">
+          <div class="absolute left-4 md:left-1/2 md:-translate-x-1/2 w-4 h-4 rounded-full bg-amber timeline-dot"></div>
+          <div class="md:order-2 md:pl-12">
+            <div class="font-display font-black text-3xl text-amber">09:30</div>
+            <div class="text-sm text-cream/60 uppercase tracking-wider">Ahır — Sinyal yok</div>
+          </div>
+          <div class="mt-2 md:mt-0 md:order-1 md:text-right md:pr-12">
+            <p class="text-lg leading-relaxed">İkinci durakta 8 koyun aşılıyor. Ahırın dibinde sinyal sıfır ama VetRota umursamıyor. Tek tek kaydı giriyor, fotoğraf çekiyor, çıkıyor.</p>
+          </div>
+        </div>
+
+        <!-- 12:00 -->
+        <div class="relative pl-14 md:pl-0 md:grid md:grid-cols-2 md:gap-12 items-center">
+          <div class="absolute left-4 md:left-1/2 md:-translate-x-1/2 w-4 h-4 rounded-full bg-amber timeline-dot"></div>
+          <div class="md:text-right md:pr-12">
+            <div class="font-display font-black text-3xl text-amber">12:00</div>
+            <div class="text-sm text-cream/60 uppercase tracking-wider">Yolda — Senkron</div>
+          </div>
+          <div class="mt-2 md:mt-0 md:pl-12">
+            <p class="text-lg leading-relaxed">Kasabaya dönerken sinyal geliyor. Telefonu cebinde, arka planda 47 kayıt sessizce buluta akıyor. Ahmet farkında bile değil.</p>
+          </div>
+        </div>
+
+        <!-- 16:00 -->
+        <div class="relative pl-14 md:pl-0 md:grid md:grid-cols-2 md:gap-12 items-center">
+          <div class="absolute left-4 md:left-1/2 md:-translate-x-1/2 w-4 h-4 rounded-full bg-amber timeline-dot"></div>
+          <div class="md:order-2 md:pl-12">
+            <div class="font-display font-black text-3xl text-amber">16:00</div>
+            <div class="text-sm text-cream/60 uppercase tracking-wider">Çiftçi araması</div>
+          </div>
+          <div class="mt-2 md:mt-0 md:order-1 md:text-right md:pr-12">
+            <p class="text-lg leading-relaxed">Mehmet Ağabey arıyor: "Sarı ineğin raporunu yollar mısın?" Ahmet SMS gönderiyor. Mehmet Ağabey linke tıklıyor, uygulama indirmeden görüyor.</p>
+          </div>
+        </div>
+
+        <!-- 18:00 -->
+        <div class="relative pl-14 md:pl-0 md:grid md:grid-cols-2 md:gap-12 items-center">
+          <div class="absolute left-4 md:left-1/2 md:-translate-x-1/2 w-4 h-4 rounded-full bg-amber timeline-dot"></div>
+          <div class="md:text-right md:pr-12">
+            <div class="font-display font-black text-3xl text-amber">18:00</div>
+            <div class="text-sm text-cream/60 uppercase tracking-wider">Eve dönüş</div>
+          </div>
+          <div class="mt-2 md:mt-0 md:pl-12">
+            <p class="text-lg leading-relaxed">Evde akşam yemeği. Excel yok, defter yok. E-faturalar çoktan gitmiş, yarının rotası hazır. Ahmet ilk kez zamanında yatıyor.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SSS -->
+<section id="sss" class="py-20 md:py-28">
+  <div class="max-w-4xl mx-auto px-6">
+    <div class="mb-16">
+      <div class="text-forest font-bold text-sm uppercase tracking-widest mb-4">05 — SSS</div>
+      <h2 class="font-display font-black text-4xl md:text-6xl leading-[1] tracking-tight">
+        Sıkça sorulanlar.
+      </h2>
+    </div>
+
+    <div class="space-y-3">
+      <details class="faq-item bg-white rounded-2xl border-2 border-ink/10 overflow-hidden">
+        <summary class="cursor-pointer p-6 flex items-center justify-between gap-4">
+          <span class="font-display font-black text-lg md:text-xl">İnternet olmadan gerçekten çalışır mı?</span>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="transition-transform flex-shrink-0"><path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </summary>
+        <div class="px-6 pb-6 text-ink/70 leading-relaxed">
+          Evet, tam olarak. Uygulama tüm verilerini önce cihazınızda saklar. Sinyal olmadan kayıt girebilir, geçmişe bakabilir, randevu planlayabilirsiniz. Sinyal geldiğinde sistem kendi kendine senkronize olur, çakışmaları akıllıca çözer.
+        </div>
+      </details>
+
+      <details class="faq-item bg-white rounded-2xl border-2 border-ink/10 overflow-hidden">
+        <summary class="cursor-pointer p-6 flex items-center justify-between gap-4">
+          <span class="font-display font-black text-lg md:text-xl">Verilerim nerede saklanıyor? Güvende mi?</span>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="transition-transform flex-shrink-0"><path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </summary>
+        <div class="px-6 pb-6 text-ink/70 leading-relaxed">
+          Tüm veriler Türkiye'deki sunucularda (Hetzner Almanya bölgesi seçeneği ile) şifreli olarak tutulur. KVKK tam uyum. Verilerinizi dilediğiniz zaman dışa aktarabilir veya silebilirsiniz.
+        </div>
+      </details>
+
+      <details class="faq-item bg-white rounded-2xl border-2 border-ink/10 overflow-hidden">
+        <summary class="cursor-pointer p-6 flex items-center justify-between gap-4">
+          <span class="font-display font-black text-lg md:text-xl">Hangi cihazlarda çalışır?</span>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="transition-transform flex-shrink-0"><path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </summary>
+        <div class="px-6 pb-6 text-ink/70 leading-relaxed">
+          Android ve iOS telefonlar, tabletler. Klinik için modern tarayıcıda web paneli (Chrome, Safari, Firefox, Edge). Aynı hesap her yerde senkron.
+        </div>
+      </details>
+
+      <details class="faq-item bg-white rounded-2xl border-2 border-ink/10 overflow-hidden">
+        <summary class="cursor-pointer p-6 flex items-center justify-between gap-4">
+          <span class="font-display font-black text-lg md:text-xl">Çiftçiler uygulama indirmek zorunda mı?</span>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="transition-transform flex-shrink-0"><path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </summary>
+        <div class="px-6 pb-6 text-ink/70 leading-relaxed">
+          Hayır. Çiftçiye SMS ile bir link gönderirsiniz, tıkladığında hayvanının raporunu tarayıcıdan görür. Kayıt yok, şifre yok, uygulama yok.
+        </div>
+      </details>
+
+      <details class="faq-item bg-white rounded-2xl border-2 border-ink/10 overflow-hidden">
+        <summary class="cursor-pointer p-6 flex items-center justify-between gap-4">
+          <span class="font-display font-black text-lg md:text-xl">Senkron sırasında iki cihazda değişiklik olursa ne olur?</span>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="transition-transform flex-shrink-0"><path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </summary>
+        <div class="px-6 pb-6 text-ink/70 leading-relaxed">
+          Çakışma çözümü uygulamanın içine yerleştirilmiş. Sistem önce otomatik birleştirmeyi dener; insan kararı gerekiyorsa size iki sürümü yan yana gösterir, siz seçersiniz. Veri kaybı olmaz.
+        </div>
+      </details>
+
+      <details class="faq-item bg-white rounded-2xl border-2 border-ink/10 overflow-hidden">
+        <summary class="cursor-pointer p-6 flex items-center justify-between gap-4">
+          <span class="font-display font-black text-lg md:text-xl">Fiyat ne kadar olacak?</span>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="transition-transform flex-shrink-0"><path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </summary>
+        <div class="px-6 pb-6 text-ink/70 leading-relaxed">
+          Henüz netleşmedi. Erken erişime kayıt olanlara özel lansman fiyatı ve 3 ay ücretsiz kullanım sözümüz var. Kayıt olduğunuzda ilk bilgi size gelir.
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="py-20 md:py-28 bg-cream relative overflow-hidden">
+  <div class="max-w-4xl mx-auto px-6 text-center">
+    <div class="stamp inline-block px-4 py-1.5 rounded-full font-bold text-xs uppercase tracking-wider mb-8">
+      Erken Erişim · Sınırlı Kontenjan
+    </div>
+    <h2 class="font-display font-black text-5xl md:text-7xl leading-[0.95] tracking-tight mb-6">
+      Sahada <span class="italic font-light highlight">işe yarayan</span><br/>
+      bir araç ister misiniz?
+    </h2>
+    <p class="text-lg text-ink/70 max-w-2xl mx-auto mb-10">
+      Kurulum yok, kart bilgisi yok. Telefon numaranızla başlayın, 3 dakika içinde sahada olun.
+    </p>
+    <button onclick="openModal()" class="btn-primary rounded-full px-10 py-4 font-semibold text-lg inline-flex items-center gap-2">
+      Ücretsiz Dene
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-ink text-cream/70 py-12">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="grid md:grid-cols-4 gap-8 mb-8">
+      <div>
+        <div class="flex items-center gap-2.5 mb-4">
+          <svg width="30" height="36" viewBox="0 0 80 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M40 4 C58 4 72 18 72 36 C72 54 52 78 40 94 C28 78 8 54 8 36 C8 18 22 4 40 4 Z"
+                  stroke="#2E7D32" stroke-width="5" fill="none" stroke-linejoin="round"/>
+            <path d="M28 24 L28 36 C28 44 34 50 40 50 C46 50 52 44 52 36 L52 24"
+                  stroke="#2E7D32" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="28" cy="22" r="3" fill="#2E7D32"/>
+            <circle cx="52" cy="22" r="3" fill="#2E7D32"/>
+            <path d="M40 50 L40 60" stroke="#2E7D32" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="40" cy="66" r="6" stroke="#2E7D32" stroke-width="4" fill="none"/>
+          </svg>
+          <span class="font-display font-black text-xl text-forest">VetRota</span>
+        </div>
+        <p class="text-sm">Kırsalda çalışan gezici veterinerler için offline-first saha yönetimi.</p>
+      </div>
+      <div>
+        <h4 class="font-bold text-cream mb-3 text-sm uppercase tracking-wider">Ürün</h4>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#ozellikler" class="hover:text-amber transition">Özellikler</a></li>
+          <li><a href="#nasil" class="hover:text-amber transition">Nasıl Çalışır</a></li>
+          <li><a href="#sss" class="hover:text-amber transition">SSS</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold text-cream mb-3 text-sm uppercase tracking-wider">Şirket</h4>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#" class="hover:text-amber transition">Hakkımızda</a></li>
+          <li><a href="#" class="hover:text-amber transition">İletişim</a></li>
+          <li><a href="#" class="hover:text-amber transition">Blog</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold text-cream mb-3 text-sm uppercase tracking-wider">Hukuki</h4>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#" class="hover:text-amber transition">KVKK Aydınlatma Metni</a></li>
+          <li><a href="#" class="hover:text-amber transition">Kullanım Şartları</a></li>
+          <li><a href="#" class="hover:text-amber transition">Gizlilik</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-cream/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+      <div>© 2026 VetRota. Tüm hakları saklıdır.</div>
+      <div>Türkiye'de, kırsaldaki veterinerlerle birlikte tasarlandı.</div>
+    </div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modal" onclick="if(event.target === this) closeModal()">
+  <div class="modal-card bg-cream rounded-3xl p-8 md:p-12 max-w-lg mx-4 text-center relative">
+    <button onclick="closeModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full hover:bg-ink/10 flex items-center justify-center transition">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+
+    <!-- Illustration -->
+    <svg viewBox="0 0 200 140" class="w-48 h-auto mx-auto mb-4">
+      <circle cx="100" cy="70" r="60" fill="#E8F5E9"/>
+      <rect x="70" y="40" width="60" height="75" rx="8" fill="#FAF7F0" stroke="#1A1F1B" stroke-width="2"/>
+      <rect x="75" y="50" width="50" height="4" fill="#2E7D32"/>
+      <circle cx="100" cy="78" r="15" fill="#FF9800"/>
+      <path d="M 92 78 l 5 5 l 10 -10" stroke="#FAF7F0" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="75" y="100" width="40" height="3" fill="#1A1F1B" opacity="0.3"/>
+      <rect x="75" y="106" width="30" height="3" fill="#1A1F1B" opacity="0.3"/>
+      <!-- Sparkles -->
+      <path d="M 50 30 l 2 -8 l 2 8 l 8 2 l -8 2 l -2 8 l -2 -8 l -8 -2 z" fill="#FF9800"/>
+      <path d="M 155 100 l 1.5 -6 l 1.5 6 l 6 1.5 l -6 1.5 l -1.5 6 l -1.5 -6 l -6 -1.5 z" fill="#2E7D32"/>
+    </svg>
+
+    <div class="stamp inline-block px-3 py-1 rounded-full font-bold text-xs uppercase tracking-wider mb-4">
+      Yakında
+    </div>
+    <h3 class="font-display font-black text-3xl md:text-4xl mb-4 leading-tight">
+      Neredeyse hazırız!
+    </h3>
+    <p class="text-ink/70 mb-8 leading-relaxed">
+      VetRota şu an erken erişim aşamasında. Lansmana birkaç hafta kaldı. Hazır olduğumuzda ilk sen haberdar olmak ister misin?
+    </p>
+    <form onsubmit="return handleSubmit(event)" class="space-y-3">
+      <input type="email" required placeholder="email@ornek.com" class="w-full px-5 py-3.5 rounded-full border-2 border-ink/10 focus:border-forest outline-none bg-white font-medium"/>
+      <button type="submit" class="btn-primary w-full rounded-full px-6 py-3.5 font-semibold">
+        Beni Haberdar Et
+      </button>
+    </form>
+    <p class="text-xs text-ink/50 mt-4">Spam yok, söz. İstediğin an çıkabilirsin.</p>
+  </div>
+</div>
+
+<script>
+  function openModal() {
+    document.getElementById('modal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('modal').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    btn.textContent = '✓ Listeye eklendin!';
+    btn.style.background = '#1B5E20';
+    setTimeout(() => {
+      closeModal();
+      btn.textContent = 'Beni Haberdar Et';
+      btn.style.background = '';
+      e.target.reset();
+    }, 1500);
+    return false;
+  }
+  // ESC to close
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+  });
+</script>
+
+</body>
+</html>
