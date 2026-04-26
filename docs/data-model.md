@@ -47,7 +47,7 @@ destekler.
 
 ### 1.3 Veritabanı Teknolojisi
 
-- **Server:** PostgreSQL 16
+- **Server:** PostgreSQL 18
 - **Flutter Local:** Drift (SQLite tabanlı) — şema server ile paraleldir
   ama Flutter tarafında ek `sync_status` alanı bulunur
 - **Zaman:** Tüm `TIMESTAMPTZ` (UTC) olarak tutulur, client UI kendi

@@ -39,3 +39,10 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# AI agent config (otomatik üretilir, regenerate edilebilir)
+.mcp.json
+boost.json
+AGENTS.md
+.claude/skills/
+CLAUDE.md.backup

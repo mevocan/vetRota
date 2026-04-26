@@ -31,12 +31,14 @@ Bu kararlar önceden verilmiştir; Claude Code bunları **sorgulamaz**, alternat
 | Veritabanı | PostgreSQL 18 |
 | Web frontend | Nuxt 4 + TypeScript |
 | CSS | Tailwind CSS |
+| Component library (web) | Nuxt UI v4 |
 | State management | Pinia |
 | Mobil | Flutter 3.41 (Dart 3.11) |
 | Yerel DB (mobil) | Drift (SQLite tabanlı) |
 | API stili | RESTful |
 | Auth | JWT (refresh token rotation) |
 | DevOps | Docker + Docker Compose |
+| AI dev araçları | Laravel Boost, Nuxt MCP, Nuxt UI Skill (Claude Code için) |
 | Repo hosting | GitHub |
 | Production hosting | Hetzner |
 
@@ -49,6 +51,11 @@ Bu kararlar önceden verilmiştir; Claude Code bunları **sorgulamaz**, alternat
 - Nuxt 4 yeni dizin yapısı: uygulama kodu `app/` altında (pages, layouts,
   components, composables, middleware), server kodu `server/` altında,
   paylaşılan kod `shared/` altında. Tek `tsconfig.json` root'ta.
+- **Nuxt UI v4 kullanımı:** Hazır component'ler tercih edilir (UButton,
+  UInput, UTable, UModal, UForm, UDashboardLayout vb.). Sıfırdan div+class
+  yazmak yerine önce Nuxt UI'da var mı diye bakılır. Marka rengi
+  `app.config.ts` üzerinden semantic color sistemine bağlanır
+  (`primary: 'green'` + custom palette). Detay: `docs/dev-tools.md`.
 - PHP: strict types, constructor property promotion, enum kullanımı, PHP 8.4
   property hooks ve asymmetric visibility (uygun yerlerde)
 - TypeScript: strict mode, type inference tercih et, gereksiz type
@@ -103,6 +110,7 @@ durumunda doküman önce, kod sonra — önce dokümanı güncelle, sonra kod ya
 | `docs/plan.md` | Milestone'lar, bağımlılık grafiği, kritik yol | Hangi milestone'dayız? Sıradaki ne? |
 | `docs/data-model.md` | PostgreSQL şeması, 32 tablo, conflict stratejileri | DB ile ilgili her şey |
 | `docs/sync-api.md` | M3 sync protokolü, Laravel iskeleti | Offline/sync ile ilgili her şey |
+| `docs/dev-tools.md` | Boost, Nuxt MCP, Nuxt UI Skill kurulum ve kullanım | Yeni cihaza geçince, araç güncellenince |
 | `CLAUDE.md` | Bu dosya, genel tutum ve kısıtlar | Her oturum başı |
 
 **Önemli:** `docs/` altındaki dosyalar **tasarım kararlarının kaynağıdır**.
@@ -212,7 +220,12 @@ sonraya bırakıldı" de.
 
 M1 tamamlandı kriteri:
 - `docker compose up` ile Laravel 13 + PostgreSQL 18 + Nuxt 4 çalışıyor
-- Veteriner web panelinden login olabiliyor
+- Laravel Boost kurulu, `.mcp.json` ve `boost.json` üretilmiş, Claude Code
+  Boost MCP server'ına bağlanabiliyor
+- Nuxt MCP HTTP server'ı `.mcp.json`'a eklenmiş
+- Nuxt UI v4 modülü kurulu, marka rengi `#2E7D32` semantic color
+  sistemine bağlanmış (login ekranında doğrulanır)
+- Veteriner web panelinden login olabiliyor (Nuxt UI UAuthForm component'i)
 - JWT dönüyor
 - Flutter'da da aynı JWT ile login çalışıyor
 

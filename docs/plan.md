@@ -83,9 +83,14 @@ Buradaki hata sonraki tüm işleri çöpe atar.
 
 ### M1 — "Docker ayağa kalktı, login çalışıyor"
 - **Bağımlılık:** Yok
-- **Tamamlandı kriteri:** `docker compose up` ile Laravel + PostgreSQL +
-  Nuxt çalışıyor; bir veteriner web panelinden login olabiliyor; JWT
-  dönüyor; Flutter'da da aynı JWT ile login çalışıyor.
+- **Tamamlandı kriteri:** `docker compose up` ile Laravel 13 + PostgreSQL
+  18 + Nuxt 4 çalışıyor; Laravel Boost kurulu (`.mcp.json` ve `boost.json`
+  üretilmiş, Claude Code Boost MCP'ye bağlanıyor); Nuxt MCP HTTP server'ı
+  `.mcp.json`'a eklenmiş; Nuxt UI v4 modülü kurulu, marka rengi
+  `#2E7D32` semantic color sistemine bağlanmış; bir veteriner web
+  panelinden login olabiliyor (Nuxt UI UAuthForm); JWT dönüyor;
+  Flutter'da da aynı JWT ile login çalışıyor. Detay kurulum sırası:
+  `docs/dev-tools.md`.
 
 ### M2 — "Çekirdek veri modeli API'den dönüyor"
 - **Bağımlılık:** M1

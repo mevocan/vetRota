@@ -100,9 +100,9 @@ Bunlara ek olarak platform şu özellikleri de kapsamaktadır: Kulak küpesi num
 
 | Alan | Seçim | Gerekçe                                                                                                                     |
 |------|-------|-----------------------------------------------------------------------------------------------------------------------------|
-| **Programlama Dili** | PHP | Köklü ekosistemi, Laravel ile birlikte hızlı ve güvenilir API geliştirme altyapısı.                                         |
-| **Framework** | Laravel | RESTful API geliştirme hızı, Queue sistemi ile offline sync kuyruklarının yönetimi ve Job tabanlı SMS gönderim altyapısı.   |
-| **Veritabanı** | PostgreSQL | Çevrimdışı senkronizasyonlarda oluşabilecek veri çakışmalarını (conflict resolution) yönetmedeki gücü ve JSON alan desteği. |
+| **Programlama Dili** | PHP 8.4 | Köklü ekosistemi, Laravel ile birlikte hızlı ve güvenilir API geliştirme altyapısı. Property hooks ve asymmetric visibility uygun yerlerde kullanılır. |
+| **Framework** | Laravel 13 | RESTful API geliştirme hızı, Queue sistemi ile offline sync kuyruklarının yönetimi ve Job tabanlı SMS gönderim altyapısı. AI SDK, MCP ve Boost gibi yerleşik ajan-geliştirme araçları. |
+| **Veritabanı** | PostgreSQL 18 | Çevrimdışı senkronizasyonlarda oluşabilecek veri çakışmalarını (conflict resolution) yönetmedeki gücü ve JSON alan desteği. |
 | **API Mimarisi** | RESTful API | Mobil cihazlarla sunucu arasındaki veri aktarımını standart ve öngörülebilir tutmak için.                                   |
 | **Kimlik Doğrulama** | JWT | Çevrimdışı ortamlarda oturumun cihazda güvenle açık kalabilmesi; çiftçi portalı için stateless token doğrulaması.           |
 
@@ -111,8 +111,9 @@ Bunlara ek olarak platform şu özellikleri de kapsamaktadır: Kulak küpesi num
 | Alan | Seçim | Gerekçe |
 |------|-------|---------|
 | **Programlama Dili** | TypeScript | Büyük çaplı verilerde tip güvenliği sağlayarak hataları erken yakalamak için. |
-| **Framework / Kütüphane** | Nuxt | SSR desteği, modüler mimarisi ve hızlı sayfa yükleme süreleri. Klinik yönetim paneli ve çiftçi portal sayfası bu katmanda sunulacaktır. |
+| **Framework / Kütüphane** | Nuxt 4 | SSR desteği, modüler mimarisi ve hızlı sayfa yükleme süreleri. Klinik yönetim paneli ve çiftçi portal sayfası bu katmanda sunulacaktır. |
 | **CSS Framework** | Tailwind CSS | Özel tasarımları ve mobil uyumlu yönetim panellerini hızlı kodlayabilmek için. |
+| **Component Library** | Nuxt UI v4 | 125+ hazır accessible component (form, tablo, modal, navigasyon). Tailwind üstüne kurulu, semantic color sistemi ile marka rengine bağlanır. Sıfırdan component yazma süresini ortadan kaldırır. |
 | **State Management** | Pinia | API'den gelen ilişkisel veriyi (hayvan → muayene → ilaç) reaktif olarak yönetmek ve önbelleklemek için. Vue 3'ün resmi state management çözümü. |
 
 ### 7.3 Mobil Uygulama
@@ -130,6 +131,7 @@ Bunlara ek olarak platform şu özellikleri de kapsamaktadır: Kulak küpesi num
 | **Versiyon Kontrolü** | 🔒 Zorunlu | Git |
 | **Kod Deposu** | 🔒 Zorunlu | GitHub |
 | **Konteynerizasyon** | 🔒 Zorunlu | Docker + Docker Compose |
+| **AI Geliştirme Araçları** | 🔒 Zorunlu | Laravel Boost (Laravel tarafı MCP server + 17.000 parça Laravel bilgisi), Nuxt MCP Server (Nuxt 4 dokümantasyonu), Nuxt UI Skill (component bilgisi). Detay: `docs/dev-tools.md`. |
 
 ### 7.5 Mimari Diyagram
 
