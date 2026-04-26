@@ -28,7 +28,7 @@
 |---|---|---|---|---|
 | 0 | Dokümantasyon + `.gitignore` + PG 18 düzeltmesi | ✅ Tamam | `3ce30c4` | `dev-tools.md` takipli, AI agent satırları eklendi |
 | 1 | Docker Compose iskeleti (`docker-compose.yml` + `.env.example`) | ✅ Tamam | `a7b1b97` | `docker compose config` syntax OK; up edilmedi (Laravel/Nuxt kurulmadan boş) |
-| 2 | Laravel 13 projesi (`backend/`) | ✅ Tamam | _bu commit_ | Laravel Framework 13.6.0; WSL içinden `docker run composer:latest create-project` ile kuruldu (UNC path mount sorunu nedeniyle WSL native path zorunlu) |
+| 2 | Laravel 13 projesi (`backend/`) | ✅ Tamam | `fa84aeb` | Laravel Framework 13.6.0; WSL içinden `docker run composer:latest create-project` ile kuruldu (UNC path mount sorunu nedeniyle WSL native path zorunlu) |
 | 3 | PostgreSQL bağlantısı + ilk migration | ⏳ Sırada | — | `.env` PG'ye çevir, `docker compose up -d postgres backend`, `artisan migrate` |
 | 4 | JWT auth iskeleti | ⬜ Bekliyor | — | `php-open-source-saver/jwt-auth` |
 | 5 | Laravel Boost kurulumu | ⬜ Bekliyor | — | CLAUDE.md.backup şart |

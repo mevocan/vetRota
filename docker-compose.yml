@@ -10,7 +10,7 @@ services:
     ports:
       - "${DB_PORT:-5432}:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-vetrota} -d ${DB_DATABASE:-vetrota}"]
       interval: 5s
@@ -18,20 +18,12 @@ services:
       retries: 10
 
   backend:
-    image: php:8.4-cli-alpine
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: vetrota-backend:local
     container_name: vetrota-backend
     restart: unless-stopped
-    working_dir: /app
-    command: >
-      sh -c "
-        apk add --no-cache git unzip libpq-dev postgresql-dev oniguruma-dev icu-dev libzip-dev &&
-        docker-php-ext-install pdo pdo_pgsql pgsql mbstring intl zip bcmath &&
-        if [ ! -f /usr/local/bin/composer ]; then
-          curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer;
-        fi &&
-        if [ -f composer.json ]; then composer install --no-interaction; fi &&
-        php artisan serve --host=0.0.0.0 --port=8000
-      "
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     volumes:
