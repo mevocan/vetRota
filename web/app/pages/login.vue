@@ -2,6 +2,8 @@
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
 
+definePageMeta({ layout: 'auth' })
+
 const auth = useAuthStore()
 
 const schema = z.object({
