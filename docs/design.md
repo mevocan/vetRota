@@ -99,10 +99,61 @@ Tasarım bu kararları **sorgulamaz**, uygular.
 
 ## 5. Onaylanan Kararlar
 
-> Bu bölüm boş başlar; mockup'lar onaylandıkça doldurulur.
-> Format: tarih + karar + gerekçe + (varsa) mockup referansı.
+> Format: tarih + karar + gerekçe + mockup referansı.
 
-_(Henüz karar yok.)_
+### 2026-04-26 — v1 baseline kabul edildi
+
+**Mockup:** `docs/design/mockup-v1.html` (claude.ai Artifacts çıktısı, tek
+dosya, web 5 ekran + mobil 4 ekran). Implementation sırasında bu dosya
+**görsel referanstır**, kod ile birebir eşleşmeyen yerlerde mockup
+güncellenir, koda özel "doğaçlama" yapılmaz.
+
+**Web paneli kararları:**
+- **Layout:** Sol sidebar (224px, beyaz arka plan, üstte logo + nav,
+  altta kullanıcı kartı) + 52px topbar (sayfa başlığı + arama) + ana
+  içerik (gri `#F4F6F8` arka plan)
+- **Aktif menü vurgusu:** açık yeşil `#E8F5E9` zemin + `#2E7D32` yazı
+- **Kartlar:** beyaz, `1px solid #E5E7EB`, 8px border-radius, 18px iç
+  boşluk
+- **Tablo:** sticky thead, gri arka plan, 11px uppercase başlıklar;
+  düşük stok satırları sarı (`#FFFDE7`), kritik kırmızı (`#FFF1F2`)
+- **Buton:** `btn-primary` ana renk dolgu / `btn-ghost` beyaz + gri
+  border; hepsi 6px radius, DM Sans 500
+- **Form:** tek kolon, 16px arası, label üstte 12.5px, error inline
+  altta 11.5px kırmızı; iki kolon gerekirse `form-row` grid
+- **Filtre paneli:** liste sayfalarında 192px sol panel (sidebar'ın
+  yanında), checkbox grupları
+- **Boş durum:** ortada küçük ikon + 1 satır açıklama + ana aksiyon
+  butonu
+- **Sayfalama:** sağ alt, 28px kare butonlar, aktif sayfa ana renk
+- **Hayvan kimlik kartı:** büyük monospace küpe no + alt satırda meta
+  bilgiler (cinsiyet, yaş, çiftçi, köy)
+
+**Mobil kararları:**
+- **Üst:** AppBar başlığı + sağda **sync indikatörü** (yeşil nokta =
+  Senkron, sarı = "N taslak")
+- **Hero alanı:** ana renk dolgu blok, beyaz büyük metin (örn. "12
+  hayvan · 4 köy")
+- **Köy/hayvan kartı:** beyaz, ikon + isim + alt satır + sayı; 16px
+  iç boşluk
+- **Bottom nav:** 4 sekme (Rota / Hayvanlar / Randevular / Profil),
+  aktif sekme ana renk
+- **Yeni muayene:** sticky FAB en altta tam genişlik, 56dp yükseklik,
+  ana renk
+- **Taslak rozeti:** offline kayıtlar `#TASLAK-ABC123` formatında,
+  sarı arka plan + koyu turuncu yazı
+- **Senkron sayfası:** kaç değişiklik bekliyor, son sync zamanı,
+  "Şimdi senkronla" butonu (offline'da disabled görsel)
+
+**İmplementation eşleşmesi (Nuxt UI v4):**
+- Sidebar → `UDashboardSidebar`
+- Topbar → `UDashboardNavbar`
+- Tablolar → `UTable` (filtreleme + sayfalama prop'ları)
+- Formlar → `UForm` + `UFormField` + `UInput`/`USelect`/`UTextarea`
+- Kartlar → `UCard`
+- Butonlar → `UButton color="primary"` / `UButton variant="ghost"`
+- Boş durum → `UCard` içinde özel layout (Nuxt UI'da hazır
+  `EmptyState` component'i yoksa kompoze edilir)
 
 ---
 

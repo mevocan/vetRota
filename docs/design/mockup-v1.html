@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VetRota — Tasarım Mockup</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --g:#2E7D32;--gd:#1B5E20;--gl:#E8F5E9;--gll:#F1F8F1;
+      --w:#FF9800;--wl:#FFF8E1;
+      --e:#C62828;--el:#FFEBEE;
+      --bd:#E5E7EB;--bg:#F4F6F8;--sf:#fff;
+      --t1:#111827;--t2:#6B7280;--t3:#9CA3AF;
+      --r:8px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;background:#18181B;color:var(--t1);-webkit-font-smoothing:antialiased}
+    .page{padding:48px;display:flex;flex-direction:column;gap:52px;max-width:1560px;margin:0 auto}
+    .section-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:#52525B;margin-bottom:20px}
+    .screen-label{font-size:11px;font-weight:600;color:#71717A;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+    .screens{display:flex;flex-direction:column;gap:36px}
+    /* Web screen */
+    .web-screen{display:flex;height:700px;border-radius:12px;overflow:hidden;border:1px solid #27272A;box-shadow:0 8px 40px rgba(0,0,0,.5)}
+    /* Sidebar */
+    .sidebar{width:224px;background:#fff;border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0}
+    .sb-logo{padding:14px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center}
+    .sb-logo img{height:26px;object-fit:contain;object-position:left}
+    .sb-nav{flex:1;padding:8px;overflow-y:auto}
+    .nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;font-size:13.5px;color:var(--t2);border-radius:6px;cursor:pointer;margin-bottom:1px;line-height:1}
+    .nav-item.active{background:var(--gl);color:var(--g);font-weight:600}
+    .nav-item svg{width:15px;height:15px;flex-shrink:0}
+    .sb-footer{padding:12px 14px;border-top:1px solid var(--bd)}
+    .sb-user{display:flex;align-items:center;gap:9px}
+    .avatar{width:30px;height:30px;border-radius:50%;background:var(--gl);color:var(--g);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
+    .avn{font-size:13px;font-weight:500;color:var(--t1)}
+    .avr{font-size:11px;color:var(--t2)}
+    /* Main */
+    .main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+    .topbar{height:52px;background:#fff;border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 22px;gap:12px;flex-shrink:0}
+    .topbar-title{font-weight:600;font-size:15px;flex:1;color:var(--t1)}
+    .tb-search{display:flex;align-items:center;gap:7px;background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:6px 12px;color:var(--t3);font-size:13.5px;min-width:200px}
+    .content{flex:1;overflow:auto;padding:22px}
+    /* Cards */
+    .card{background:#fff;border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
+    .card-head{padding:13px 18px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+    .card-title{font-size:13.5px;font-weight:600;color:var(--t1)}
+    /* Stats */
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+    .stat-card{background:#fff;border:1px solid var(--bd);border-radius:var(--r);padding:16px 18px}
+    .stat-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+    .stat-val{font-size:28px;font-weight:700;line-height:1;margin-bottom:3px}
+    .stat-lbl{font-size:12px;color:var(--t2)}
+    /* Buttons */
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:13.5px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;border:1px solid transparent;line-height:1.2}
+    .btn-primary{background:var(--g);color:#fff;border-color:var(--g)}
+    .btn-ghost{background:#fff;color:var(--t2);border-color:var(--bd)}
+    .btn-sm{padding:5px 10px;font-size:12.5px}
+    .btn-icon{padding:7px;border-radius:6px;background:#fff;border:1px solid var(--bd);color:var(--t2);cursor:pointer;display:flex;align-items:center}
+    /* Table */
+    .tbl-wrap{border-radius:var(--r);border:1px solid var(--bd);overflow:hidden;background:#fff}
+    table{width:100%;border-collapse:collapse;font-size:13.5px}
+    thead{background:var(--bg)}
+    th{padding:9px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bd);white-space:nowrap}
+    td{padding:11px 14px;border-bottom:1px solid var(--bd);color:var(--t1);vertical-align:middle}
+    tr:last-child td{border-bottom:none}
+    tr:hover td{background:#FAFAFA}
+    tr.row-low td{background:#FFFDE7}
+    tr.row-crit td{background:#FFF1F2}
+    /* Badges */
+    .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:100px;font-size:11.5px;font-weight:500;white-space:nowrap}
+    .bg0{background:var(--gl);color:var(--gd)}
+    .bo{background:var(--wl);color:#BF360C}
+    .br{background:var(--el);color:var(--e)}
+    .bgr{background:#F3F4F6;color:var(--t2)}
+    /* Tabs */
+    .tabs{display:flex;border-bottom:1px solid var(--bd);margin-bottom:18px}
+    .tab{padding:10px 18px;font-size:13.5px;font-weight:500;color:var(--t2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+    .tab.active{color:var(--g);border-bottom-color:var(--g)}
+    /* Form */
+    .fg{margin-bottom:16px}
+    .fl{display:block;font-size:12.5px;font-weight:500;margin-bottom:5px;color:var(--t1)}
+    .fi{width:100%;padding:8px 11px;border:1px solid var(--bd);border-radius:6px;font-size:13.5px;font-family:'DM Sans',sans-serif;color:var(--t1);background:#fff;outline:none}
+    .fi.err{border-color:var(--e)}
+    .ferr{font-size:11.5px;color:var(--e);margin-top:3px}
+    textarea.fi{resize:vertical;min-height:76px}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .form-actions{display:flex;gap:10px;padding-top:12px;border-top:1px solid var(--bd);margin-top:4px}
+    /* Toolbar */
+    .toolbar{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+    /* Timeline */
+    .tl-item{display:flex;gap:13px;padding:13px 0;border-bottom:1px solid var(--bd)}
+    .tl-item:last-child{border-bottom:none}
+    .tl-dot{width:8px;height:8px;border-radius:50%;background:var(--g);margin-top:4px;flex-shrink:0}
+    .tl-date{font-size:12px;color:var(--t2);margin-bottom:2px}
+    .tl-title{font-size:13.5px;font-weight:500}
+    .tl-sub{font-size:12.5px;color:var(--t2);margin-top:2px;line-height:1.45}
+    /* Identity card */
+    .id-card{background:#fff;border:1px solid var(--bd);border-radius:var(--r);padding:20px 22px;margin-bottom:18px;display:flex;align-items:flex-start;gap:18px}
+    .id-tag{font-size:20px;font-weight:700;font-family:monospace;margin-bottom:2px}
+    .id-sub{font-size:13px;color:var(--t2);margin-bottom:10px}
+    .id-meta{display:flex;gap:20px;flex-wrap:wrap}
+    .id-meta-item .lbl{color:var(--t2);font-size:11.5px}
+    .id-meta-item .val{font-weight:500;color:var(--t1);font-size:13px}
+    /* Filter panel */
+    .list-layout{display:flex;flex:1;overflow:hidden}
+    .filter-panel{width:192px;background:#fff;border-right:1px solid var(--bd);padding:14px;flex-shrink:0;overflow-y:auto}
+    .filter-head{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t2);margin-bottom:6px;margin-top:14px}
+    .filter-head:first-child{margin-top:0}
+    .fi-item{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;color:var(--t2);cursor:pointer}
+    .fi-item input{accent-color:var(--g);width:13px;height:13px}
+    .list-content{flex:1;overflow:auto;padding:18px}
+    /* Pagination */
+    .pag{display:flex;align-items:center;gap:4px;justify-content:flex-end;margin-top:14px}
+    .pg-info{font-size:12px;color:var(--t2);margin-right:6px}
+    .pg-btn{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;border:1px solid var(--bd);background:#fff;color:var(--t2)}
+    .pg-btn.act{background:var(--g);color:#fff;border-color:var(--g)}
+    /* Empty state */
+    .empty{display:flex;flex-direction:column;align-items:center;gap:8px;padding:48px 20px;text-align:center}
+    .empty-icon{width:44px;height:44px;border-radius:10px;background:var(--bg);display:flex;align-items:center;justify-content:center;margin-bottom:4px}
+    .empty-title{font-size:14px;font-weight:600}
+    .empty-sub{font-size:13px;color:var(--t2);max-width:260px;line-height:1.5}
+    /* ─── MOBILE ─── */
+    .mobile-row{display:flex;gap:28px;flex-wrap:wrap}
+    .phone-wrap{display:flex;flex-direction:column;gap:10px;align-items:center}
+    .phone-lbl{font-size:11px;font-weight:600;color:#71717A;text-transform:uppercase;letter-spacing:.08em;text-align:center}
+    .phone{width:375px;height:792px;background:#fff;border-radius:44px;overflow:hidden;border:8px solid #1F1F1F;box-shadow:0 8px 48px rgba(0,0,0,.55),inset 0 0 0 1px #3a3a3a;display:flex;flex-direction:column;position:relative;flex-shrink:0}
+    .phone-status{height:44px;background:#fff;display:flex;align-items:center;padding:12px 22px 0;justify-content:space-between;flex-shrink:0}
+    .phone-time{font-size:15px;font-weight:600;color:#111}
+    .phone-icons{display:flex;gap:5px;align-items:center}
+    .phone-appbar{background:#fff;height:56px;display:flex;align-items:center;padding:0 16px;gap:10px;border-bottom:1px solid var(--bd);flex-shrink:0}
+    .phone-appbar-title{font-size:18px;font-weight:700;flex:1;color:var(--t1)}
+    .sync-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .sync-ok{background:#4CAF50}
+    .sync-pending{background:var(--w)}
+    .sync-txt{font-size:10.5px;color:var(--t2)}
+    .phone-body{flex:1;overflow:hidden;display:flex;flex-direction:column;background:var(--bg)}
+    .phone-content{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+    .m-card{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+    .m-chip{display:inline-flex;align-items:center;padding:3px 10px;border-radius:100px;font-size:12px;font-weight:500}
+    .m-chip-g{background:var(--gl);color:var(--g)}
+    .m-chip-o{background:var(--wl);color:#E65100}
+    .fab{position:absolute;bottom:76px;right:16px;width:56px;height:56px;border-radius:16px;background:var(--g);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(46,125,50,.45);z-index:10}
+    .bottom-nav{height:64px;background:#fff;border-top:1px solid var(--bd);display:flex;align-items:center;justify-content:space-around;flex-shrink:0;padding:0 4px 8px}
+    .bn-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:var(--t3);cursor:pointer;flex:1;padding-top:8px}
+    .bn-item.active{color:var(--g)}
+    .bn-icon{width:22px;height:22px}
+    .m-fg{margin-bottom:14px}
+    .m-label{display:block;font-size:11px;font-weight:600;margin-bottom:5px;color:var(--t2);text-transform:uppercase;letter-spacing:.05em}
+    .m-input{width:100%;padding:13px 14px;border:1.5px solid var(--bd);border-radius:10px;font-size:15px;font-family:'DM Sans',sans-serif;background:#fff;color:var(--t1);outline:none}
+    .sticky-save{position:absolute;bottom:0;left:0;right:0;padding:12px 16px 20px;background:#fff;border-top:1px solid var(--bd)}
+    .m-btn-primary{display:block;width:100%;height:52px;background:var(--g);color:#fff;border:none;border-radius:12px;font-size:16px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer}
+    .offline-hint{font-size:11px;color:var(--t3);text-align:center;margin-top:6px}
+    .m-toggle{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;background:#fff;border:1.5px solid var(--bd);border-radius:10px}
+    .toggle-track{width:44px;height:24px;border-radius:12px;background:var(--g);position:relative;flex-shrink:0;cursor:pointer}
+    .toggle-thumb{width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:2px;right:2px;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+    .village-card{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+    .vc-icon{width:42px;height:42px;border-radius:12px;background:var(--gl);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .vc-name{font-size:15px;font-weight:600;margin-bottom:2px;color:var(--t1)}
+    .vc-sub{font-size:12.5px;color:var(--t2)}
+    .vc-count{margin-left:auto;font-size:22px;font-weight:700;color:var(--g)}
+    .draft-tag{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:4px;background:#FFF8E1;border:1px solid #FFE082;color:#F57F17;font-size:11.5px;font-weight:500}
+    .sync-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd)}
+    .sync-row:last-child{border-bottom:none}
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- PAGE HEADER -->
+  <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:24px;border-bottom:1px solid #27272A">
+    <div>
+      <div style="font-size:22px;font-weight:700;color:#E4E4E7">VetRota — Tasarım Mockup</div>
+      <div style="font-size:13px;color:#52525B;margin-top:3px">Web Paneli · 5 ekran &nbsp;|&nbsp; Android Mobil · 4 ekran &nbsp;·&nbsp; 26 Nisan 2026</div>
+    </div>
+    <img src="logo/logo.png" style="height:34px;filter:brightness(10);opacity:.2" alt="VetRota">
+  </div>
+
+  <!-- ════════════════ WEB PANELİ ════════════════ -->
+  <div>
+    <div class="section-title">Web Paneli — Masaüstü &nbsp;·&nbsp; Klinik Sahibi / Sekreter</div>
+    <div class="screens">
+
+      <!-- ── 1. DASHBOARD ── -->
+      <div>
+        <div class="screen-label">1 — Dashboard</div>
+        <div class="web-screen">
+          <div class="sidebar" data-active="dashboard"></div>
+          <div class="main">
+            <div class="topbar">
+              <div class="topbar-title">Dashboard</div>
+              <div class="tb-search">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="6" cy="6" r="4.5"/><path d="m10 10 2.5 2.5"/></svg>
+                Ara...
+              </div>
+              <div class="avatar" style="width:32px;height:32px;font-size:12px">AY</div>
+            </div>
+            <div class="content">
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <div class="stat-icon" style="background:var(--gl)">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--g)" stroke-width="1.5" stroke-linecap="round"><path d="M8 2v6l3 3"/><circle cx="8" cy="8" r="6"/></svg>
+                  </div>
+                  <div class="stat-val">8</div>
+                  <div class="stat-lbl">Bugün muayene</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon" style="background:#EEF2FF">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="3" width="12" height="11" rx="1"/><path d="M5 1.5v3M11 1.5v3M2 7h12"/></svg>
+                  </div>
+                  <div class="stat-val">12</div>
+                  <div class="stat-lbl">Bugün randevu</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon" style="background:var(--wl)">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--w)" stroke-width="1.5" stroke-linecap="round"><path d="M8 5v4M8 10.5v.5"/><circle cx="8" cy="8" r="6.5"/></svg>
+                  </div>
+                  <div class="stat-val" style="color:var(--w)">3</div>
+                  <div class="stat-lbl">Düşük stok</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon" style="background:var(--gl)">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--g)" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="5.5" r="2.5"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
+                  </div>
+                  <div class="stat-val">2</div>
+                  <div class="stat-lbl">Yeni hayvan</div>
+                </div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:16px">
+                <div class="card">
+                  <div class="card-head">
+                    <div class="card-title">Bugünkü Randevular</div>
+                    <span class="badge bg0">12 randevu</span>
+                  </div>
+                  <div style="padding:0 18px">
+                    <div class="tl-item">
+                      <div class="tl-dot"></div>
+                      <div><div class="tl-date">09:00 · Büyükdere</div><div class="tl-title">Mehmet Yılmaz — <span style="font-family:monospace;font-size:12.5px;color:var(--t2)">TR-1234</span></div><div class="tl-sub">Sığır · Rutin muayene</div></div>
+                    </div>
+                    <div class="tl-item">
+                      <div class="tl-dot"></div>
+                      <div><div class="tl-date">10:30 · Karaçam</div><div class="tl-title">Ali Kara — <span style="font-family:monospace;font-size:12.5px;color:var(--t2)">TR-5678</span></div><div class="tl-sub">Koyun · Aşı</div></div>
+                    </div>
+                    <div class="tl-item">
+                      <div class="tl-dot" style="background:var(--w)"></div>
+                      <div><div class="tl-date">11:00 · Yeniköy</div><div class="tl-title">Fatma Demir — <span style="font-family:monospace;font-size:12.5px;color:var(--t2)">TR-9012</span></div><div class="tl-sub">Keçi · Gebelik kontrol</div></div>
+                    </div>
+                    <div class="tl-item" style="border:none">
+                      <div class="tl-dot"></div>
+                      <div><div class="tl-date">13:30 · Büyükdere</div><div class="tl-title">Mehmet Yılmaz — <span style="font-family:monospace;font-size:12.5px;color:var(--t2)">TR-3456</span></div><div class="tl-sub">Sığır · Tedavi takibi</div></div>
+                    </div>
+                  </div>
+                  <div style="padding:10px 18px;border-top:1px solid var(--bd)">
+                    <button class="btn btn-ghost btn-sm" style="width:100%">Tüm randevuları gör</button>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <div class="card-head">
+                    <div class="card-title">Düşük Stok Uyarıları</div>
+                    <span class="badge br">3 ürün</span>
+                  </div>
+                  <div style="padding:0 18px">
+                    <div class="tl-item">
+                      <div class="tl-dot" style="background:var(--e)"></div>
+                      <div><div class="tl-date" style="color:var(--e)">KRİTİK · 1 adet kaldı</div><div class="tl-title">İvermektin %1</div><div class="tl-sub">Şişe · Min. 5 gerekli</div></div>
+                    </div>
+                    <div class="tl-item">
+                      <div class="tl-dot" style="background:var(--w)"></div>
+                      <div><div class="tl-date" style="color:#E65100">DÜŞÜK · 3 kutu kaldı</div><div class="tl-title">Penisilin 200mg</div><div class="tl-sub">Kutu · Min. 10 gerekli</div></div>
+                    </div>
+                    <div class="tl-item" style="border:none">
+                      <div class="tl-dot" style="background:var(--w)"></div>
+                      <div><div class="tl-date" style="color:#E65100">DÜŞÜK · 2 doz kaldı</div><div class="tl-title">Şap Aşısı</div><div class="tl-sub">Doz · Min. 8 gerekli</div></div>
+                    </div>
+                  </div>
+                  <div style="padding:10px 18px;border-top:1px solid var(--bd)">
+                    <button class="btn btn-ghost btn-sm" style="width:100%">Stok listesine git</button>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <div class="card-head"><div class="card-title">Son Muayeneler</div></div>
+                  <div style="padding:0 18px">
+                    <div class="tl-item">
+                      <div class="tl-dot"></div>
+                      <div><div class="tl-date">Bugün, 08:20</div><div class="tl-title" style="font-family:monospace;font-size:13px">TR-1234</div><div class="tl-sub">Sığır · Mehmet Yılmaz · Büyükdere</div></div>
+                    </div>
+                    <div class="tl-item">
+                      <div class="tl-dot"></div>
+                      <div><div class="tl-date">Dün, 15:45</div><div class="tl-title" style="font-family:monospace;font-size:13px">TR-5678</div><div class="tl-sub">Koyun · Ali Kara · Karaçam</div></div>
+                    </div>
+                    <div class="tl-item">
+                      <div class="tl-dot"></div>
+                      <div><div class="tl-date">25 Nis, 11:00</div><div class="tl-title" style="font-family:monospace;font-size:13px">TR-9012</div><div class="tl-sub">Keçi · Fatma Demir · Yeniköy</div></div>
+                    </div>
+                    <div class="tl-item" style="border:none">
+                      <div class="tl-dot"></div>
+                      <div><div class="tl-date">24 Nis, 09:30</div><div class="tl-title" style="font-family:monospace;font-size:13px">TR-7890</div><div class="tl-sub">At · Hasan Şahin · Dutluca</div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 2. HAYVAN LİSTESİ ── -->
+      <div>
+        <div class="screen-label">2 — Hayvan Listesi</div>
+        <div class="web-screen">
+          <div class="sidebar" data-active="animals"></div>
+          <div class="main">
+            <div class="topbar">
+              <div class="topbar-title">Hayvanlar</div>
+              <div class="tb-search">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="6" cy="6" r="4.5"/><path d="m10 10 2.5 2.5"/></svg>
+                Küpe no, çiftçi, köy ara...
+              </div>
+              <button class="btn btn-primary">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 1v10M1 6h10"/></svg>
+                Yeni Hayvan
+              </button>
+            </div>
+            <div class="list-layout">
+              <div class="filter-panel">
+                <div class="filter-head">Tür</div>
+                <label class="fi-item"><input type="checkbox" checked> Sığır <span style="margin-left:auto;font-size:11px;color:var(--t3)">18</span></label>
+                <label class="fi-item"><input type="checkbox" checked> Koyun <span style="margin-left:auto;font-size:11px;color:var(--t3)">12</span></label>
+                <label class="fi-item"><input type="checkbox"> Keçi <span style="margin-left:auto;font-size:11px;color:var(--t3)">7</span></label>
+                <label class="fi-item"><input type="checkbox"> At <span style="margin-left:auto;font-size:11px;color:var(--t3)">3</span></label>
+                <div class="filter-head">Köy</div>
+                <label class="fi-item"><input type="checkbox" checked> Büyükdere</label>
+                <label class="fi-item"><input type="checkbox"> Karaçam</label>
+                <label class="fi-item"><input type="checkbox"> Yeniköy</label>
+                <label class="fi-item"><input type="checkbox"> Dutluca</label>
+                <label class="fi-item"><input type="checkbox"> Sarıkaya</label>
+                <div class="filter-head">Çiftçi</div>
+                <label class="fi-item"><input type="checkbox"> Mehmet Yılmaz</label>
+                <label class="fi-item"><input type="checkbox"> Ali Kara</label>
+                <label class="fi-item"><input type="checkbox"> Fatma Demir</label>
+                <div class="filter-head">Etiket</div>
+                <label class="fi-item"><input type="checkbox"> Gebe</label>
+                <label class="fi-item"><input type="checkbox"> Hasta</label>
+                <label class="fi-item"><input type="checkbox"> Aşı bekliyor</label>
+                <div style="margin-top:16px">
+                  <button class="btn btn-ghost btn-sm" style="width:100%">Filtreleri sıfırla</button>
+                </div>
+              </div>
+              <div class="list-content">
+                <div class="toolbar">
+                  <span style="font-size:13px;color:var(--t2)">40 kayıt</span>
+                  <div style="margin-left:auto;display:flex;gap:8px">
+                    <button class="btn btn-ghost btn-sm">Dışa aktar</button>
+                  </div>
+                </div>
+                <div class="tbl-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th><input type="checkbox" style="accent-color:var(--g)"></th>
+                        <th>Küpe No</th><th>Tür</th><th>Cinsiyet</th><th>Köy</th><th>Çiftçi</th><th>Son Muayene</th><th>Etiket</th><th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr><td><input type="checkbox" style="accent-color:var(--g)"></td><td style="font-weight:600;font-family:monospace;font-size:13px">TR-1234</td><td>Sığır</td><td>Dişi</td><td>Büyükdere</td><td>Mehmet Yılmaz</td><td>26 Nis 2026</td><td><span class="badge bg0">Gebe</span></td><td><button class="btn btn-ghost btn-sm">Görüntüle</button></td></tr>
+                      <tr><td><input type="checkbox" style="accent-color:var(--g)"></td><td style="font-weight:600;font-family:monospace;font-size:13px">TR-5678</td><td>Koyun</td><td>Erkek</td><td>Karaçam</td><td>Ali Kara</td><td>25 Nis 2026</td><td><span class="badge bo">Aşı bekliyor</span></td><td><button class="btn btn-ghost btn-sm">Görüntüle</button></td></tr>
+                      <tr><td><input type="checkbox" style="accent-color:var(--g)"></td><td style="font-weight:600;font-family:monospace;font-size:13px">TR-9012</td><td>Keçi</td><td>Dişi</td><td>Yeniköy</td><td>Fatma Demir</td><td>24 Nis 2026</td><td><span style="color:var(--t3);font-size:13px">—</span></td><td><button class="btn btn-ghost btn-sm">Görüntüle</button></td></tr>
+                      <tr><td><input type="checkbox" style="accent-color:var(--g)"></td><td style="font-weight:600;font-family:monospace;font-size:13px">TR-3456</td><td>Sığır</td><td>Dişi</td><td>Büyükdere</td><td>Mehmet Yılmaz</td><td>22 Nis 2026</td><td><span class="badge br">Hasta</span></td><td><button class="btn btn-ghost btn-sm">Görüntüle</button></td></tr>
+                      <tr><td><input type="checkbox" style="accent-color:var(--g)"></td><td style="font-weight:600;font-family:monospace;font-size:13px">TR-7890</td><td>At</td><td>Erkek</td><td>Dutluca</td><td>Hasan Şahin</td><td>20 Nis 2026</td><td><span style="color:var(--t3);font-size:13px">—</span></td><td><button class="btn btn-ghost btn-sm">Görüntüle</button></td></tr>
+                      <tr><td><input type="checkbox" style="accent-color:var(--g)"></td><td style="font-weight:600;font-family:monospace;font-size:13px">TR-2345</td><td>Koyun</td><td>Dişi</td><td>Sarıkaya</td><td>Zeynep Öz</td><td>18 Nis 2026</td><td><span class="badge bg0">Gebe</span></td><td><button class="btn btn-ghost btn-sm">Görüntüle</button></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="pag">
+                  <span class="pg-info">1–6 / 40 kayıt</span>
+                  <div class="pg-btn">&lsaquo;</div>
+                  <div class="pg-btn act">1</div>
+                  <div class="pg-btn">2</div>
+                  <div class="pg-btn">3</div>
+                  <div class="pg-btn">…</div>
+                  <div class="pg-btn">7</div>
+                  <div class="pg-btn">&rsaquo;</div>
+                </div>
+                <!-- Empty state reference -->
+                <div style="margin-top:28px;border-top:1px dashed #D1D5DB;padding-top:16px">
+                  <div class="screen-label" style="margin-bottom:10px">Boş durum — filtrelere uyan kayıt yok</div>
+                  <div class="tbl-wrap">
+                    <table><thead><tr><th><input type="checkbox"></th><th>Küpe No</th><th>Tür</th><th>Cinsiyet</th><th>Köy</th><th>Çiftçi</th><th>Son Muayene</th><th>Etiket</th><th></th></tr></thead><tbody></tbody></table>
+                    <div class="empty">
+                      <div class="empty-icon">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="var(--t3)" stroke-width="1.5" stroke-linecap="round"><circle cx="10" cy="10" r="8.5"/><path d="M7 7l6 6M13 7l-6 6"/></svg>
+                      </div>
+                      <div class="empty-title">Sonuç bulunamadı</div>
+                      <div class="empty-sub">Seçili filtrelere uyan hayvan kaydı yok. Filtreleri değiştirerek tekrar deneyin.</div>
+                      <button class="btn btn-ghost btn-sm" style="margin-top:4px">Filtreleri sıfırla</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 3. HAYVAN DETAYI ── -->
+      <div>
+        <div class="screen-label">3 — Hayvan Detayı</div>
+        <div class="web-screen">
+          <div class="sidebar" data-active="animals"></div>
+          <div class="main">
+            <div class="topbar">
+              <div class="btn-icon">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 2 4 7l5 5"/></svg>
+              </div>
+              <div class="topbar-title">Hayvan Detayı</div>
+              <button class="btn btn-ghost btn-sm">Düzenle</button>
+              <button class="btn btn-primary btn-sm">Yeni Muayene</button>
+            </div>
+            <div class="content">
+              <div class="id-card">
+                <div style="width:52px;height:52px;border-radius:14px;background:var(--gl);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                  <svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="var(--g)" stroke-width="1.7" stroke-linecap="round"><ellipse cx="13" cy="10" rx="5" ry="6"/><path d="M3 24c0-5.5 4.5-10 10-10s10 4.5 10 10"/></svg>
+                </div>
+                <div style="flex:1">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px">
+                    <div class="id-tag">TR-1234</div>
+                    <span class="badge bg0">Gebe</span>
+                  </div>
+                  <div class="id-sub">Sığır · Holstein · Dişi · 2019 doğumlu</div>
+                  <div class="id-meta">
+                    <div class="id-meta-item"><div class="lbl">Çiftçi</div><div class="val">Mehmet Yılmaz</div></div>
+                    <div class="id-meta-item"><div class="lbl">Köy</div><div class="val">Büyükdere</div></div>
+                    <div class="id-meta-item"><div class="lbl">TARKS No</div><div class="val">TR-12345678</div></div>
+                    <div class="id-meta-item"><div class="lbl">Son muayene</div><div class="val">26 Nis 2026</div></div>
+                    <div class="id-meta-item"><div class="lbl">Toplam muayene</div><div class="val">14</div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="tabs">
+                <div class="tab active">Muayeneler</div>
+                <div class="tab">Aşılar</div>
+                <div class="tab">Reçeteler</div>
+                <div class="tab">Fotoğraflar</div>
+              </div>
+              <div class="tbl-wrap" style="padding:0 18px">
+                <div class="tl-item">
+                  <div class="tl-dot"></div>
+                  <div style="flex:1">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
+                      <div class="tl-date">26 Nisan 2026, 08:20</div>
+                      <span class="badge bg0">Normal</span>
+                    </div>
+                    <div class="tl-title">Rutin kontrol</div>
+                    <div class="tl-sub">Bulgu: Genel durum iyi, yem alımı normal. Tanı: Sağlıklı. İlaç: Penisilin 200mg × 3 gün uygulandı.</div>
+                  </div>
+                </div>
+                <div class="tl-item">
+                  <div class="tl-dot"></div>
+                  <div style="flex:1">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
+                      <div class="tl-date">10 Nisan 2026, 10:15</div>
+                      <span class="badge bo">Takip gerekli</span>
+                    </div>
+                    <div class="tl-title">Gebelik kontrol — 2. ay</div>
+                    <div class="tl-sub">Bulgu: Gebelik teyit edildi. Doğum tahmini: Temmuz 2026. Vitamin B12 desteği başlandı.</div>
+                  </div>
+                </div>
+                <div class="tl-item">
+                  <div class="tl-dot"></div>
+                  <div style="flex:1">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
+                      <div class="tl-date">18 Mart 2026, 14:00</div>
+                      <span class="badge bgr">Tamamlandı</span>
+                    </div>
+                    <div class="tl-title">Solunum yolu enfeksiyonu</div>
+                    <div class="tl-sub">Bulgu: Öksürük, burun akıntısı. Tanı: Viral BRSV. Tedavi: Antibiyotik + ateş düşürücü 5 gün.</div>
+                  </div>
+                </div>
+                <div class="tl-item" style="border:none">
+                  <div class="tl-dot"></div>
+                  <div style="flex:1">
+                    <div class="tl-date">5 Şubat 2026, 09:00</div>
+                    <div class="tl-title">Rutin kontrol</div>
+                    <div class="tl-sub">Bulgu: Genel durum iyi. Herhangi bir işlem yapılmadı.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 4. HAYVAN FORMU ── -->
+      <div>
+        <div class="screen-label">4 — Hayvan Formu (Yeni Kayıt · Validation Görünümü)</div>
+        <div class="web-screen">
+          <div class="sidebar" data-active="animals"></div>
+          <div class="main">
+            <div class="topbar">
+              <div class="btn-icon">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 2 4 7l5 5"/></svg>
+              </div>
+              <div class="topbar-title">Yeni Hayvan</div>
+            </div>
+            <div class="content">
+              <div style="max-width:600px;background:#fff;border:1px solid var(--bd);border-radius:var(--r);padding:26px">
+                <div style="font-size:14px;font-weight:600;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--bd)">Hayvan Bilgileri</div>
+
+                <div class="fg">
+                  <label class="fl">Küpe No <span style="color:var(--e)">*</span></label>
+                  <input class="fi err" type="text" value="TR-" style="font-family:monospace">
+                  <div class="ferr">Geçerli bir küpe numarası girin. Örnek: TR-12345</div>
+                </div>
+
+                <div class="form-row">
+                  <div class="fg">
+                    <label class="fl">Tür <span style="color:var(--e)">*</span></label>
+                    <select class="fi"><option>Sığır</option><option>Koyun</option><option>Keçi</option><option>At</option><option>Diğer</option></select>
+                  </div>
+                  <div class="fg">
+                    <label class="fl">Cinsiyet <span style="color:var(--e)">*</span></label>
+                    <select class="fi"><option>Dişi</option><option>Erkek</option></select>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="fg">
+                    <label class="fl">Doğum Yılı</label>
+                    <input class="fi" type="number" placeholder="2020" style="font-family:monospace">
+                  </div>
+                  <div class="fg">
+                    <label class="fl">TARKS Ulusal Kimlik</label>
+                    <input class="fi" type="text" placeholder="TR-XXXXXXXX" style="font-family:monospace">
+                  </div>
+                </div>
+
+                <div class="fg">
+                  <label class="fl">Çiftçi <span style="color:var(--e)">*</span></label>
+                  <input class="fi" type="text" placeholder="Adı veya telefonu ile arayın..." value="Mehmet">
+                  <div style="border:1px solid var(--bd);border-radius:6px;margin-top:4px;overflow:hidden;border-top:none;border-top-left-radius:0;border-top-right-radius:0">
+                    <div style="padding:9px 12px;font-size:13.5px;background:var(--gl);color:var(--g);font-weight:500">Mehmet Yılmaz — Büyükdere</div>
+                    <div style="padding:9px 12px;font-size:13.5px;color:var(--t2);border-top:1px solid var(--bd)">Mehmet Arslan — Karaçam</div>
+                  </div>
+                </div>
+
+                <div class="fg">
+                  <label class="fl">Köy <span style="color:var(--e)">*</span></label>
+                  <select class="fi err"><option value="">Köy seçin...</option><option selected>Büyükdere</option><option>Karaçam</option><option>Yeniköy</option><option>Dutluca</option></select>
+                  <div class="ferr">Köy seçimi zorunludur.</div>
+                </div>
+
+                <div class="fg">
+                  <label class="fl">Notlar</label>
+                  <textarea class="fi" placeholder="Hayvan hakkında ek bilgi..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                  <button class="btn btn-primary">Kaydı Oluştur</button>
+                  <button class="btn btn-ghost">İptal</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 5. İLAÇ / STOK ── -->
+      <div>
+        <div class="screen-label">5 — İlaç / Stok Listesi</div>
+        <div class="web-screen">
+          <div class="sidebar" data-active="stock"></div>
+          <div class="main">
+            <div class="topbar">
+              <div class="topbar-title">İlaç / Stok</div>
+              <div class="tb-search">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="6" cy="6" r="4.5"/><path d="m10 10 2.5 2.5"/></svg>
+                İlaç adı ara...
+              </div>
+              <button class="btn btn-primary">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 1v10M1 6h10"/></svg>
+                Stok Girişi
+              </button>
+            </div>
+            <div class="content">
+              <div class="tabs">
+                <div class="tab active">Stok Listesi</div>
+                <div class="tab">Hareket Geçmişi</div>
+              </div>
+              <div class="toolbar" style="margin-bottom:12px">
+                <div style="display:flex;gap:8px">
+                  <button class="btn btn-sm" style="background:var(--el);color:var(--e);border:1px solid #FFCDD2">
+                    <svg width="8" height="8" viewBox="0 0 8 8" fill="var(--e)"><circle cx="4" cy="4" r="4"/></svg>
+                    Kritik (1)
+                  </button>
+                  <button class="btn btn-sm" style="background:var(--wl);color:#E65100;border:1px solid #FFE0B2">
+                    <svg width="8" height="8" viewBox="0 0 8 8" fill="var(--w)"><circle cx="4" cy="4" r="4"/></svg>
+                    Düşük (2)
+                  </button>
+                </div>
+                <div style="margin-left:auto">
+                  <button class="btn btn-ghost btn-sm">Dışa aktar</button>
+                </div>
+              </div>
+              <div class="tbl-wrap">
+                <table>
+                  <thead>
+                    <tr><th>İlaç Adı</th><th>Mevcut</th><th>Birim</th><th>Min. Seviye</th><th>Son Hareket</th><th>Durum</th><th></th></tr>
+                  </thead>
+                  <tbody>
+                    <tr class="row-crit"><td style="font-weight:500">İvermektin %1</td><td style="font-weight:700;color:var(--e)">1</td><td>Şişe</td><td>5</td><td>24 Nis 2026</td><td><span class="badge br">Kritik</span></td><td><button class="btn btn-ghost btn-sm">Stok gir</button></td></tr>
+                    <tr class="row-low"><td style="font-weight:500">Penisilin 200mg</td><td style="font-weight:700;color:#E65100">3</td><td>Kutu</td><td>10</td><td>22 Nis 2026</td><td><span class="badge bo">Düşük</span></td><td><button class="btn btn-ghost btn-sm">Stok gir</button></td></tr>
+                    <tr class="row-low"><td style="font-weight:500">Şap Aşısı</td><td style="font-weight:700;color:#E65100">2</td><td>Doz</td><td>8</td><td>20 Nis 2026</td><td><span class="badge bo">Düşük</span></td><td><button class="btn btn-ghost btn-sm">Stok gir</button></td></tr>
+                    <tr><td style="font-weight:500">Oksitosin 10 IU</td><td>24</td><td>Ampul</td><td>10</td><td>18 Nis 2026</td><td><span class="badge bg0">Yeterli</span></td><td><button class="btn btn-ghost btn-sm">Stok gir</button></td></tr>
+                    <tr><td style="font-weight:500">Deksametazon 4mg</td><td>12</td><td>Flakon</td><td>5</td><td>15 Nis 2026</td><td><span class="badge bg0">Yeterli</span></td><td><button class="btn btn-ghost btn-sm">Stok gir</button></td></tr>
+                    <tr><td style="font-weight:500">Vitamin B12 Kompleks</td><td>18</td><td>Flakon</td><td>5</td><td>12 Nis 2026</td><td><span class="badge bg0">Yeterli</span></td><td><button class="btn btn-ghost btn-sm">Stok gir</button></td></tr>
+                    <tr><td style="font-weight:500">Brucella Aşısı Rev-1</td><td>10</td><td>Doz</td><td>5</td><td>10 Nis 2026</td><td><span class="badge bg0">Yeterli</span></td><td><button class="btn btn-ghost btn-sm">Stok gir</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="pag">
+                <span class="pg-info">1–7 / 24 kayıt</span>
+                <div class="pg-btn">&lsaquo;</div>
+                <div class="pg-btn act">1</div>
+                <div class="pg-btn">2</div>
+                <div class="pg-btn">3</div>
+                <div class="pg-btn">&rsaquo;</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /screens -->
+  </div>
+
+  <!-- ════════════════ MOBİL ════════════════ -->
+  <div>
+    <div class="section-title">Mobil Uygulama — Android &nbsp;·&nbsp; Gezici Veteriner, Offline-First</div>
+    <div class="mobile-row">
+
+      <!-- M1. BUGÜNÜN ROTASI -->
+      <div class="phone-wrap">
+        <div class="phone-lbl">1 — Bugünün Rotası</div>
+        <div class="phone">
+          <div class="phone-status">
+            <span class="phone-time">09:41</span>
+            <div class="phone-icons">
+              <svg width="15" height="11" viewBox="0 0 15 11" fill="#111"><rect x="0" y="5" width="3" height="6" rx="1"/><rect x="4" y="3" width="3" height="8" rx="1"/><rect x="8" y="1" width="3" height="10" rx="1"/><rect x="12" y="0" width="3" height="11" rx="1"/></svg>
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#111" stroke-width="1.2"><rect x=".6" y=".6" width="13.8" height="10.8" rx="2"/><path d="M14.5 4h.9a.6.6 0 0 1 .6.6v2.8a.6.6 0 0 1-.6.6h-.9"/><rect x="1.6" y="1.6" width="11.8" height="8.8" rx="1.2" fill="#111"/></svg>
+            </div>
+          </div>
+          <div class="phone-appbar">
+            <div class="phone-appbar-title">Bugünün Rotası</div>
+            <div style="display:flex;align-items:center;gap:5px">
+              <div class="sync-dot sync-ok"></div>
+              <span class="sync-txt">Senkron</span>
+            </div>
+          </div>
+          <div style="background:var(--g);padding:14px 16px;flex-shrink:0">
+            <div style="font-size:12.5px;color:rgba(255,255,255,.75);margin-bottom:2px">26 Nisan 2026, Pazar</div>
+            <div style="font-size:18px;font-weight:700;color:#fff">12 hayvan &nbsp;·&nbsp; 4 köy</div>
+          </div>
+          <div class="phone-body">
+            <div class="phone-content">
+              <div style="font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t2);margin-bottom:2px">Bugünkü köyler</div>
+              <div class="village-card">
+                <div class="vc-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="var(--g)" stroke-width="1.6" stroke-linecap="round"><path d="M3 17V9l7-5 7 5v8"/><rect x="7" y="12" width="3" height="5"/><rect x="10" y="12" width="3" height="5"/></svg></div>
+                <div><div class="vc-name">Büyükdere</div><div class="vc-sub">5 hayvan · Sığır</div></div>
+                <div class="vc-count">5</div>
+              </div>
+              <div class="village-card">
+                <div class="vc-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="var(--g)" stroke-width="1.6" stroke-linecap="round"><path d="M3 17V9l7-5 7 5v8"/><rect x="7" y="12" width="3" height="5"/><rect x="10" y="12" width="3" height="5"/></svg></div>
+                <div><div class="vc-name">Karaçam</div><div class="vc-sub">4 hayvan · Koyun, Keçi</div></div>
+                <div class="vc-count">4</div>
+              </div>
+              <div class="village-card">
+                <div class="vc-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="var(--g)" stroke-width="1.6" stroke-linecap="round"><path d="M3 17V9l7-5 7 5v8"/><rect x="7" y="12" width="3" height="5"/><rect x="10" y="12" width="3" height="5"/></svg></div>
+                <div><div class="vc-name">Yeniköy</div><div class="vc-sub">2 hayvan · Sığır</div></div>
+                <div class="vc-count">2</div>
+              </div>
+              <div class="village-card">
+                <div class="vc-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="var(--g)" stroke-width="1.6" stroke-linecap="round"><path d="M3 17V9l7-5 7 5v8"/><rect x="7" y="12" width="3" height="5"/><rect x="10" y="12" width="3" height="5"/></svg></div>
+                <div><div class="vc-name">Dutluca</div><div class="vc-sub">1 hayvan · At</div></div>
+                <div class="vc-count">1</div>
+              </div>
+            </div>
+          </div>
+          <div class="bottom-nav">
+            <div class="bn-item active"><svg class="bn-icon" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 10.5 11 3l8 7.5V19a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></svg>Rota</div>
+            <div class="bn-item"><svg class="bn-icon" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 3H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/><path d="M16 3h3v3M19 3 9 13"/></svg>Hayvanlar</div>
+            <div class="bn-item"><svg class="bn-icon" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="4" width="16" height="16" rx="2"/><path d="M3 9h16M8 2v4M14 2v4"/></svg>Randevular</div>
+            <div class="bn-item"><svg class="bn-icon" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="8" r="4"/><path d="M3 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>Profil</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M2. HAYVAN DETAYI -->
+      <div class="phone-wrap">
+        <div class="phone-lbl">2 — Hayvan Detayı</div>
+        <div class="phone">
+          <div class="phone-status">
+            <span class="phone-time">09:41</span>
+            <div class="phone-icons">
+              <svg width="15" height="11" viewBox="0 0 15 11" fill="#111"><rect x="0" y="5" width="3" height="6" rx="1"/><rect x="4" y="3" width="3" height="8" rx="1"/><rect x="8" y="1" width="3" height="10" rx="1"/><rect x="12" y="0" width="3" height="11" rx="1"/></svg>
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#111" stroke-width="1.2"><rect x=".6" y=".6" width="13.8" height="10.8" rx="2"/><path d="M14.5 4h.9a.6.6 0 0 1 .6.6v2.8a.6.6 0 0 1-.6.6h-.9"/><rect x="1.6" y="1.6" width="11.8" height="8.8" rx="1.2" fill="#111"/></svg>
+            </div>
+          </div>
+          <div class="phone-appbar">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 4 6 10l6 6"/></svg>
+            <div class="phone-appbar-title">Hayvan</div>
+            <div style="display:flex;align-items:center;gap:5px">
+              <div class="sync-dot sync-pending"></div>
+              <span class="sync-txt">2 taslak</span>
+            </div>
+          </div>
+          <div class="phone-body">
+            <div class="phone-content" style="padding-bottom:90px">
+              <div class="m-card" style="border-left:4px solid var(--g)">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
+                  <span style="font-size:19px;font-weight:700;font-family:monospace;color:var(--t1)">TR-1234</span>
+                  <span class="m-chip m-chip-g">Gebe</span>
+                </div>
+                <div style="font-size:13px;color:var(--t2);margin-bottom:12px">Sığır · Holstein · Dişi · 2019</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                  <div style="font-size:12px;color:var(--t2)">Çiftçi<br><span style="font-size:13.5px;font-weight:500;color:var(--t1)">Mehmet Yılmaz</span></div>
+                  <div style="font-size:12px;color:var(--t2)">Köy<br><span style="font-size:13.5px;font-weight:500;color:var(--t1)">Büyükdere</span></div>
+                </div>
+              </div>
+
+              <div style="font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t2)">Son Muayeneler</div>
+
+              <div class="m-card">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+                  <span style="font-size:12px;color:var(--t2)">Bugün, 08:20</span>
+                  <span class="badge bg0" style="font-size:11px">Normal</span>
+                </div>
+                <div style="font-size:14px;font-weight:500;margin-bottom:3px">Rutin kontrol</div>
+                <div style="font-size:13px;color:var(--t2)">Penisilin 200mg × 3 gün</div>
+              </div>
+
+              <div class="m-card" style="border:1.5px solid #FFE082">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+                  <span class="draft-tag">
+                    <svg width="8" height="8" viewBox="0 0 8 8" fill="var(--w)"><circle cx="4" cy="4" r="4"/></svg>
+                    Taslak #A3F8
+                  </span>
+                  <span style="font-size:11px;color:var(--t3)">Sync bekliyor</span>
+                </div>
+                <div style="font-size:14px;font-weight:500;margin-bottom:3px">Gebelik kontrol</div>
+                <div style="font-size:12.5px;color:var(--t2)">Çevrimdışı kaydedildi — internet gelince numaralanacak</div>
+              </div>
+
+              <div class="m-card">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+                  <span style="font-size:12px;color:var(--t2)">10 Nis 2026</span>
+                  <span class="badge bo" style="font-size:11px">Takip</span>
+                </div>
+                <div style="font-size:14px;font-weight:500;margin-bottom:3px">Solunum enfeksiyonu</div>
+                <div style="font-size:13px;color:var(--t2)">Antibiyotik 5 gün</div>
+              </div>
+            </div>
+          </div>
+          <div class="fab">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M11 4v14M4 11h14"/></svg>
+          </div>
+          <div class="bottom-nav">
+            <div class="bn-item"><svg class="bn-icon" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 10.5 11 3l8 7.5V19a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></svg>Rota</div>
+            <div class="bn-item active"><svg class="bn-icon" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 3H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/><path d="M16 3h3v3M19 3 9 13"/></svg>Hayvanlar</div>
+            <div class="bn-item"><svg class="bn-icon" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="4" width="16" height="16" rx="2"/><path d="M3 9h16M8 2v4M14 2v4"/></svg>Randevular</div>
+            <div class="bn-item"><svg class="bn-icon" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="8" r="4"/><path d="M3 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>Profil</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M3. YENİ MUAYENE FORMU -->
+      <div class="phone-wrap">
+        <div class="phone-lbl">3 — Yeni Muayene (Offline)</div>
+        <div class="phone">
+          <div class="phone-status">
+            <span class="phone-time">09:41</span>
+            <div class="phone-icons">
+              <svg width="15" height="11" viewBox="0 0 15 11" fill="none"><rect x="0" y="5" width="3" height="6" rx="1" fill="#ccc"/><rect x="4" y="3" width="3" height="8" rx="1" fill="#ccc"/><rect x="8" y="1" width="3" height="10" rx="1" fill="#ccc"/><rect x="12" y="0" width="3" height="11" rx="1" fill="#ccc"/></svg>
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#111" stroke-width="1.2"><rect x=".6" y=".6" width="13.8" height="10.8" rx="2"/><path d="M14.5 4h.9a.6.6 0 0 1 .6.6v2.8a.6.6 0 0 1-.6.6h-.9"/><rect x="1.6" y="1.6" width="5" height="8.8" rx="1.2" fill="#111"/></svg>
+            </div>
+          </div>
+          <div class="phone-appbar">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 4 6 10l6 6"/></svg>
+            <div class="phone-appbar-title" style="font-size:16px">Yeni Muayene</div>
+          </div>
+          <div style="background:#FFF8E1;border-bottom:1px solid #FFE082;padding:7px 16px;display:flex;align-items:center;gap:8px;flex-shrink:0">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6.5" fill="var(--w)"/><path d="M7 4v3.5M7 9v.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span style="font-size:12px;color:#BF360C;font-weight:500">Çevrimdışı mod aktif</span>
+          </div>
+          <div class="phone-body">
+            <div class="phone-content" style="padding-bottom:116px">
+              <div style="font-size:12.5px;font-weight:600;color:var(--t2);background:var(--gl);border-radius:8px;padding:9px 12px">TR-1234 · Sığır · Mehmet Yılmaz</div>
+              <div class="m-fg">
+                <label class="m-label">Bulgu</label>
+                <textarea class="m-input" rows="3" style="font-size:14px">Sağ ön bacakta topallık, hafif şişlik mevcut.</textarea>
+              </div>
+              <div class="m-fg">
+                <label class="m-label">Tanı</label>
+                <select class="m-input" style="font-size:14px">
+                  <option selected>Laminitis (Tırnak İltihabı)</option>
+                  <option>Mastitis</option>
+                  <option>Solunum Enfeksiyonu</option>
+                  <option>Sindirim Bozukluğu</option>
+                </select>
+              </div>
+              <div class="m-fg">
+                <label class="m-label">İlaç Verildi</label>
+                <div class="m-toggle">
+                  <span style="font-size:15px;color:var(--t1)">İlaç kullanıldı</span>
+                  <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                </div>
+              </div>
+              <div class="m-fg">
+                <label class="m-label">İlaç</label>
+                <select class="m-input" style="font-size:14px"><option selected>Penisilin 200mg</option><option>İvermektin %1</option><option>Deksametazon 4mg</option></select>
+              </div>
+              <div class="m-fg">
+                <label class="m-label">Notlar</label>
+                <textarea class="m-input" rows="2" style="font-size:14px" placeholder="Ek notlar..."></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="sticky-save">
+            <button class="m-btn-primary">Kaydet</button>
+            <div class="offline-hint">Çevrimdışı — internet gelince senkronlanır</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M4. SENKRON DURUMU -->
+      <div class="phone-wrap">
+        <div class="phone-lbl">4 — Senkron Durumu</div>
+        <div class="phone">
+          <div class="phone-status">
+            <span class="phone-time">09:41</span>
+            <div class="phone-icons">
+              <svg width="15" height="11" viewBox="0 0 15 11" fill="none"><rect x="0" y="5" width="3" height="6" rx="1" fill="#ccc"/><rect x="4" y="3" width="3" height="8" rx="1" fill="#ccc"/><rect x="8" y="1" width="3" height="10" rx="1" fill="#ccc"/><rect x="12" y="0" width="3" height="11" rx="1" fill="#ccc"/></svg>
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#111" stroke-width="1.2"><rect x=".6" y=".6" width="13.8" height="10.8" rx="2"/><path d="M14.5 4h.9a.6.6 0 0 1 .6.6v2.8a.6.6 0 0 1-.6.6h-.9"/><rect x="1.6" y="1.6" width="3" height="8.8" rx="1.2" fill="#111"/></svg>
+            </div>
+          </div>
+          <div class="phone-appbar">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 4 6 10l6 6"/></svg>
+            <div class="phone-appbar-title" style="font-size:16px">Senkronizasyon</div>
+          </div>
+          <div class="phone-body">
+            <div class="phone-content">
+              <div class="m-card" style="border-left:4px solid var(--w)">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+                  <div class="sync-dot sync-pending" style="width:10px;height:10px"></div>
+                  <span style="font-size:14px;font-weight:600;color:var(--t1)">Çevrimdışı</span>
+                </div>
+                <div style="font-size:13px;color:var(--t2);line-height:1.5">İnternet bağlantısı yok. Değişiklikler bağlantı gelince otomatik senkronlanır.</div>
+              </div>
+
+              <div class="m-card">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+                  <span style="font-size:14px;font-weight:600;color:var(--t1)">Bekleyen Değişiklikler</span>
+                  <span style="font-size:26px;font-weight:700;color:var(--w)">7</span>
+                </div>
+                <div class="sync-row">
+                  <span style="font-size:13.5px;color:var(--t1)">Yeni muayene</span>
+                  <span class="badge bo">4 kayıt</span>
+                </div>
+                <div class="sync-row">
+                  <span style="font-size:13.5px;color:var(--t1)">Stok hareketi</span>
+                  <span class="badge bo">2 kayıt</span>
+                </div>
+                <div class="sync-row" style="border:none">
+                  <span style="font-size:13.5px;color:var(--t1)">Hayvan güncellemesi</span>
+                  <span class="badge bo">1 kayıt</span>
+                </div>
+              </div>
+
+              <div class="m-card">
+                <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t2);margin-bottom:10px">Son Başarılı Senkronizasyon</div>
+                <div class="sync-row">
+                  <span style="font-size:13px;color:var(--t2)">Tarih / Saat</span>
+                  <span style="font-size:13px;font-weight:500;color:var(--t1)">26 Nis, 07:15</span>
+                </div>
+                <div class="sync-row">
+                  <span style="font-size:13px;color:var(--t2)">Aktarılan kayıt</span>
+                  <span style="font-size:13px;font-weight:500;color:var(--t1)">23 kayıt</span>
+                </div>
+                <div class="sync-row" style="border:none">
+                  <span style="font-size:13px;color:var(--t2)">Cihaz</span>
+                  <span style="font-size:13px;font-weight:500;color:var(--t1)">Ahmet'in tableti</span>
+                </div>
+              </div>
+
+              <button style="width:100%;height:52px;background:#E5E7EB;color:#9CA3AF;border:none;border-radius:12px;font-size:15px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:not-allowed">
+                Şimdi Senkronla
+              </button>
+              <div style="text-align:center;font-size:11.5px;color:var(--t3)">İnternet bağlantısı gerekli</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /mobile-row -->
+  </div>
+
+</div><!-- /page -->
+
+<script>
+const ICONS = {
+  dashboard:`<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="1" y="1" width="5.5" height="5.5" rx="1"/><rect x="8.5" y="1" width="5.5" height="5.5" rx="1"/><rect x="1" y="8.5" width="5.5" height="5.5" rx="1"/><rect x="8.5" y="8.5" width="5.5" height="5.5" rx="1"/></svg>`,
+  animals:`<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M9.5 1h4v4"/><path d="M13.5 1 7.5 7"/><path d="M5.5 3h-3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-3"/></svg>`,
+  farmers:`<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="7.5" cy="5" r="2.5"/><path d="M2 14c0-3.1 2.5-5.5 5.5-5.5S13 10.9 13 14"/></svg>`,
+  exams:`<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="2.5" y="1.5" width="10" height="12" rx="1"/><path d="M5.5 1.5V.5h4v1"/><path d="M4.5 6.5h6M4.5 9.5h4"/></svg>`,
+  stock:`<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M5.5 2h4M7 2v4.5L3 12.5h9L8 6.5V2"/></svg>`,
+  calendar:`<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="1" y="2.5" width="13" height="11" rx="1"/><path d="M1 6.5h13M5 1v3M10 1v3"/></svg>`,
+  reports:`<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M1.5 11 5 7.5l2.5 2.5 3-4 3 3"/><path d="M1.5 13.5h12"/></svg>`,
+};
+const NAV=[
+  {key:'dashboard',label:'Dashboard'},
+  {key:'animals',label:'Hayvanlar'},
+  {key:'farmers',label:'Çiftçiler'},
+  {key:'exams',label:'Muayeneler'},
+  {key:'stock',label:'İlaç / Stok'},
+  {key:'calendar',label:'Randevular'},
+  {key:'reports',label:'Raporlar'},
+];
+document.querySelectorAll('.sidebar').forEach(sb=>{
+  const a=sb.dataset.active;
+  sb.innerHTML=`
+    <div class="sb-logo"><img src="logo/logo.png" style="height:26px" alt="VetRota"></div>
+    <div class="sb-nav">
+      ${NAV.map(n=>`<div class="nav-item${a===n.key?' active':''}">${ICONS[n.key]} ${n.label}</div>`).join('')}
+    </div>
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="avatar">AY</div>
+        <div><div class="avn">Ahmet Yılmaz</div><div class="avr">Klinik Sahibi</div></div>
+      </div>
+    </div>`;
+});
+</script>
+</body>
+</html>
