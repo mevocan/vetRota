@@ -36,8 +36,8 @@
 | 7 | Nuxt 4 projesi (`web/`) | ✅ Tamam | — | Nuxt 4.4.2 + Nuxt UI starter template; `app/` dizin yapısı |
 | 8 | Nuxt UI v4 + marka rengi | ✅ Tamam | — | `@nuxt/ui` ^4.6.1; `vetrota-green` 50-950 palette + DM Sans `main.css`'te; `app.config.ts` `primary: 'vetrota-green'` |
 | 9 | Pinia + login sayfası | ✅ Tamam | — | `@pinia/nuxt` + `pinia` `web/package.json`'a eklendi (önceden root'ta yanlışlıkla kuruluymuş, temizlendi); `app/stores/auth.ts` + `app/pages/login.vue` (UForm/UInput/UCard/UAlert/UButton); `npm run dev` hatasız boot ediyor |
-| 10 | Flutter 3.41 projesi + login | ⬜ Bekliyor | — | `flutter create mobile --org tr.com.vetrota` |
-| 11 | M1 doğrulama (web kısmı) | ⏳ Kısmen | — | `docker compose up -d` → 3 container healthy/up; `GET /` 200, `GET /login` 200, `POST /api/v1/auth/login` JWT döner. Flutter (Adım 10) bitince final doğrulama + CLAUDE.md "Mevcut Durum" → M2 güncellemesi |
+| 10 | Flutter 3.41 projesi + login | ✅ Tamam | — | Flutter Linux SDK WSL'ye kuruldu (`~/development/flutter`, stable git clone, **3.41.7 — CLAUDE.md hedefi 3.41 ile tam eşleşti**). `flutter create --org tr.com.vetrota --platforms=android mobile`. `http ^1.6.0` eklendi. `lib/main.dart`: `LoginScreen` (Material 3, vetrota green seed color, `10.0.2.2:8000` ile backend'e POST). `flutter analyze` temiz. **Cihaz testi M1 Adım 11'de manuel** (Android emulator/gerçek cihaz kullanıcının elinde) |
+| 11 | M1 doğrulama (web kısmı) | ⏳ Kısmen | — | `docker compose up -d` → 3 container healthy/up; `GET /` 200, `GET /login` 200, `POST /api/v1/auth/login` JWT döner. Flutter cihaz testi (Android emulator) kullanıcı tarafından yapılacak; sonrasında CLAUDE.md "Mevcut Durum" → M2 güncellemesi |
 
 **Durum sembolleri:** ✅ Tamam · ⏳ Devam ediyor · ⚠️ Bloke · ⬜ Bekliyor
 
