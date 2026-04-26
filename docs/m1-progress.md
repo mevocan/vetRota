@@ -35,9 +35,9 @@
 | 6 | Nuxt MCP `.mcp.json`'a eklenir | ✅ Tamam | c2393b7 | Adım 5 ile birlikte aynı `backend/.mcp.json` içine eklendi; **DNS uyarısı:** `mcp.nuxt.com` şu an çözülmüyor (test edilemedi, Adım 7'de yeniden bakılacak) |
 | 7 | Nuxt 4 projesi (`web/`) | ✅ Tamam | — | Nuxt 4.4.2 + Nuxt UI starter template; `app/` dizin yapısı |
 | 8 | Nuxt UI v4 + marka rengi | ✅ Tamam | — | `@nuxt/ui` ^4.6.1; `vetrota-green` 50-950 palette + DM Sans `main.css`'te; `app.config.ts` `primary: 'vetrota-green'` |
-| 9 | Pinia + login sayfası | ✅ Tamam | — | `@pinia/nuxt` + `pinia` `web/package.json`'a eklendi (önceden root'ta yanlışlıkla kuruluymuş, temizlendi); `app/stores/auth.ts` + `app/pages/login.vue` (UForm/UInput/UCard/UAlert/UButton); `npm run dev` hatasız boot ediyor; **canlı login testi M1 Adım 11'de yapılacak** (backend ayağa kaldırılınca) |
+| 9 | Pinia + login sayfası | ✅ Tamam | — | `@pinia/nuxt` + `pinia` `web/package.json`'a eklendi (önceden root'ta yanlışlıkla kuruluymuş, temizlendi); `app/stores/auth.ts` + `app/pages/login.vue` (UForm/UInput/UCard/UAlert/UButton); `npm run dev` hatasız boot ediyor |
 | 10 | Flutter 3.41 projesi + login | ⬜ Bekliyor | — | `flutter create mobile --org tr.com.vetrota` |
-| 11 | M1 doğrulama + CLAUDE.md "Mevcut Durum" güncelleme | ⬜ Bekliyor | — | dev-tools.md § 2.4 checklist |
+| 11 | M1 doğrulama (web kısmı) | ⏳ Kısmen | — | `docker compose up -d` → 3 container healthy/up; `GET /` 200, `GET /login` 200, `POST /api/v1/auth/login` JWT döner. Flutter (Adım 10) bitince final doğrulama + CLAUDE.md "Mevcut Durum" → M2 güncellemesi |
 
 **Durum sembolleri:** ✅ Tamam · ⏳ Devam ediyor · ⚠️ Bloke · ⬜ Bekliyor
 
@@ -60,6 +60,7 @@
   CLAUDE.md'nin ezilmesini engellemek için önce `cp CLAUDE.md CLAUDE.md.backup`.
 - Adım 11'de CLAUDE.md "7. Mevcut Durum" bölümü "M2 sırada" olarak güncellenecek.
 - **Root'taki `node_modules/`, `package.json`, `package-lock.json` temizlendi** — Pinia paketleri yanlışlıkla repo root'unda kurulmuştu. Doğrusu `web/` altında. `web/package.json`'dan `packageManager: pnpm@10.33.0` da silindi (Sabit Karar: npm).
+- **Adım 11 web doğrulamasında bulunan hata:** `login.vue` `import * as z from 'zod'` yapıyordu ama `zod` paketi `web/package.json`'da yoktu. SSR sırasında "IPC connection closed" hatası veriyordu (vite-node worker module resolve edemeyince ölüyor — yanıltıcı hata mesajı). Çözüm: `zod ^4.0.0` eklendi. Ayrıca `nuxt.config.ts`'teki gereksiz `imports.dirs: ['stores']` ve `pinia.storesDirs` satırları silindi (Nuxt 4 + `@pinia/nuxt` `app/stores`'u zaten otomatik discover ediyor).
 
 ---
 

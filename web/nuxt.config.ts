@@ -6,14 +6,6 @@ export default defineNuxtConfig({
     '@pinia/nuxt'
   ],
 
-  imports: {
-    dirs: ['stores']
-  },
-
-  pinia: {
-    storesDirs: ['./app/stores/**']
-  },
-
   devtools: {
     enabled: true
   },
