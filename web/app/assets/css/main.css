@@ -1,0 +1,18 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+@theme static {
+  --font-sans: 'DM Sans', sans-serif;
+
+  --color-vetrota-green-50:  #E8F5E9;
+  --color-vetrota-green-100: #C8E6C9;
+  --color-vetrota-green-200: #A5D6A7;
+  --color-vetrota-green-300: #81C784;
+  --color-vetrota-green-400: #66BB6A;
+  --color-vetrota-green-500: #4CAF50;
+  --color-vetrota-green-600: #2E7D32;
+  --color-vetrota-green-700: #1B5E20;
+  --color-vetrota-green-800: #154518;
+  --color-vetrota-green-900: #0D2C10;
+  --color-vetrota-green-950: #061508;
+}

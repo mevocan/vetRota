@@ -43,19 +43,16 @@ services:
     image: node:22-alpine
     container_name: vetrota-web
     restart: unless-stopped
+    user: "1000:1000"
     working_dir: /app
-    command: >
-      sh -c "
-        if [ -f package.json ]; then npm install && npm run dev -- --host 0.0.0.0; else
-          echo 'web/package.json yok — Nuxt projesi henuz kurulmadi (Adim 7).' && tail -f /dev/null;
-        fi
-      "
+    command: sh -c "if [ ! -d node_modules ]; then npm install --no-audit --no-fund; fi && npm run dev -- --host 0.0.0.0"
     ports:
       - "${WEB_PORT:-3000}:3000"
     volumes:
       - ./web:/app
     environment:
       NUXT_PUBLIC_API_BASE: http://localhost:${BACKEND_PORT:-8000}/api/v1
+      HOST: 0.0.0.0
 
 volumes:
   postgres_data:
