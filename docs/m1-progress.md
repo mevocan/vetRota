@@ -27,9 +27,9 @@
 | # | Adım | Durum | Commit | Not |
 |---|---|---|---|---|
 | 0 | Dokümantasyon + `.gitignore` + PG 18 düzeltmesi | ✅ Tamam | `3ce30c4` | `dev-tools.md` takipli, AI agent satırları eklendi |
-| 1 | Docker Compose iskeleti (`docker-compose.yml` + `.env.example`) | ✅ Tamam | _bu commit_ | `docker compose config` syntax OK; up edilmedi (Laravel/Nuxt kurulmadan boş) |
-| 2 | Laravel 13 projesi (`backend/`) | ⏳ Sırada | — | `composer create-project laravel/laravel:^13.0 backend` |
-| 3 | PostgreSQL bağlantısı + ilk migration | ⬜ Bekliyor | — | Default `users` migration test |
+| 1 | Docker Compose iskeleti (`docker-compose.yml` + `.env.example`) | ✅ Tamam | `a7b1b97` | `docker compose config` syntax OK; up edilmedi (Laravel/Nuxt kurulmadan boş) |
+| 2 | Laravel 13 projesi (`backend/`) | ✅ Tamam | _bu commit_ | Laravel Framework 13.6.0; WSL içinden `docker run composer:latest create-project` ile kuruldu (UNC path mount sorunu nedeniyle WSL native path zorunlu) |
+| 3 | PostgreSQL bağlantısı + ilk migration | ⏳ Sırada | — | `.env` PG'ye çevir, `docker compose up -d postgres backend`, `artisan migrate` |
 | 4 | JWT auth iskeleti | ⬜ Bekliyor | — | `php-open-source-saver/jwt-auth` |
 | 5 | Laravel Boost kurulumu | ⬜ Bekliyor | — | CLAUDE.md.backup şart |
 | 6 | Nuxt MCP `.mcp.json`'a eklenir | ⬜ Bekliyor | — | HTTP server satırı |
@@ -45,6 +45,15 @@
 
 ## Açık Sorular / Notlar
 
+- **WSL UNC path uyarısı:** Claude Code Git Bash (Windows) üzerinden çalışıyor
+  ama working dir `\\wsl.localhost\Ubuntu\...` UNC. Docker Desktop UNC path
+  mount edemiyor. Çözüm: tüm `docker run` komutları
+  `wsl -d Ubuntu -- bash -c "cd /home/mcdag/projects/vetrota && docker ..."`
+  şeklinde WSL içinden çalıştırılıyor. Aynı şey `docker compose up` için de
+  geçerli olacak.
+- Laravel kurulumu sırasında composer otomatik `php artisan migrate` koştu
+  (SQLite'a, `database/database.sqlite` oluşturuldu). Adım 3'te PG'ye
+  geçince bu dosya silinecek/ignore edilecek.
 - `.claude/` dizini untracked; içinde Claude Code yerel ayarları olabilir.
   İlerde `.claude/settings.local.json` için ayrı gitignore satırı eklenebilir.
 - Boost kurulumu interaktif — `php artisan boost:install` çalıştırılırken
