@@ -29,9 +29,9 @@
 | 0 | Dokümantasyon + `.gitignore` + PG 18 düzeltmesi | ✅ Tamam | `3ce30c4` | `dev-tools.md` takipli, AI agent satırları eklendi |
 | 1 | Docker Compose iskeleti (`docker-compose.yml` + `.env.example`) | ✅ Tamam | `a7b1b97` | `docker compose config` syntax OK; up edilmedi (Laravel/Nuxt kurulmadan boş) |
 | 2 | Laravel 13 projesi (`backend/`) | ✅ Tamam | `fa84aeb` | Laravel Framework 13.6.0; WSL içinden `docker run composer:latest create-project` ile kuruldu (UNC path mount sorunu nedeniyle WSL native path zorunlu) |
-| 3 | PostgreSQL bağlantısı + ilk migration | ⏳ Sırada | — | `.env` PG'ye çevir, `docker compose up -d postgres backend`, `artisan migrate` |
-| 4 | JWT auth iskeleti | ⬜ Bekliyor | — | `php-open-source-saver/jwt-auth` |
-| 5 | Laravel Boost kurulumu | ⬜ Bekliyor | — | CLAUDE.md.backup şart |
+| 3 | PostgreSQL bağlantısı + ilk migration | ✅ Tamam | `7525a9d` | PG 18.3 healthy; backend HTTP 200; 9 tablo migrate edildi (`users`, `cache`, `jobs`, `sessions` vb.); custom Dockerfile ile sonraki up'lar hızlı |
+| 4 | JWT auth iskeleti | ✅ Tamam | _bu commit_ | `php-open-source-saver/jwt-auth` v2.9; `POST /api/v1/auth/login` JWT döner; seed user `ahmet@vetrota.com.tr / sifre1234`; `/me`, `/logout`, `/refresh` endpoint'leri de var |
+| 5 | Laravel Boost kurulumu | ⏳ Sırada | — | CLAUDE.md.backup şart |
 | 6 | Nuxt MCP `.mcp.json`'a eklenir | ⬜ Bekliyor | — | HTTP server satırı |
 | 7 | Nuxt 4 projesi (`web/`) | ⬜ Bekliyor | — | `npx nuxi@latest init web --packageManager npm` |
 | 8 | Nuxt UI v4 + marka rengi | ⬜ Bekliyor | — | `vetrota-green` palette + DM Sans |
