@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Models\Animal;
+use App\Models\Appointment;
 use App\Models\Drug;
 use App\Models\Farmer;
 use App\Models\MedicalRecord;
@@ -205,6 +206,58 @@ class DatabaseSeeder extends Seeder
                     'earliest_expiry_at' => $expiry,
                 ]);
             }
+        }
+
+        // Randevular: idempotent kombinasyon = farmer + scheduled_at.
+        $appointments = [
+            [
+                'farmer_id' => $farmers[0]->id,
+                'animal_id' => $createdAnimals[0]->id,
+                'village_id' => $createdAnimals[0]->village_id,
+                'scheduled_at' => now()->addDay()->setTime(10, 0),
+                'estimated_duration_minutes' => 45,
+                'appointment_type' => 'follow_up',
+                'reason' => 'Gebelik takip kontrolu (Sarikiz).',
+                'status' => 'planned',
+            ],
+            [
+                'farmer_id' => $farmers[2]->id,
+                'animal_id' => $createdAnimals[1]->id,
+                'village_id' => $createdAnimals[1]->village_id,
+                'scheduled_at' => now()->addDays(2)->setTime(14, 30),
+                'estimated_duration_minutes' => 30,
+                'appointment_type' => 'vaccination',
+                'reason' => 'Yillik koruyucu asi.',
+                'status' => 'confirmed',
+            ],
+            [
+                'farmer_id' => $farmers[1]->id,
+                'animal_id' => null,
+                'village_id' => $farmers[1]->village_id,
+                'scheduled_at' => now()->addDays(3)->setTime(9, 30),
+                'estimated_duration_minutes' => 60,
+                'appointment_type' => 'visit',
+                'reason' => 'Surudeki tum hayvanlar icin genel kontrol.',
+                'status' => 'planned',
+            ],
+            [
+                'farmer_id' => $farmers[3]->id,
+                'animal_id' => null,
+                'village_id' => $farmers[3]->village_id,
+                'scheduled_at' => now()->subDay()->setTime(11, 0),
+                'estimated_duration_minutes' => 30,
+                'appointment_type' => 'routine_check',
+                'reason' => 'Rutin kontrol.',
+                'status' => 'completed',
+                'status_changed_at' => now()->subDay()->setTime(12, 0),
+            ],
+        ];
+
+        foreach ($appointments as $a) {
+            Appointment::updateOrCreate(
+                ['farmer_id' => $a['farmer_id'], 'scheduled_at' => $a['scheduled_at']],
+                array_merge($a, ['vet_id' => $vet->id]),
+            );
         }
     }
 }

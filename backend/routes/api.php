@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\AnimalController;
+use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DrugController;
 use App\Http\Controllers\Api\FarmerController;
@@ -32,6 +33,8 @@ Route::middleware('auth:api')->group(function (): void {
     Route::apiResource('drugs', DrugController::class);
     Route::get('stock-movements', [StockMovementController::class, 'index']);
     Route::post('stock-movements', [StockMovementController::class, 'store']);
+    // M2 vertical slice 5: Randevular.
+    Route::apiResource('appointments', AppointmentController::class);
     // Koy dropdown icin read-only.
     Route::get('villages', [VillageController::class, 'index']);
 });

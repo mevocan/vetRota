@@ -108,6 +108,52 @@
 
 ---
 
+## Vertical Slice 5 — Randevular (Appointments)
+
+> M2'nin son slice'ı. Status state machine basit: planned → confirmed →
+> in_progress → completed (veya cancelled / no_show). Detay sayfasında
+> hızlı durum geçiş butonları ve "tamamlandı"sa otomatik "muayene
+> oluştur" CTA'sı var.
+>
+> M2 kapsam dışı: source/source_reference_id (M5: aşı takvimi/follow-up
+> tetikleyicileri), sms_reminder_sent_at + confirmed_by_farmer_at (M6:
+> SMS akışları), completed_medical_record_id (M2.5'te muayene ile
+> bidirectional bağlama), sync kolonları (M3).
+
+| # | Adım | Durum | Not |
+|---|---|---|---|
+| 1 | Migration: `appointments` | ✅ Tamam | UUID PK + farmer_id + animal_id (nullable, sürü bazlı için) + vet_id (bigint) + village_id; `chk_appt_type` ve `chk_appt_status` PG check constraint'leri |
+| 2 | Model: `Appointment` + ilişkiler | ✅ Tamam | belongsTo farmer/animal/vet/village |
+| 3 | Form Request: Store/UpdateAppointmentRequest | ✅ Tamam | Türkçe mesajlar; süre 5–480 dk; status 6 değerli enum |
+| 4 | Controller: `AppointmentController` | ✅ Tamam | farmer_id/animal_id/status/type/from/to filtreleri + sort asc/desc; `vet_id` otomatik = giriş yapan kullanıcı; `village_id` boşsa hayvan→çiftçi zincirinden türetilir; status değişince `status_changed_at` otomatik güncellenir |
+| 5 | Route: `apiResource('appointments')` | ✅ Tamam | |
+| 6 | Seeder: 4 randevu | ✅ Tamam | Yarın gebelik takip, +2 gün aşı confirmed, +3 gün sürü ziyareti, dün tamamlanmış rutin (test çeşitliliği için) |
+| 7 | Frontend: `pages/appointments/index.vue` | ✅ Tamam | **Gün gün gruplanmış** liste (tarih başlığı + altında kartlar); status/type filtreleri + "bugünden itibaren" varsayılan açık |
+| 8 | Frontend: `pages/appointments/[id].vue` | ✅ Tamam | Tarih + tür/durum rozetleri + **hızlı durum geçiş butonları** (state machine'e göre dinamik: planned'dan 4, confirmed'dan 4 vs) + farmer/animal/village/vet kartları + tamamlandıysa "muayene oluştur" CTA |
+| 9 | Frontend: `new.vue` + `[id]/edit.vue` + `AppointmentForm.vue` | ✅ Tamam | Hayvan dropdown çiftçi seçimine göre filtrelenir; çiftçi değişince hayvan reset; `?farmer_id=&animal_id=` query desteği; edit formunda durum alanı görünür |
+| 10 | **Test (canlı, backend)** | ✅ Tamam | 2026-05-01: 11/11 curl senaryosu yeşil — list + ilişkiler, status filter, validation 422 (3 alan), geçersiz type 422, valid POST 201 (vet_id + village_id otomatik), show, status değişikliği `status_changed_at` güncellendi, geçersiz status 422, süre<5dk 422 (Türkçe mesaj eklendi), DELETE soft delete + 404, tarih aralığı filtresi |
+| 11 | **Test (canlı, frontend)** | ⬜ Bekliyor | 4 sayfa SSR 200; sidebar artık tüm linklere kayıtlı (No-match uyarısı sıfır); tarayıcı UX testi kullanıcıda |
+
+---
+
+## M2 Genel Durumu
+
+Tüm 5 slice ✅ kod düzeyinde tamam. Geriye sadece **kullanıcı tarafında
+tarayıcı UX testi** kaldı:
+
+| Slice | Backend test | Frontend SSR | Tarayıcı testi |
+|---|---|---|---|
+| 1 — Hayvan | 11/11 ✅ | ✅ | ✅ kullanıcı doğruladı |
+| 2 — Çiftçi | 11/11 ✅ | ✅ | ✅ "ekleme çalışıyor" |
+| 3 — Muayene | 10/10 ✅ | ✅ | ⬜ |
+| 4 — İlaç & Stok | 13/13 ✅ | ✅ | ⬜ |
+| 5 — Randevu | 11/11 ✅ | ✅ | ⬜ |
+
+Sıradaki: tarayıcı testleri tamamlandığında M2 kapatılır, **M3 — Sync
+Protokolü** başlar (offline-first kalbi).
+
+---
+
 ## Test Kontrol Listesi (sonra yapılacak)
 
 Backend:
