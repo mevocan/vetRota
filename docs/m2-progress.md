@@ -9,23 +9,69 @@
 
 | # | Adım | Durum | Not |
 |---|---|---|---|
-| 1 | Migration: villages, farmers, animals | ⏳ Yazıldı | UUID PK, soft delete; clinic_id ve sync kolonları (last_modified_at, origin_device_id, version) **kapsam dışı**, M3'te eklenecek |
-| 2 | Modeller: Village, Farmer, Animal | ⏳ Yazıldı | HasUuids + SoftDeletes + ilişkiler |
-| 3 | Form Request: Store/UpdateAnimalRequest | ⏳ Yazıldı | Türkçe hata mesajları |
-| 4 | Controller: AnimalController + FarmerController + VillageController | ⏳ Yazıldı | Hayvan tam CRUD; çiftçi/köy read-only (dropdown için) |
-| 5 | Route: `apiResource('animals')` + `GET /farmers` + `GET /villages` | ⏳ Yazıldı | Hepsi `auth:api` middleware ile JWT korumalı |
-| 6 | Seeder güncelleme | ⏳ Yazıldı | 4 köy + 5 çiftçi + 2 hayvan idempotent seed |
-| 7 | Nuxt: auth store localStorage persistence | ⏳ Yazıldı | `vetrota.token`; `auth.client.ts` plugin ile hydrate |
-| 8 | Nuxt: global auth middleware | ⏳ Yazıldı | `/login` dışı her sayfa korumalı |
-| 9 | Nuxt: `useApi()` + `useApiFetch()` composable | ⏳ Yazıldı | JWT otomatik header, 401'de logout |
-| 10 | Nuxt: dashboard layout (sidebar + topbar) | ⏳ Yazıldı | `mockup-v1.html`'e göre; menu: Panel/Hayvanlar/Çiftçiler/Muayeneler/İlaç/Randevular |
-| 11 | Nuxt: `pages/index.vue` (panel) | ⏳ Yazıldı | 4 stat card + son hayvan listesi |
-| 12 | Nuxt: `pages/animals/index.vue` (liste) | ⏳ Yazıldı | Arama + tür filtresi + sayfalama + boş durum |
-| 13 | Nuxt: `pages/animals/[id].vue` (detay) | ⏳ Yazıldı | Kimlik kartı + sahibi/köy kartları + sil butonu |
-| 14 | Nuxt: `pages/animals/new.vue` + `pages/animals/[id]/edit.vue` | ⏳ Yazıldı | Ortak `AnimalForm.vue` component |
-| 15 | **Test (canlı)** | ⬜ Bekliyor | Backend container restart edilince + migration çalıştırınca test edilecek |
+| 1 | Migration: villages, farmers, animals | ✅ Tamam | UUID PK, soft delete; clinic_id ve sync kolonları (last_modified_at, origin_device_id, version) **kapsam dışı**, M3'te eklenecek |
+| 2 | Modeller: Village, Farmer, Animal | ✅ Tamam | HasUuids + SoftDeletes + ilişkiler |
+| 3 | Form Request: Store/UpdateAnimalRequest | ✅ Tamam | Türkçe hata mesajları |
+| 4 | Controller: AnimalController + FarmerController + VillageController | ✅ Tamam | Hayvan tam CRUD; çiftçi/köy read-only (dropdown için) |
+| 5 | Route: `apiResource('animals')` + `GET /farmers` + `GET /villages` | ✅ Tamam | Hepsi `auth:api` middleware ile JWT korumalı |
+| 6 | Seeder güncelleme | ✅ Tamam | 4 köy + 5 çiftçi + 2 hayvan idempotent seed |
+| 7 | Nuxt: auth store localStorage persistence | ✅ Tamam | `vetrota.token`; `auth.client.ts` plugin ile hydrate |
+| 8 | Nuxt: global auth middleware | ✅ Tamam | `/login` dışı her sayfa korumalı |
+| 9 | Nuxt: `useApi()` + `useApiFetch()` composable | ✅ Tamam | JWT otomatik header, 401'de logout |
+| 10 | Nuxt: dashboard layout (sidebar + topbar) | ✅ Tamam | `mockup-v1.html`'e göre; menu: Panel/Hayvanlar/Çiftçiler/Muayeneler/İlaç/Randevular |
+| 11 | Nuxt: `pages/index.vue` (panel) | ✅ Tamam | 4 stat card + son hayvan listesi |
+| 12 | Nuxt: `pages/animals/index.vue` (liste) | ✅ Tamam | Arama + tür filtresi + sayfalama + boş durum |
+| 13 | Nuxt: `pages/animals/[id].vue` (detay) | ✅ Tamam | Kimlik kartı + sahibi/köy kartları + sil butonu |
+| 14 | Nuxt: `pages/animals/new.vue` + `pages/animals/[id]/edit.vue` | ✅ Tamam | Ortak `AnimalForm.vue` component |
+| 15 | **Test (canlı)** | ✅ Tamam | 2026-04-30: 11/11 backend curl senaryosu yeşil (login, 401, list, show, store, validation 422 + Türkçe mesaj, update, soft delete, 404). Frontend SSR 200; tarayıcı UX testi kullanıcıda. |
 
 **Durum sembolleri:** ✅ Tamam · ⏳ Yazıldı (test edilmedi) · ⚠️ Bloke · ⬜ Bekliyor
+
+---
+
+## Vertical Slice 2 — Çiftçi (Farmer) tam CRUD
+
+> Slice 1 ile aynı pattern. Backend: `FarmerController` read-only'den
+> `apiResource`'a yükseltilir + Form Request'ler eklenir. Frontend: hayvan
+> sayfalarının ikizi.
+
+| # | Adım | Durum | Not |
+|---|---|---|---|
+| 1 | Form Request: Store/UpdateFarmerRequest | ✅ Tamam | `phone` unique kuralı (update'te kendisi hariç + soft-delete'leri hariç), Türkçe mesajlar |
+| 2 | Controller: FarmerController'a show/store/update/destroy | ✅ Tamam | `with('village')` + `withCount('animals')` + show'da son 50 hayvan |
+| 3 | Route: `apiResource('farmers')` | ✅ Tamam | Eski sade `GET /farmers` kaldırıldı |
+| 4 | Migration: farmers.phone partial unique (deleted_at IS NULL) | ✅ Tamam | Smoke test sırasında "soft-deleted phone yeniden kullanılamıyor 500 atıyor" sorunu fark edildi, partial index ile düzeltildi |
+| 5 | Nuxt: `pages/farmers/index.vue` | ✅ Tamam | Arama (ad/soyad/telefon) + sayfalama + boş durum + hayvan sayısı + bakiye TL formatı |
+| 6 | Nuxt: `pages/farmers/[id].vue` | ✅ Tamam | Kimlik kartı + iletişim + köy/adres kartları + bu çiftçinin hayvanları listesi (ilk 50) |
+| 7 | Nuxt: `pages/farmers/new.vue` + `[id]/edit.vue` | ✅ Tamam | Ortak `FarmerForm.vue` |
+| 8 | **Test (canlı, backend)** | ✅ Tamam | 2026-04-30: 11/11 curl senaryosu yeşil — list+animals_count, validation 422 + Türkçe mesajlar, duplicate phone 422, valid POST 201, show + animals, partial PUT, kendi telefonu OK, başkasının telefonu 422, soft delete 204, soft-deleted phone yeni kayıtla yeniden kullanılabiliyor |
+| 9 | **Test (canlı, frontend)** | ⬜ Bekliyor | 4 sayfa SSR 200; tarayıcı UX testi kullanıcıda |
+
+---
+
+## Vertical Slice 3 — Muayene (MedicalRecord) tam CRUD
+
+> Hayvan tablosunu ana modelin etrafında bir saha ziyareti kayıtlarına
+> bağlar. M2 kapsamında **clinic_id, diagnosis_id, appointment_id,
+> invoice_id, sync kolonları (last_modified_at/origin_device_id/version)
+> yok** — bunlar M2.5/M3/M4/M7'de ALTER TABLE ile eklenecek. `vet_id`
+> users tablosu bigint olduğu için `foreignId` (M3 UUID geçişinde uyumlu
+> hâle getirilecek).
+
+| # | Adım | Durum | Not |
+|---|---|---|---|
+| 1 | Migration: `medical_records` (sade kapsam) | ✅ Tamam | UUID PK + animal_id (UUID) + vet_id (bigint) + village_id; vital değerler, takip, hizmet ücreti, soft delete |
+| 2 | Model: `MedicalRecord` + `Animal::medicalRecords()` | ✅ Tamam | belongsTo animal/vet/village + hasMany Animal'da |
+| 3 | Form Request: Store/UpdateMedicalRecordRequest | ✅ Tamam | Türkçe mesajlar; `temperature_celsius` 30–50, `follow_up_date` STORE'da `required_if:follow_up_needed,true` |
+| 4 | Controller: `MedicalRecordController` (CRUD + filtreler) | ✅ Tamam | animal_id/vet_id/visit_type/from/to/follow_up_due filtreleri; `vet_id` otomatik = giriş yapan kullanıcı; `village_id` boşsa hayvanın köyünden alınır |
+| 5 | Route: `apiResource('medical-records')` | ✅ Tamam | URL'de tire (Türkçe `/muayeneler` yerine REST konvansiyonu) |
+| 6 | Seeder: 2 muayene | ✅ Tamam | Sarıkız → gebelik kontrolü + takip; TR-06-014 → aşı |
+| 7 | Nuxt: `pages/examinations/index.vue` | ✅ Tamam | Tür filtresi + "sadece takip gerekenler" + sayfalama; ziyaret rozeti renkli (acil = kırmızı, gebelik = sarı) |
+| 8 | Nuxt: `pages/examinations/[id].vue` | ✅ Tamam | Vital kart şeritleri (sıcaklık/ağırlık/nabız/solunum) + şikayet/semptom/tanı/tedavi/öneri kartları + ücret + takip |
+| 9 | Nuxt: `pages/examinations/new.vue` + `[id]/edit.vue` | ✅ Tamam | Ortak `ExaminationForm.vue`; `?animal_id=...` query'si geldiğinde hayvan kilitli açılır |
+| 10 | Nuxt: hayvan detayında "Son muayeneler" bölümü | ✅ Tamam | `/animals/[id]` altına son 10 muayene tablosu + "Yeni muayene" CTA (animal_id preset) |
+| 11 | **Test (canlı, backend)** | ✅ Tamam | 2026-04-30: 10/10 curl senaryosu yeşil — list+ilişkiler, animal_id filter, validation 422 (3 alan), geçersiz visit_type + sıcaklık out-of-range 422, valid POST 201 (vet_id otomatik, village_id otomatik), show, PUT partial, follow_up_date STORE'da `required_if`, DELETE 204, 404 |
+| 12 | **Test (canlı, frontend)** | ⬜ Bekliyor | 4 sayfa SSR 200 + hayvan detay 200; tarayıcı UX testi kullanıcıda |
 
 ---
 

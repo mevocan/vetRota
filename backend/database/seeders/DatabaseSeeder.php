@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Models\Animal;
 use App\Models\Farmer;
+use App\Models\MedicalRecord;
 use App\Models\User;
 use App\Models\Village;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -17,7 +18,7 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        User::updateOrCreate(
+        $vet = User::updateOrCreate(
             ['email' => 'ahmet@vetrota.com.tr'],
             [
                 'name' => 'Ahmet Veteriner',
@@ -72,8 +73,46 @@ class DatabaseSeeder extends Seeder
             ],
         ];
 
-        foreach ($animals as $a) {
-            Animal::updateOrCreate(['ear_tag' => $a['ear_tag']], $a);
+        $createdAnimals = collect($animals)->map(
+            fn (array $a): Animal => Animal::updateOrCreate(['ear_tag' => $a['ear_tag']], $a)
+        );
+
+        // Idempotent muayene seed: ayni hayvan + tarih kombinasyonu varsa olusturma.
+        $records = [
+            [
+                'animal_id' => $createdAnimals[0]->id,
+                'village_id' => $createdAnimals[0]->village_id,
+                'visit_type' => 'pregnancy_check',
+                'examined_at' => '2026-04-20 10:30:00',
+                'chief_complaint' => 'Gebelik kontrolu.',
+                'diagnosis_notes' => 'Yaklasik 4 aylik gebelik tespit edildi.',
+                'treatment_notes' => 'Vitamin destegi onerildi.',
+                'recommendations' => 'Iki hafta sonra tekrar kontrol.',
+                'temperature_celsius' => 38.7,
+                'weight_kg' => 425.00,
+                'heart_rate' => 72,
+                'service_fee' => 350.00,
+                'follow_up_needed' => true,
+                'follow_up_date' => '2026-05-04',
+            ],
+            [
+                'animal_id' => $createdAnimals[1]->id,
+                'village_id' => $createdAnimals[1]->village_id,
+                'visit_type' => 'vaccination',
+                'examined_at' => '2026-04-22 14:00:00',
+                'chief_complaint' => 'Yillik koruyucu asi.',
+                'treatment_notes' => 'Sap-icim ve enterotoksemi karma asisi yapildi.',
+                'temperature_celsius' => 39.0,
+                'weight_kg' => 39.50,
+                'service_fee' => 120.00,
+            ],
+        ];
+
+        foreach ($records as $r) {
+            MedicalRecord::updateOrCreate(
+                ['animal_id' => $r['animal_id'], 'examined_at' => $r['examined_at']],
+                array_merge($r, ['vet_id' => $vet->id]),
+            );
         }
     }
 }

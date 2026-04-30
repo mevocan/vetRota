@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Animal extends Model
@@ -54,5 +55,10 @@ class Animal extends Model
     public function village(): BelongsTo
     {
         return $this->belongsTo(Village::class);
+    }
+
+    public function medicalRecords(): HasMany
+    {
+        return $this->hasMany(MedicalRecord::class);
     }
 }

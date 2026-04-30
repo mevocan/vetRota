@@ -17,13 +17,46 @@ interface AnimalDetail {
   village: { id: string; name: string; district: string; city: string } | null
 }
 
+interface ExamLite {
+  id: string
+  visit_type: string
+  examined_at: string
+  follow_up_needed: boolean
+  follow_up_date: string | null
+}
+
 const route = useRoute()
 const { apiFetch } = useApi()
 const toast = useToast()
 
 const { data, refresh } = await useApiFetch<{ data: AnimalDetail }>(`/animals/${route.params.id}`)
+const { data: examsData } = await useApiFetch<{ data: ExamLite[] }>(
+  `/medical-records?animal_id=${route.params.id}&per_page=10`
+)
 
 const animal = computed(() => data.value?.data)
+const exams = computed(() => examsData.value?.data ?? [])
+
+const visitLabel: Record<string, string> = {
+  examination: 'Genel muayene',
+  vaccination: 'Aşı',
+  treatment: 'Tedavi',
+  emergency: 'Acil',
+  routine_check: 'Rutin kontrol',
+  pregnancy_check: 'Gebelik'
+}
+const visitColor: Record<string, 'primary' | 'warning' | 'error' | 'neutral'> = {
+  examination: 'neutral',
+  vaccination: 'primary',
+  treatment: 'primary',
+  emergency: 'error',
+  routine_check: 'neutral',
+  pregnancy_check: 'warning'
+}
+
+function fmtDate(iso: string) {
+  return new Date(iso).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' })
+}
 
 const speciesLabel: Record<string, string> = {
   cattle: 'Sığır', sheep: 'Koyun', goat: 'Keçi', poultry: 'Kanatlı', other: 'Diğer'
@@ -158,6 +191,55 @@ async function handleDelete() {
       </UCard>
     </div>
 
+    <UCard :ui="{ body: 'p-0' }">
+      <template #header>
+        <div class="flex items-center justify-between">
+          <h3 class="font-semibold text-sm">
+            Son muayeneler ({{ exams.length }})
+          </h3>
+          <UButton :to="`/examinations/new?animal_id=${animal.id}`" size="xs" variant="ghost" icon="i-lucide-plus">
+            Yeni muayene
+          </UButton>
+        </div>
+      </template>
+      <div v-if="!exams.length" class="p-8 text-center text-sm text-neutral-500">
+        Bu hayvanın henüz muayene kaydı yok.
+      </div>
+      <table v-else class="w-full text-sm">
+        <thead class="bg-neutral-50">
+          <tr class="text-left text-xs uppercase tracking-wide text-neutral-500">
+            <th class="px-4 py-2.5 font-semibold">Tarih</th>
+            <th class="px-4 py-2.5 font-semibold">Tür</th>
+            <th class="px-4 py-2.5 font-semibold">Takip</th>
+            <th class="px-4 py-2.5" />
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-neutral-200">
+          <tr v-for="ex in exams" :key="ex.id" class="hover:bg-neutral-50">
+            <td class="px-4 py-3 whitespace-nowrap">
+              <NuxtLink :to="`/examinations/${ex.id}`" class="font-medium hover:text-primary-600">
+                {{ fmtDate(ex.examined_at) }}
+              </NuxtLink>
+            </td>
+            <td class="px-4 py-3">
+              <UBadge :color="visitColor[ex.visit_type] ?? 'neutral'" variant="soft" size="sm">
+                {{ visitLabel[ex.visit_type] ?? ex.visit_type }}
+              </UBadge>
+            </td>
+            <td class="px-4 py-3">
+              <UBadge v-if="ex.follow_up_needed" color="warning" variant="soft" size="sm">
+                {{ ex.follow_up_date ?? 'Gerekli' }}
+              </UBadge>
+              <span v-else class="text-neutral-300">—</span>
+            </td>
+            <td class="px-4 py-3 text-right">
+              <UButton :to="`/examinations/${ex.id}`" size="xs" variant="ghost" icon="i-lucide-eye" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </UCard>
+
     <UCard v-if="animal.notes">
       <template #header>
         <h3 class="font-semibold text-sm">
@@ -168,7 +250,5 @@ async function handleDelete() {
         {{ animal.notes }}
       </p>
     </UCard>
-
-    <!-- M2'de sadece kimlik kartı; muayene/aşı/reçete sekmeleri sonraki milestone'larda. -->
   </div>
 </template>
