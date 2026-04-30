@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\AnimalController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DrugController;
 use App\Http\Controllers\Api\FarmerController;
 use App\Http\Controllers\Api\MedicalRecordController;
+use App\Http\Controllers\Api\StockMovementController;
 use App\Http\Controllers\Api\VillageController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +28,10 @@ Route::middleware('auth:api')->group(function (): void {
     Route::apiResource('farmers', FarmerController::class);
     // M2 vertical slice 3: Muayene tam CRUD (URL'de medical-records).
     Route::apiResource('medical-records', MedicalRecordController::class);
+    // M2 vertical slice 4: Ilac CRUD + stok hareketleri.
+    Route::apiResource('drugs', DrugController::class);
+    Route::get('stock-movements', [StockMovementController::class, 'index']);
+    Route::post('stock-movements', [StockMovementController::class, 'store']);
     // Koy dropdown icin read-only.
     Route::get('villages', [VillageController::class, 'index']);
 });

@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Models\Animal;
+use App\Models\Drug;
 use App\Models\Farmer;
 use App\Models\MedicalRecord;
+use App\Models\Stock;
+use App\Models\StockMovement;
 use App\Models\User;
 use App\Models\Village;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -113,6 +116,95 @@ class DatabaseSeeder extends Seeder
                 ['animal_id' => $r['animal_id'], 'examined_at' => $r['examined_at']],
                 array_merge($r, ['vet_id' => $vet->id]),
             );
+        }
+
+        // Ilaclar (3 ornek + her birine baslangic stoku ve ilk alim hareketi).
+        $drugs = collect([
+            [
+                'name' => 'Amoksisilin LA',
+                'active_ingredient' => 'Amoksisilin',
+                'manufacturer' => 'Vetaş',
+                'drug_type' => 'antibiotic',
+                'unit' => 'ml',
+                'package_size' => 100,
+                'requires_prescription' => true,
+                'is_vaccine' => false,
+                'default_price' => 280.00,
+                'critical_threshold' => 200,
+                'initial_stock' => 1000,
+                'expiry' => '2027-06-30',
+            ],
+            [
+                'name' => 'Şap Aşısı (Trivalan)',
+                'active_ingredient' => null,
+                'manufacturer' => 'Pendik',
+                'drug_type' => 'vaccine',
+                'unit' => 'doz',
+                'package_size' => 50,
+                'requires_prescription' => true,
+                'is_vaccine' => true,
+                'vaccine_duration_days' => 180,
+                'default_price' => 15.00,
+                'critical_threshold' => 100,
+                'initial_stock' => 500,
+                'expiry' => '2026-09-15',
+            ],
+            [
+                'name' => 'İvermektin',
+                'active_ingredient' => 'İvermektin',
+                'manufacturer' => 'Bayer',
+                'drug_type' => 'antiparasitic',
+                'unit' => 'ml',
+                'package_size' => 50,
+                'requires_prescription' => false,
+                'is_vaccine' => false,
+                'default_price' => 95.00,
+                'critical_threshold' => 100,
+                'initial_stock' => 80, // bilerek dusuk - kritik testi icin
+                'expiry' => '2027-03-01',
+            ],
+        ]);
+
+        foreach ($drugs as $d) {
+            $initial = $d['initial_stock'];
+            $expiry = $d['expiry'];
+            $threshold = $d['critical_threshold'];
+            unset($d['initial_stock'], $d['expiry'], $d['critical_threshold']);
+
+            $drug = Drug::firstOrCreate(['name' => $d['name']], $d);
+
+            $stock = Stock::firstOrCreate(
+                ['drug_id' => $drug->id],
+                ['current_quantity' => 0, 'critical_threshold' => $threshold]
+            );
+
+            // Idempotent: ayni drug icin baslangic 'purchase' hareketi sadece 1 kez eklensin.
+            $alreadySeeded = StockMovement::where('drug_id', $drug->id)
+                ->where('movement_type', 'purchase')
+                ->where('notes', 'Seed: baslangic stoku')
+                ->exists();
+            if (!$alreadySeeded) {
+                StockMovement::create([
+                    'stock_id' => $stock->id,
+                    'drug_id' => $drug->id,
+                    'movement_type' => 'purchase',
+                    'quantity' => $initial,
+                    'unit_price' => $d['default_price'],
+                    'expiry_date' => $expiry,
+                    'supplier_name' => 'Seed Tedarikçi',
+                    'performed_by' => $vet->id,
+                    'notes' => 'Seed: baslangic stoku',
+                    'occurred_at' => now()->subDays(30),
+                ]);
+
+                // Seeder WithoutModelEvents kullaniyor; observer calismadigi icin
+                // stocks cache'ini el ile guncelle.
+                $stock->update([
+                    'current_quantity' => $initial,
+                    'last_purchased_at' => now()->subDays(30),
+                    'earliest_expiry_at' => $expiry,
+                ]);
+            }
         }
     }
 }

@@ -75,6 +75,39 @@
 
 ---
 
+## Vertical Slice 4 — İlaç & Stok (Drug + Stock + StockMovement)
+
+> Üç tablo: `drugs` (katalog), `stocks` (cumulative cache), `stock_movements`
+> (ledger — `deleted_at` YOK, asla silinmez). Her ilaç oluşturulduğunda
+> otomatik 1 stok kaydı açılır. Hareket eklenince `StockMovementObserver`
+> `stocks.current_quantity`'i atomik olarak günceller (lockForUpdate),
+> `last_purchased_at` ve `earliest_expiry_at` türetilmiş alanlarını
+> tazeler.
+>
+> M2 kapsam dışı: clinic_id (M2.5/M3), owner_user_id (çoklu vet — M3+),
+> sync kolonları (M3), `medical_record_drugs` ara tablosu (M2.5'te muayene
+> ile bağlamak için), `medical_record_photos` (M5+).
+
+| # | Adım | Durum | Not |
+|---|---|---|---|
+| 1 | Migration: `drugs` (partial unique name) | ✅ Tamam | Soft-delete'lere izin veren `WHERE deleted_at IS NULL` index |
+| 2 | Migration: `stocks` | ✅ Tamam | drug_id unique → her ilaç için tek kayıt |
+| 3 | Migration: `stock_movements` (ledger, deleted_at YOK) | ✅ Tamam | `chk_movement_type` constraint; `related_movement_id` self-FK PG aynı CREATE'te sorun çıkardığı için sadece UUID kolonu, FK M3'te ALTER ile eklenecek |
+| 4 | Modeller: Drug, Stock, StockMovement (+ ilişkiler) | ✅ Tamam | StockMovement'ta `SoftDeletes` YOK |
+| 5 | `StockMovementObserver` + `AppServiceProvider::boot()` | ✅ Tamam | DB transaction + `lockForUpdate` ile race-safe; `earliest_expiry_at` sadece pozitif quantity'de güncellenir |
+| 6 | Form Request: Store/UpdateDrugRequest, StoreStockMovementRequest | ✅ Tamam | Türkçe mesajlar; `quantity != 0` kuralı; `name` partial unique |
+| 7 | DrugController CRUD + filtreler | ✅ Tamam | search (name/etken/üretici/barkod), drug_type, is_vaccine, **low_stock_only** (`whereColumn current_quantity <= critical_threshold`); store yeni ilaç + stock kaydı tek atomik işlem; destroy soft delete + stok soft delete |
+| 8 | StockMovementController (index + store) | ✅ Tamam | drug_id/movement_type/from/to filtreleri; store stock_id'yi otomatik bulur, performed_by = giriş yapan kullanıcı |
+| 9 | Route: apiResource('drugs') + GET/POST stock-movements | ✅ Tamam | |
+| 10 | Seeder: 3 ilaç + 3 alım hareketi | ✅ Tamam | Amoksisilin LA (1000ml), Şap Aşısı (500doz), İvermektin (80ml — bilerek kritik test); seeder `WithoutModelEvents` kullandığı için stock cache manuel güncellenir |
+| 11 | Frontend: `pages/medications/index.vue` | ✅ Tamam | Arama + tür filtresi + **"sadece kritik stok"** + kritik satırlar amber arka plan |
+| 12 | Frontend: `pages/medications/[id].vue` | ✅ Tamam | 4 stok kartı (mevcut/eşik/SKT/son alım) + inline "Yeni hareket" formu (toggle ile açılır) + son 50 hareket geçmişi tablosu (giriş yeşil, çıkış kırmızı) |
+| 13 | Frontend: `new/edit` + `DrugForm.vue` + `StockMovementForm.vue` | ✅ Tamam | Drug form: drug_type=vaccine seçince is_vaccine otomatik açılır. Movement form: kullanım/fire seçince işaret otomatik negatif olur, kullanıcı pozitif girer |
+| 14 | **Test (canlı, backend)** | ✅ Tamam | 2026-04-30: 13/13 curl senaryosu yeşil — list + ilişkiler, low_stock_only filter, duplicate name 422, valid POST 201 + otomatik stock, alım observer +200, kullanım observer -50 → toplam 150 doğru, quantity=0 reddedildi, hareket geçmişi 2, PUT, DELETE soft delete + 404 |
+| 15 | **Test (canlı, frontend)** | ⬜ Bekliyor | 4 sayfa SSR 200; tarayıcı UX testi kullanıcıda |
+
+---
+
 ## Test Kontrol Listesi (sonra yapılacak)
 
 Backend:
