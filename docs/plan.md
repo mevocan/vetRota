@@ -92,11 +92,15 @@ Buradaki hata sonraki tüm işleri çöpe atar.
   Flutter'da da aynı JWT ile login çalışıyor. Detay kurulum sırası:
   `docs/dev-tools.md`.
 
-### M2 — "Çekirdek veri modeli API'den dönüyor"
+### M2 — "Çekirdek veri modeli API'den dönüyor" ✅
 - **Bağımlılık:** M1
 - **Tamamlandı kriteri:** Hayvan, çiftçi, muayene (metin), ilaç/stok,
   randevu için CRUD REST endpoint'leri çalışıyor. Nuxt panelde liste +
   detay + form var.
+- **Durum (2026-05-01):** Kod düzeyinde tamam. 5 vertical slice, 57/57
+  backend curl senaryosu yeşil, 20+ Nuxt sayfası SSR 200. Detay:
+  `docs/m2-progress.md`. Sıradaki: kullanıcı tarafında tarayıcı UX
+  testi → M3.
 
 ### M3 — "Flutter offline muayene yazabiliyor ve sync oluyor" ⚡
 - **Bağımlılık:** M2
