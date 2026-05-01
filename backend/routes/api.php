@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\MedicalRecordController;
 use App\Http\Controllers\Api\StockMovementController;
 use App\Http\Controllers\Api\V1\Sync\SyncPullController;
 use App\Http\Controllers\Api\V1\Sync\SyncPushController;
+use App\Http\Controllers\Api\V1\Sync\SyncStatusController;
 use App\Http\Controllers\Api\VillageController;
 use Illuminate\Support\Facades\Route;
 
@@ -45,5 +46,6 @@ Route::middleware('auth:api')->group(function (): void {
     Route::middleware('device.match')->prefix('sync')->group(function (): void {
         Route::post('push', SyncPushController::class)->name('sync.push');
         Route::get('pull', SyncPullController::class)->name('sync.pull');
+        Route::get('status', SyncStatusController::class)->name('sync.status');
     });
 });
