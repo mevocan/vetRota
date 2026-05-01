@@ -24,7 +24,7 @@ M2 bilinçli olarak şunları M3'e bıraktı:
 |---|---|---|
 | M3.1 | Şema upgrade: `clinics` + sync kolonları + trigger + sync tabloları | ⏳ Yazıldı |
 | M3.2 | JWT'ye `device_id` + `clinic_id` claim, `EnsureDeviceMatchesJwt` middleware | ⏳ Yazıldı |
-| M3.3 | `POST /sync/push` — Service + 8 processor + LWW + additive merge + idempotency | ⬜ Bekliyor |
+| M3.3 | `POST /sync/push` — Service + 8 processor + LWW + additive merge + idempotency | ⏳ Yazıldı |
 | M3.4 | `GET /sync/pull` — cursor pagination + echo prevention + clinic scope | ⬜ Bekliyor |
 | M3.5 | `GET /sync/status` + integration testler (sync-api.md §12 madde 6) | ⬜ Bekliyor |
 | M3.6 | Flutter projesi: Drift şeması, push/pull queue, retry, conflict UI, airplane-mode demo | ⬜ Bekliyor |
@@ -76,17 +76,17 @@ M2 bilinçli olarak şunları M3'e bıraktı:
 
 | # | Adım | Durum | Not |
 |---|---|---|---|
-| 1 | Enum: `SyncOperation`, `ConflictStrategy`, `SyncResult` | ⬜ | sync-api.md §11.4 |
-| 2 | `SyncIdempotencyCache` (Redis/file cache 24h) | ⬜ | sync-api.md §11.7 |
-| 3 | `SyncPushRequest` form request | ⬜ | Tablo bazında kural seti |
-| 4 | `AbstractTableProcessor` | ⬜ | upsert/delete + LWW + version bump (saveQuietly) |
-| 5 | Concrete processors (8 adet) | ⬜ | Village, Farmer, Animal, Appointment, MedicalRecord, MedicalRecordDrug, Stock, StockMovement |
-| 6 | `StockMovementProcessor` AdditiveMerge override | ⬜ | upsert=INSERT, delete=REJECTED |
-| 7 | `SyncPushService` orchestrator | ⬜ | DB::transaction + sync_logs |
-| 8 | `SyncPushController` + route | ⬜ | `/api/v1/sync/push` |
-| 9 | Curl test: yeni hayvan + muayene push | ⬜ | M2 verisinden bağımsız |
-| 10 | Curl test: idempotent retry (aynı `client_sync_id`) | ⬜ | Cache hit |
-| 11 | Curl test: LWW conflict (version mismatch) | ⬜ | sync_conflicts log |
+| 1 | Enum: `SyncOperation`, `ConflictStrategy`, `SyncResult` | ⏳ | `app/Enums/Sync/` |
+| 2 | `SyncIdempotencyCache` (Laravel Cache, 24h TTL) | ⏳ | `app/Support/Sync/SyncIdempotencyCache.php` |
+| 3 | `SyncCursor` helper (M3.4 için hazır) | ⏳ | base64+json |
+| 4 | `SyncLog` + `SyncConflict` Eloquent modelleri | ⏳ | UUID PK |
+| 5 | `SyncPushRequest` form request | ⏳ | 9 tablo için kural seti (drugs dahil) |
+| 6 | `AbstractTableProcessor` | ⏳ | upsert/delete + LWW + insert version=1 + DB trigger update'te version++ |
+| 7 | Concrete processors (9 adet) | ⏳ | Village, Farmer, Animal, Appointment, MedicalRecord, MedicalRecordDrug, Drug, Stock, StockMovement |
+| 8 | `StockMovementProcessor` AdditiveMerge override + performed_by auto-fill | ⏳ | resolveAdditive parent'ten gelir; insertNew override |
+| 9 | `SyncPushService` orchestrator | ⏳ | DB::transaction + sync_logs |
+| 10 | `SyncPushController` + route `/api/v1/sync/push` | ⏳ | `device.match` middleware ile korunuyor |
+| 11 | **Test (Docker ile)** — yeni hayvan + muayene push, idempotent retry, LWW conflict | ⬜ | Docker erişimi yok |
 
 ---
 
