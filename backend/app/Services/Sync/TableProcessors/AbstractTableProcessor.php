@@ -121,7 +121,10 @@ abstract class AbstractTableProcessor implements TableProcessorInterface
             $data['clinic_id'] = $this->user->clinic_id;
         }
 
-        $model = $modelClass::create($data);
+        // forceFill: client'in UUID v4 id'si ve version=1 fillable'da degil
+        // ama offline-first sozlesmesi geregi server-side override edilmemeli.
+        $model = (new $modelClass())->forceFill($data);
+        $model->save();
 
         return [
             'status' => SyncResult::Accepted->value,

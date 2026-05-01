@@ -7,7 +7,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 // sync-api.md §11.3: Sync endpoint'lerinde JWT'deki device_id ile
 // X-Device-Id header'inin (veya body'nin) eslesmesini zorunlu kilar.
