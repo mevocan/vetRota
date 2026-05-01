@@ -26,7 +26,7 @@ M2 bilinçli olarak şunları M3'e bıraktı:
 | M3.2 | JWT'ye `device_id` + `clinic_id` claim, `EnsureDeviceMatchesJwt` middleware | ✅ Test edildi |
 | M3.3 | `POST /sync/push` — Service + 8 processor + LWW + additive merge + idempotency | ✅ Test edildi |
 | M3.4 | `GET /sync/pull` — cursor pagination + echo prevention + clinic scope | ✅ Test edildi |
-| M3.5 | `GET /sync/status` + integration testler (sync-api.md §12 madde 6) | ⏳ Status ✅, PHPUnit testleri bekliyor |
+| M3.5 | `GET /sync/status` + integration testler (sync-api.md §12 madde 6) | ✅ Test edildi |
 | M3.6 | Flutter projesi: Drift şeması, push/pull queue, retry, conflict UI, airplane-mode demo | ⬜ Bekliyor |
 
 **Durum sembolleri:** ✅ Tamam · ⏳ Yazıldı (test edilmedi) · ⚠️ Bloke · ⬜ Bekliyor
@@ -110,14 +110,22 @@ M2 bilinçli olarak şunları M3'e bıraktı:
 | # | Adım | Durum | Not |
 |---|---|---|---|
 | 1 | `SyncStatusController` + route | ✅ | 2026-05-01 Docker'da test edildi; last_pushed_at + last_pulled_at + pending_conflicts + server_time donuyor |
-| 2 | PHPUnit feature test: basit push | ⬜ | Yeni kayıtlar |
-| 3 | PHPUnit feature test: update push (version eşleşen) | ⬜ | |
-| 4 | PHPUnit feature test: LWW conflict (client_won) | ⬜ | |
-| 5 | PHPUnit feature test: delete vs update çakışması | ⬜ | server_won_deleted |
-| 6 | PHPUnit feature test: echo prevention | ⬜ | |
-| 7 | PHPUnit feature test: idempotent retry | ⬜ | |
-| 8 | PHPUnit feature test: cursor pagination | ⬜ | |
-| 9 | PHPUnit feature test: ledger delete reddi | ⬜ | stock_movements |
+| 2 | PHPUnit feature test: basit push | ✅ | `tests/Feature/Sync/SyncFlowTest.php` |
+| 3 | PHPUnit feature test: update push (version eşleşen) | ✅ | |
+| 4 | PHPUnit feature test: LWW conflict (client_won) | ✅ | sync_conflicts kaydı + version+1 dogrulanir |
+| 5 | PHPUnit feature test: delete vs update çakışması | ✅ | server_won_deleted; soft-delete korunur |
+| 6 | PHPUnit feature test: echo prevention | ✅ | deviceA pull'da kendi yazdigini almaz; deviceB gorur |
+| 7 | PHPUnit feature test: idempotent retry | ✅ | ayni client_sync_id duplicate yaratmaz, version=1 kalir |
+| 8 | PHPUnit feature test: cursor pagination | ✅ | 5 kayit, limit=2, en az 3 sayfa |
+| 9 | PHPUnit feature test: ledger delete reddi | ✅ | stock_movements delete → `ledger_immutable` |
+
+**Test altyapisi notu:** `vetrota_testing` veritabani ayri kullanilir
+(`docker compose exec backend createdb` yerine ilk kurulumda
+`docker compose exec postgres psql -U vetrota -d vetrota -c "CREATE DATABASE vetrota_testing;"`).
+`backend/.env.testing` ile DB ayarlari tutulur; container'da
+`DB_DATABASE=vetrota` env'i Dotenv-immutable tarafindan
+ezilemediginden `tests/TestCase.php` setUp icinde `putenv` ile zorla
+override yapilir. `RefreshDatabase` her test once tabloyu wipe eder.
 
 ---
 
