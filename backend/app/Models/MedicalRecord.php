@@ -4,19 +4,25 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToClinic;
+use App\Models\Concerns\HasSyncColumns;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MedicalRecord extends Model
 {
+    use BelongsToClinic;
     use HasFactory;
+    use HasSyncColumns;
     use HasUuids;
     use SoftDeletes;
 
     protected $fillable = [
+        'clinic_id',
         'animal_id',
         'vet_id',
         'village_id',
@@ -67,5 +73,10 @@ class MedicalRecord extends Model
     public function village(): BelongsTo
     {
         return $this->belongsTo(Village::class);
+    }
+
+    public function drugs(): HasMany
+    {
+        return $this->hasMany(MedicalRecordDrug::class);
     }
 }

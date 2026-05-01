@@ -4,34 +4,35 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Models\Concerns\HasSyncColumns;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Village extends Model
+class Clinic extends Model
 {
-    use HasFactory;
-    use HasSyncColumns;
     use HasUuids;
     use SoftDeletes;
 
     protected $fillable = [
         'name',
-        'district',
+        'phone',
+        'email',
         'city',
-        'lat',
-        'lng',
+        'district',
+        'settings',
     ];
 
     protected function casts(): array
     {
         return [
-            'lat' => 'decimal:7',
-            'lng' => 'decimal:7',
+            'settings' => 'array',
         ];
+    }
+
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class);
     }
 
     public function farmers(): HasMany

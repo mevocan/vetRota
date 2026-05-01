@@ -22,7 +22,7 @@ M2 bilinçli olarak şunları M3'e bıraktı:
 
 | Faz | Kapsam | Durum |
 |---|---|---|
-| M3.1 | Şema upgrade: `clinics` + sync kolonları + trigger + sync tabloları | ⬜ Bekliyor |
+| M3.1 | Şema upgrade: `clinics` + sync kolonları + trigger + sync tabloları | ⏳ Yazıldı |
 | M3.2 | JWT'ye `device_id` + `clinic_id` claim, `EnsureDeviceMatchesJwt` middleware | ⬜ Bekliyor |
 | M3.3 | `POST /sync/push` — Service + 8 processor + LWW + additive merge + idempotency | ⬜ Bekliyor |
 | M3.4 | `GET /sync/pull` — cursor pagination + echo prevention + clinic scope | ⬜ Bekliyor |
@@ -39,17 +39,18 @@ M2 bilinçli olarak şunları M3'e bıraktı:
 
 | # | Adım | Durum | Not |
 |---|---|---|---|
-| 1 | Migration: `clinics` tablosu (id UUID, name, settings jsonb) | ⬜ | Tek demo klinik seed |
-| 2 | Migration: `users` → `clinic_id`, `device_id`, `role` kolonları | ⬜ | Mevcut user'lar default klinikle backfill |
-| 3 | Migration: mevcut 8 tabloya sync kolonları (`version` int default 0, `last_modified_at` tstz, `origin_device_id` uuid null, `clinic_id` uuid null) | ⬜ | villages, farmers, animals, appointments, medical_records, drugs, stocks, stock_movements |
-| 4 | Migration: PostgreSQL `bump_sync_columns()` fonksiyonu + her sync tablosuna BEFORE UPDATE trigger | ⬜ | `data-model.md` §2.4 |
-| 5 | Migration: `sync_logs` tablosu | ⬜ | device_id, direction, started_at, completed_at, status, counts |
-| 6 | Migration: `sync_conflicts` tablosu | ⬜ | LWW audit trail |
-| 7 | Migration: `medical_record_drugs` tablosu | ⬜ | M3 push kapsamında, M2'de yoktu |
-| 8 | Eloquent: `Clinic` modeli + ilişkiler | ⬜ | Tüm tenant modellere `BelongsTo` |
-| 9 | Eloquent: sync trait `HasSyncColumns` | ⬜ | `version`, `last_modified_at`, `origin_device_id` cast'leri |
-| 10 | Seeder: default klinik + mevcut user'ları bağla | ⬜ | Idempotent |
-| 11 | M2 curl regression testi | ⬜ | 57/57 senaryo hâlâ yeşil olmalı |
+| 1 | Migration: `clinics` tablosu (id UUID, name, settings jsonb) | ⏳ | `2026_05_02_000001_create_clinics_table` — default demo klinik insert eder |
+| 2 | Migration: `users` → `clinic_id`, `device_id`, `role` kolonları | ⏳ | `2026_05_02_000002` — backfill + NOT NULL + FK |
+| 3 | Migration: mevcut 8 tabloya sync kolonları (`version`, `last_modified_at`, `origin_device_id`, `clinic_id`) | ⏳ | `2026_05_02_000003` — villages global, diğer 7 tabloya `clinic_id` NOT NULL + index |
+| 4 | Migration: PostgreSQL `bump_sync_columns()` fonksiyonu + her sync tablosuna BEFORE UPDATE trigger | ⏳ | `2026_05_02_000007` — `medical_record_drugs` dahil 9 tabloda trigger |
+| 5 | Migration: `sync_logs` tablosu | ⏳ | `2026_05_02_000004` |
+| 6 | Migration: `sync_conflicts` tablosu | ⏳ | `2026_05_02_000005` — LWW audit trail |
+| 7 | Migration: `medical_record_drugs` tablosu | ⏳ | `2026_05_02_000006` — soft delete + sync kolonları dahil |
+| 8 | Eloquent: `Clinic` modeli + `BelongsToClinic` trait (creating hook ile auto-fill) | ⏳ | M2 controller'ları değişmedi; auto-fill auth'lu requestlerde tetikleniyor |
+| 9 | Eloquent: `HasSyncColumns` trait | ⏳ | `version` int + `last_modified_at` datetime cast |
+| 10 | Modeller güncellendi (Animal, Farmer, Village, Appointment, MedicalRecord, Drug, Stock, StockMovement, MedicalRecordDrug, User) | ⏳ | `clinic_id` fillable; User `getJWTCustomClaims` clinic_id+device_id+role döndürüyor |
+| 11 | Seeder güncellendi: default klinik + her tenant kayda `clinic_id` | ⏳ | Idempotent korundu |
+| 12 | **Test (Docker ile)** — `php artisan migrate:fresh --seed` + M2 curl 57/57 | ⬜ | Docker erişimi yok, kullanıcı çalıştıracak |
 
 ---
 

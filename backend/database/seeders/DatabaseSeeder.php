@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Models\Animal;
 use App\Models\Appointment;
+use App\Models\Clinic;
 use App\Models\Drug;
 use App\Models\Farmer;
 use App\Models\MedicalRecord;
@@ -22,11 +23,20 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
+        // M3.1: Default klinik. Migration'da olusturuldu, seeder tekrar
+        // edildiginde firstOrCreate ile idempotent kalir.
+        $clinic = Clinic::firstOrCreate(
+            ['name' => 'VetRota Demo Klinik'],
+            ['city' => 'Ankara', 'district' => 'Beypazarı'],
+        );
+
         $vet = User::updateOrCreate(
             ['email' => 'ahmet@vetrota.com.tr'],
             [
                 'name' => 'Ahmet Veteriner',
                 'password' => 'sifre1234',
+                'clinic_id' => $clinic->id,
+                'role' => 'vet',
             ],
         );
 
@@ -46,7 +56,10 @@ class DatabaseSeeder extends Seeder
             ['first_name' => 'Hasan', 'last_name' => 'Kaya', 'phone' => '5551110003', 'village_id' => $villages[1]->id],
             ['first_name' => 'Fatma', 'last_name' => 'Şahin', 'phone' => '5551110004', 'village_id' => $villages[2]->id],
             ['first_name' => 'İbrahim', 'last_name' => 'Çelik', 'phone' => '5551110005', 'village_id' => $villages[3]->id],
-        ])->map(fn (array $f): Farmer => Farmer::updateOrCreate(['phone' => $f['phone']], $f));
+        ])->map(fn (array $f): Farmer => Farmer::updateOrCreate(
+            ['phone' => $f['phone']],
+            array_merge($f, ['clinic_id' => $clinic->id]),
+        ));
 
         // Iki ornek hayvan; tekrar seed'lerde duplicate olmasin diye ear_tag uzerinden idempotent.
         $animals = [
@@ -78,7 +91,10 @@ class DatabaseSeeder extends Seeder
         ];
 
         $createdAnimals = collect($animals)->map(
-            fn (array $a): Animal => Animal::updateOrCreate(['ear_tag' => $a['ear_tag']], $a)
+            fn (array $a): Animal => Animal::updateOrCreate(
+                ['ear_tag' => $a['ear_tag']],
+                array_merge($a, ['clinic_id' => $clinic->id]),
+            )
         );
 
         // Idempotent muayene seed: ayni hayvan + tarih kombinasyonu varsa olusturma.
@@ -115,7 +131,7 @@ class DatabaseSeeder extends Seeder
         foreach ($records as $r) {
             MedicalRecord::updateOrCreate(
                 ['animal_id' => $r['animal_id'], 'examined_at' => $r['examined_at']],
-                array_merge($r, ['vet_id' => $vet->id]),
+                array_merge($r, ['vet_id' => $vet->id, 'clinic_id' => $clinic->id]),
             );
         }
 
@@ -172,11 +188,14 @@ class DatabaseSeeder extends Seeder
             $threshold = $d['critical_threshold'];
             unset($d['initial_stock'], $d['expiry'], $d['critical_threshold']);
 
-            $drug = Drug::firstOrCreate(['name' => $d['name']], $d);
+            $drug = Drug::firstOrCreate(
+                ['name' => $d['name']],
+                array_merge($d, ['clinic_id' => $clinic->id]),
+            );
 
             $stock = Stock::firstOrCreate(
                 ['drug_id' => $drug->id],
-                ['current_quantity' => 0, 'critical_threshold' => $threshold]
+                ['clinic_id' => $clinic->id, 'current_quantity' => 0, 'critical_threshold' => $threshold]
             );
 
             // Idempotent: ayni drug icin baslangic 'purchase' hareketi sadece 1 kez eklensin.
@@ -186,6 +205,7 @@ class DatabaseSeeder extends Seeder
                 ->exists();
             if (!$alreadySeeded) {
                 StockMovement::create([
+                    'clinic_id' => $clinic->id,
                     'stock_id' => $stock->id,
                     'drug_id' => $drug->id,
                     'movement_type' => 'purchase',
@@ -256,7 +276,7 @@ class DatabaseSeeder extends Seeder
         foreach ($appointments as $a) {
             Appointment::updateOrCreate(
                 ['farmer_id' => $a['farmer_id'], 'scheduled_at' => $a['scheduled_at']],
-                array_merge($a, ['vet_id' => $vet->id]),
+                array_merge($a, ['vet_id' => $vet->id, 'clinic_id' => $clinic->id]),
             );
         }
     }
