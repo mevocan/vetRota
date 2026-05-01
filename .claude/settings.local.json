@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(wsl -d Ubuntu -- bash -c \"cd /home/mcdag/projects/vetrota && rm -rf node_modules package.json package-lock.json && ls -la | grep -E 'node_modules|package'\")"
+    ]
+  }
+}

@@ -16,9 +16,23 @@ class AuthController extends Controller
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
+            'device_id' => ['sometimes', 'uuid'],
         ]);
 
-        $token = Auth::guard('api')->attempt($credentials);
+        $deviceId = $credentials['device_id']
+            ?? $request->header('X-Device-Id');
+
+        // M3.2: device_id JWT claim olarak gomulur (sync-api.md §3).
+        // Mobile login eder, web etmeyebilir — sync endpoint'leri zorunlu kilar.
+        $guard = Auth::guard('api');
+        if ($deviceId) {
+            $guard->claims(['device_id' => $deviceId]);
+        }
+
+        $token = $guard->attempt([
+            'email' => $credentials['email'],
+            'password' => $credentials['password'],
+        ]);
 
         if (! $token) {
             return response()->json([
@@ -26,12 +40,29 @@ class AuthController extends Controller
             ], 401);
         }
 
+        // Mobile cihazlarda son login eden device_id'yi user'a not et
+        // (audit/raporlama icin; sync zorunlulugu degil — JWT zaten claim tasiyor).
+        if ($deviceId) {
+            $user = Auth::guard('api')->user();
+            $user->forceFill(['device_id' => $deviceId])->saveQuietly();
+        }
+
         return $this->respondWithToken($token);
     }
 
     public function me(): JsonResponse
     {
-        return response()->json(Auth::guard('api')->user());
+        $user = Auth::guard('api')->user();
+        $payload = Auth::guard('api')->payload();
+
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role,
+            'clinic_id' => $payload->get('clinic_id'),
+            'device_id' => $payload->get('device_id'),
+        ]);
     }
 
     public function logout(): JsonResponse

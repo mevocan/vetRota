@@ -23,7 +23,7 @@ M2 bilinçli olarak şunları M3'e bıraktı:
 | Faz | Kapsam | Durum |
 |---|---|---|
 | M3.1 | Şema upgrade: `clinics` + sync kolonları + trigger + sync tabloları | ⏳ Yazıldı |
-| M3.2 | JWT'ye `device_id` + `clinic_id` claim, `EnsureDeviceMatchesJwt` middleware | ⬜ Bekliyor |
+| M3.2 | JWT'ye `device_id` + `clinic_id` claim, `EnsureDeviceMatchesJwt` middleware | ⏳ Yazıldı |
 | M3.3 | `POST /sync/push` — Service + 8 processor + LWW + additive merge + idempotency | ⬜ Bekliyor |
 | M3.4 | `GET /sync/pull` — cursor pagination + echo prevention + clinic scope | ⬜ Bekliyor |
 | M3.5 | `GET /sync/status` + integration testler (sync-api.md §12 madde 6) | ⬜ Bekliyor |
@@ -60,12 +60,13 @@ M2 bilinçli olarak şunları M3'e bıraktı:
 
 | # | Adım | Durum | Not |
 |---|---|---|---|
-| 1 | Login request → `device_id` (UUID, client üretir) parametresi | ⬜ | Header: `X-Device-Id` |
-| 2 | JWT custom claim'leri (`clinic_id`, `device_id`) | ⬜ | `JWTSubject::getJWTCustomClaims()` |
-| 3 | `AuthController::me` response → clinic + device | ⬜ | Frontend için |
-| 4 | Middleware `EnsureDeviceMatchesJwt` | ⬜ | sync-api.md §11.3 |
-| 5 | `auth:api` middleware'i clinic_id ile scope'la | ⬜ | Global query scope `BelongsToClinic` |
-| 6 | Curl: login ile JWT döner, claim'ler decode edilebilir | ⬜ | Manuel |
+| 1 | Login request → `device_id` (UUID, body veya `X-Device-Id` header) | ⏳ | `AuthController::login` parametre `sometimes,uuid`; `claims(['device_id'=>..])->attempt()` ile JWT'ye gomuluyor |
+| 2 | JWT custom claim'leri (`clinic_id`, `device_id`, `role`) | ⏳ | `User::getJWTCustomClaims()` (M3.1) + login akışından device_id |
+| 3 | `AuthController::me` response → id/email/role/clinic_id/device_id | ⏳ | Payload'dan okunuyor |
+| 4 | Middleware `EnsureDeviceMatchesJwt` | ⏳ | `device.match` alias, JWT yoksa veya header mismatch ise 403 |
+| 5 | Middleware `bootstrap/app.php` alias'lendi | ⏳ | Sync rotalarında M3.3'te kullanılacak |
+| 6 | `auth:api` global tenant scope (BelongsToClinic) | ⬜ | Şimdilik creating hook ile auto-fill, query scope M3.4'e ertelendi |
+| 7 | **Test (Docker ile)** — login + me + device mismatch curl | ⬜ | Docker erişimi yok |
 
 ---
 

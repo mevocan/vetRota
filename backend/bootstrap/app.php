@@ -13,7 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // M3.2: sync endpoint'leri device_id eslesmesini zorunlu kilar.
+        $middleware->alias([
+            'device.match' => \App\Http\Middleware\EnsureDeviceMatchesJwt::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
