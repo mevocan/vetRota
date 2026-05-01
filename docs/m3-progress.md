@@ -1,0 +1,146 @@
+# M3 İlerleme Takibi
+
+> **Amaç:** "Flutter offline muayene yazabiliyor ve sync oluyor" ⚡
+> M3 projenin kritik yolu — geçilemezse gerisi anlamsız.
+> Detay protokol: `docs/sync-api.md`. Conflict stratejileri: `docs/data-model.md` §7.
+
+---
+
+## M2 Devralınan Durum (2026-05-01)
+
+M2 bilinçli olarak şunları M3'e bıraktı:
+- `clinics` tablosu yok, `users.clinic_id` / `users.device_id` yok
+- JWT'de `clinic_id` / `device_id` claim'i yok
+- Mevcut 8 tabloda sync kolonları yok: `version`, `last_modified_at`, `origin_device_id`, `clinic_id`
+- PostgreSQL `bump_sync_columns()` trigger'ı yok
+- `sync_logs`, `sync_conflicts`, `medical_record_drugs` tabloları yok
+- Flutter projesi henüz başlatılmadı (sadece `backend/` + `frontend/` var)
+
+---
+
+## Faz Özeti
+
+| Faz | Kapsam | Durum |
+|---|---|---|
+| M3.1 | Şema upgrade: `clinics` + sync kolonları + trigger + sync tabloları | ⬜ Bekliyor |
+| M3.2 | JWT'ye `device_id` + `clinic_id` claim, `EnsureDeviceMatchesJwt` middleware | ⬜ Bekliyor |
+| M3.3 | `POST /sync/push` — Service + 8 processor + LWW + additive merge + idempotency | ⬜ Bekliyor |
+| M3.4 | `GET /sync/pull` — cursor pagination + echo prevention + clinic scope | ⬜ Bekliyor |
+| M3.5 | `GET /sync/status` + integration testler (sync-api.md §12 madde 6) | ⬜ Bekliyor |
+| M3.6 | Flutter projesi: Drift şeması, push/pull queue, retry, conflict UI, airplane-mode demo | ⬜ Bekliyor |
+
+**Durum sembolleri:** ✅ Tamam · ⏳ Yazıldı (test edilmedi) · ⚠️ Bloke · ⬜ Bekliyor
+
+---
+
+## M3.1 — Şema Upgrade
+
+**Hedef:** Sync altyapısının veritabanı tarafı hazır, M2 endpoint'leri eskisi gibi yeşil.
+
+| # | Adım | Durum | Not |
+|---|---|---|---|
+| 1 | Migration: `clinics` tablosu (id UUID, name, settings jsonb) | ⬜ | Tek demo klinik seed |
+| 2 | Migration: `users` → `clinic_id`, `device_id`, `role` kolonları | ⬜ | Mevcut user'lar default klinikle backfill |
+| 3 | Migration: mevcut 8 tabloya sync kolonları (`version` int default 0, `last_modified_at` tstz, `origin_device_id` uuid null, `clinic_id` uuid null) | ⬜ | villages, farmers, animals, appointments, medical_records, drugs, stocks, stock_movements |
+| 4 | Migration: PostgreSQL `bump_sync_columns()` fonksiyonu + her sync tablosuna BEFORE UPDATE trigger | ⬜ | `data-model.md` §2.4 |
+| 5 | Migration: `sync_logs` tablosu | ⬜ | device_id, direction, started_at, completed_at, status, counts |
+| 6 | Migration: `sync_conflicts` tablosu | ⬜ | LWW audit trail |
+| 7 | Migration: `medical_record_drugs` tablosu | ⬜ | M3 push kapsamında, M2'de yoktu |
+| 8 | Eloquent: `Clinic` modeli + ilişkiler | ⬜ | Tüm tenant modellere `BelongsTo` |
+| 9 | Eloquent: sync trait `HasSyncColumns` | ⬜ | `version`, `last_modified_at`, `origin_device_id` cast'leri |
+| 10 | Seeder: default klinik + mevcut user'ları bağla | ⬜ | Idempotent |
+| 11 | M2 curl regression testi | ⬜ | 57/57 senaryo hâlâ yeşil olmalı |
+
+---
+
+## M3.2 — Auth & Device Identity
+
+**Hedef:** JWT içinde `device_id` + `clinic_id` taşınıyor, middleware doğruluyor.
+
+| # | Adım | Durum | Not |
+|---|---|---|---|
+| 1 | Login request → `device_id` (UUID, client üretir) parametresi | ⬜ | Header: `X-Device-Id` |
+| 2 | JWT custom claim'leri (`clinic_id`, `device_id`) | ⬜ | `JWTSubject::getJWTCustomClaims()` |
+| 3 | `AuthController::me` response → clinic + device | ⬜ | Frontend için |
+| 4 | Middleware `EnsureDeviceMatchesJwt` | ⬜ | sync-api.md §11.3 |
+| 5 | `auth:api` middleware'i clinic_id ile scope'la | ⬜ | Global query scope `BelongsToClinic` |
+| 6 | Curl: login ile JWT döner, claim'ler decode edilebilir | ⬜ | Manuel |
+
+---
+
+## M3.3 — POST /sync/push
+
+**Hedef:** Client batch'i transaction içinde işleyen push endpoint'i çalışıyor.
+
+| # | Adım | Durum | Not |
+|---|---|---|---|
+| 1 | Enum: `SyncOperation`, `ConflictStrategy`, `SyncResult` | ⬜ | sync-api.md §11.4 |
+| 2 | `SyncIdempotencyCache` (Redis/file cache 24h) | ⬜ | sync-api.md §11.7 |
+| 3 | `SyncPushRequest` form request | ⬜ | Tablo bazında kural seti |
+| 4 | `AbstractTableProcessor` | ⬜ | upsert/delete + LWW + version bump (saveQuietly) |
+| 5 | Concrete processors (8 adet) | ⬜ | Village, Farmer, Animal, Appointment, MedicalRecord, MedicalRecordDrug, Stock, StockMovement |
+| 6 | `StockMovementProcessor` AdditiveMerge override | ⬜ | upsert=INSERT, delete=REJECTED |
+| 7 | `SyncPushService` orchestrator | ⬜ | DB::transaction + sync_logs |
+| 8 | `SyncPushController` + route | ⬜ | `/api/v1/sync/push` |
+| 9 | Curl test: yeni hayvan + muayene push | ⬜ | M2 verisinden bağımsız |
+| 10 | Curl test: idempotent retry (aynı `client_sync_id`) | ⬜ | Cache hit |
+| 11 | Curl test: LWW conflict (version mismatch) | ⬜ | sync_conflicts log |
+
+---
+
+## M3.4 — GET /sync/pull
+
+**Hedef:** Cursor pagination ile delta pull, echo prevention çalışıyor.
+
+| # | Adım | Durum | Not |
+|---|---|---|---|
+| 1 | `SyncCursor` helper (base64 encode/decode) | ⬜ | sync-api.md §11.12 |
+| 2 | `SyncPullService` | ⬜ | clinic scope + `origin_device_id != device` |
+| 3 | `SyncPullController` + route | ⬜ | `/api/v1/sync/pull` |
+| 4 | Curl test: ilk sync (`since=1970-01-01`) | ⬜ | Tüm veri döner |
+| 5 | Curl test: delta pull (`since=<last_sync>`) | ⬜ | Sadece yeniler |
+| 6 | Curl test: echo prevention | ⬜ | Cihaz kendi yazdığını geri almıyor |
+| 7 | Curl test: cursor pagination 500+ kayıt | ⬜ | `has_more=true` → ikinci sayfa |
+| 8 | Curl test: clinic scope ihlali | ⬜ | Başka klinik verisi sızmıyor |
+
+---
+
+## M3.5 — Status & Integration Testler
+
+**Hedef:** sync-api.md §12 madde 6'daki 8 senaryo otomatik test ile yeşil.
+
+| # | Adım | Durum | Not |
+|---|---|---|---|
+| 1 | `SyncStatusController` + route | ⬜ | last_pushed_at, last_pulled_at, pending_conflicts |
+| 2 | PHPUnit feature test: basit push | ⬜ | Yeni kayıtlar |
+| 3 | PHPUnit feature test: update push (version eşleşen) | ⬜ | |
+| 4 | PHPUnit feature test: LWW conflict (client_won) | ⬜ | |
+| 5 | PHPUnit feature test: delete vs update çakışması | ⬜ | server_won_deleted |
+| 6 | PHPUnit feature test: echo prevention | ⬜ | |
+| 7 | PHPUnit feature test: idempotent retry | ⬜ | |
+| 8 | PHPUnit feature test: cursor pagination | ⬜ | |
+| 9 | PHPUnit feature test: ledger delete reddi | ⬜ | stock_movements |
+
+---
+
+## M3.6 — Flutter Client
+
+**Hedef:** Veteriner airplane-mode'da hayvan ekleyebiliyor, internet gelince sync oluyor.
+
+| # | Adım | Durum | Not |
+|---|---|---|---|
+| 1 | Flutter projesi başlat (`flutter create mobile`) | ⬜ | Dart 3.11, sound null safety |
+| 2 | State management seçimi (riverpod / bloc / provider) | ⬜ | CLAUDE.md: M3'te karar verilecek |
+| 3 | Drift kurulumu + şema (sync_status, version kolonu dahil) | ⬜ | 8 tablo + UUID PK |
+| 4 | Dio HTTP client + JWT interceptor + retry | ⬜ | Exponential backoff |
+| 5 | Login ekranı + JWT storage (flutter_secure_storage) | ⬜ | device_id `Uuid().v4()` ilk açılışta |
+| 6 | Hayvan listesi + ekleme formu (sadece Drift'ten) | ⬜ | Loading spinner YOK |
+| 7 | Muayene formu + stok düşüm (additive ledger) | ⬜ | client UUID üretir |
+| 8 | Push queue manager (`sync_status='pending'` → batch) | ⬜ | |
+| 9 | Pull queue manager (cursor + delta) | ⬜ | |
+| 10 | Conflict UI (badge + bildirim) | ⬜ | sync_conflicts göster |
+| 11 | Airplane-mode demo testi | ⬜ | Manuel: uçağa al, kayıt gir, indir, sync gör |
+
+---
+
+**Doküman Sonu.**
