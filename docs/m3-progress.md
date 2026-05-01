@@ -22,11 +22,11 @@ M2 bilinçli olarak şunları M3'e bıraktı:
 
 | Faz | Kapsam | Durum |
 |---|---|---|
-| M3.1 | Şema upgrade: `clinics` + sync kolonları + trigger + sync tabloları | ⏳ Yazıldı |
-| M3.2 | JWT'ye `device_id` + `clinic_id` claim, `EnsureDeviceMatchesJwt` middleware | ⏳ Yazıldı |
-| M3.3 | `POST /sync/push` — Service + 8 processor + LWW + additive merge + idempotency | ⏳ Yazıldı |
-| M3.4 | `GET /sync/pull` — cursor pagination + echo prevention + clinic scope | ⏳ Yazıldı |
-| M3.5 | `GET /sync/status` + integration testler (sync-api.md §12 madde 6) | ⬜ Bekliyor |
+| M3.1 | Şema upgrade: `clinics` + sync kolonları + trigger + sync tabloları | ✅ Test edildi |
+| M3.2 | JWT'ye `device_id` + `clinic_id` claim, `EnsureDeviceMatchesJwt` middleware | ✅ Test edildi |
+| M3.3 | `POST /sync/push` — Service + 8 processor + LWW + additive merge + idempotency | ✅ Test edildi |
+| M3.4 | `GET /sync/pull` — cursor pagination + echo prevention + clinic scope | ✅ Test edildi |
+| M3.5 | `GET /sync/status` + integration testler (sync-api.md §12 madde 6) | ⏳ Status ✅, PHPUnit testleri bekliyor |
 | M3.6 | Flutter projesi: Drift şeması, push/pull queue, retry, conflict UI, airplane-mode demo | ⬜ Bekliyor |
 
 **Durum sembolleri:** ✅ Tamam · ⏳ Yazıldı (test edilmedi) · ⚠️ Bloke · ⬜ Bekliyor
@@ -50,7 +50,7 @@ M2 bilinçli olarak şunları M3'e bıraktı:
 | 9 | Eloquent: `HasSyncColumns` trait | ⏳ | `version` int + `last_modified_at` datetime cast |
 | 10 | Modeller güncellendi (Animal, Farmer, Village, Appointment, MedicalRecord, Drug, Stock, StockMovement, MedicalRecordDrug, User) | ⏳ | `clinic_id` fillable; User `getJWTCustomClaims` clinic_id+device_id+role döndürüyor |
 | 11 | Seeder güncellendi: default klinik + her tenant kayda `clinic_id` | ⏳ | Idempotent korundu |
-| 12 | **Test (Docker ile)** — `php artisan migrate:fresh --seed` + M2 curl 57/57 | ⬜ | Docker erişimi yok, kullanıcı çalıştıracak |
+| 12 | **Test (Docker ile)** — `php artisan migrate:fresh --seed` + M2 curl 57/57 | ✅ | 2026-05-01 smoke; trigger BEFORE UPDATE eksigi tespit edildi → migration `..._000008` ile INSERT'e de baglandi |
 
 ---
 
@@ -66,7 +66,7 @@ M2 bilinçli olarak şunları M3'e bıraktı:
 | 4 | Middleware `EnsureDeviceMatchesJwt` | ⏳ | `device.match` alias, JWT yoksa veya header mismatch ise 403 |
 | 5 | Middleware `bootstrap/app.php` alias'lendi | ⏳ | Sync rotalarında M3.3'te kullanılacak |
 | 6 | `auth:api` global tenant scope (BelongsToClinic) | ⬜ | Şimdilik creating hook ile auto-fill, query scope M3.4'e ertelendi |
-| 7 | **Test (Docker ile)** — login + me + device mismatch curl | ⬜ | Docker erişimi yok |
+| 7 | **Test (Docker ile)** — login + me + device mismatch curl | ✅ | 2026-05-01: login JWT clinic_id+device_id+role icerir, /me dogru, device mismatch 403. Bug: middleware'de yanlis JWT facade namespace'i (Tymon -> PHPOpenSourceSaver) duzeltildi. |
 
 ---
 
@@ -86,7 +86,7 @@ M2 bilinçli olarak şunları M3'e bıraktı:
 | 8 | `StockMovementProcessor` AdditiveMerge override + performed_by auto-fill | ⏳ | resolveAdditive parent'ten gelir; insertNew override |
 | 9 | `SyncPushService` orchestrator | ⏳ | DB::transaction + sync_logs |
 | 10 | `SyncPushController` + route `/api/v1/sync/push` | ⏳ | `device.match` middleware ile korunuyor |
-| 11 | **Test (Docker ile)** — yeni hayvan + muayene push, idempotent retry, LWW conflict | ⬜ | Docker erişimi yok |
+| 11 | **Test (Docker ile)** — yeni hayvan + muayene push, idempotent retry, LWW conflict | ✅ | 2026-05-01: animal+MR push accepted, idempotent retry duplicate yaratmiyor. Bug: insertNew Model::create fillable filtresi client UUID + version=1'i dusuruyordu (HasUuids yeni v7 ureterek offline-first kontratini kiriyordu) → forceFill+save ile duzeltildi. |
 
 ---
 
@@ -99,7 +99,7 @@ M2 bilinçli olarak şunları M3'e bıraktı:
 | 1 | `SyncCursor` helper (base64 encode/decode) | ⏳ | M3.3'te hazırlandı |
 | 2 | `SyncPullService` | ⏳ | clinic scope + echo prevention + cursor + sync_logs |
 | 3 | `SyncPullController` + route `/api/v1/sync/pull` | ⏳ | `device.match` middleware altında |
-| 4 | **Test (Docker ile)** — ilk sync, delta, echo prevention, cursor 500+, clinic scope | ⬜ | Docker erişimi yok |
+| 4 | **Test (Docker ile)** — ilk sync, delta, echo prevention, cursor 500+, clinic scope | ✅ | 2026-05-01: device1 kendi yazdigini almiyor, device2 device1'in animal'ini goruyor. Cursor 500+ ve LWW conflict henuz dataset ile dogrulanmadi (PHPUnit'te kapsanir). |
 
 ---
 
@@ -109,7 +109,7 @@ M2 bilinçli olarak şunları M3'e bıraktı:
 
 | # | Adım | Durum | Not |
 |---|---|---|---|
-| 1 | `SyncStatusController` + route | ⬜ | last_pushed_at, last_pulled_at, pending_conflicts |
+| 1 | `SyncStatusController` + route | ✅ | 2026-05-01 Docker'da test edildi; last_pushed_at + last_pulled_at + pending_conflicts + server_time donuyor |
 | 2 | PHPUnit feature test: basit push | ⬜ | Yeni kayıtlar |
 | 3 | PHPUnit feature test: update push (version eşleşen) | ⬜ | |
 | 4 | PHPUnit feature test: LWW conflict (client_won) | ⬜ | |
