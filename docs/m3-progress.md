@@ -25,7 +25,7 @@ M2 bilinçli olarak şunları M3'e bıraktı:
 | M3.1 | Şema upgrade: `clinics` + sync kolonları + trigger + sync tabloları | ⏳ Yazıldı |
 | M3.2 | JWT'ye `device_id` + `clinic_id` claim, `EnsureDeviceMatchesJwt` middleware | ⏳ Yazıldı |
 | M3.3 | `POST /sync/push` — Service + 8 processor + LWW + additive merge + idempotency | ⏳ Yazıldı |
-| M3.4 | `GET /sync/pull` — cursor pagination + echo prevention + clinic scope | ⬜ Bekliyor |
+| M3.4 | `GET /sync/pull` — cursor pagination + echo prevention + clinic scope | ⏳ Yazıldı |
 | M3.5 | `GET /sync/status` + integration testler (sync-api.md §12 madde 6) | ⬜ Bekliyor |
 | M3.6 | Flutter projesi: Drift şeması, push/pull queue, retry, conflict UI, airplane-mode demo | ⬜ Bekliyor |
 
@@ -96,14 +96,10 @@ M2 bilinçli olarak şunları M3'e bıraktı:
 
 | # | Adım | Durum | Not |
 |---|---|---|---|
-| 1 | `SyncCursor` helper (base64 encode/decode) | ⬜ | sync-api.md §11.12 |
-| 2 | `SyncPullService` | ⬜ | clinic scope + `origin_device_id != device` |
-| 3 | `SyncPullController` + route | ⬜ | `/api/v1/sync/pull` |
-| 4 | Curl test: ilk sync (`since=1970-01-01`) | ⬜ | Tüm veri döner |
-| 5 | Curl test: delta pull (`since=<last_sync>`) | ⬜ | Sadece yeniler |
-| 6 | Curl test: echo prevention | ⬜ | Cihaz kendi yazdığını geri almıyor |
-| 7 | Curl test: cursor pagination 500+ kayıt | ⬜ | `has_more=true` → ikinci sayfa |
-| 8 | Curl test: clinic scope ihlali | ⬜ | Başka klinik verisi sızmıyor |
+| 1 | `SyncCursor` helper (base64 encode/decode) | ⏳ | M3.3'te hazırlandı |
+| 2 | `SyncPullService` | ⏳ | clinic scope + echo prevention + cursor + sync_logs |
+| 3 | `SyncPullController` + route `/api/v1/sync/pull` | ⏳ | `device.match` middleware altında |
+| 4 | **Test (Docker ile)** — ilk sync, delta, echo prevention, cursor 500+, clinic scope | ⬜ | Docker erişimi yok |
 
 ---
 

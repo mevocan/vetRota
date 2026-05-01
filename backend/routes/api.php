@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\DrugController;
 use App\Http\Controllers\Api\FarmerController;
 use App\Http\Controllers\Api\MedicalRecordController;
 use App\Http\Controllers\Api\StockMovementController;
+use App\Http\Controllers\Api\V1\Sync\SyncPullController;
 use App\Http\Controllers\Api\V1\Sync\SyncPushController;
 use App\Http\Controllers\Api\VillageController;
 use Illuminate\Support\Facades\Route;
@@ -43,5 +44,6 @@ Route::middleware('auth:api')->group(function (): void {
     // header X-Device-Id eslesmesini zorunlu kilar.
     Route::middleware('device.match')->prefix('sync')->group(function (): void {
         Route::post('push', SyncPushController::class)->name('sync.push');
+        Route::get('pull', SyncPullController::class)->name('sync.pull');
     });
 });
