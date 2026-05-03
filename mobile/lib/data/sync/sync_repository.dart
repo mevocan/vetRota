@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -5,6 +8,7 @@ import 'package:uuid/uuid.dart';
 import '../api/api_client.dart';
 import '../auth/auth_storage.dart';
 import '../db/app_database.dart';
+import '../photos/photos_repository.dart';
 import 'sync_mappers.dart';
 import 'ulid.dart';
 
@@ -27,6 +31,8 @@ class SyncResult {
     required this.conflictCount,
     required this.rejectedCount,
     required this.pulledCount,
+    this.photosUploaded = 0,
+    this.photosFailed = 0,
   });
 
   final int pushedCount;
@@ -34,27 +40,32 @@ class SyncResult {
   final int conflictCount;
   final int rejectedCount;
   final int pulledCount;
+  final int photosUploaded;
+  final int photosFailed;
 
-  bool get hasIssues => rejectedCount > 0;
+  bool get hasIssues => rejectedCount > 0 || photosFailed > 0;
 
   @override
   String toString() =>
       'push=$pushedCount accepted=$acceptedCount conflicts=$conflictCount '
-      'rejected=$rejectedCount pulled=$pulledCount';
+      'rejected=$rejectedCount pulled=$pulledCount '
+      'photos_up=$photosUploaded photos_fail=$photosFailed';
 }
 
 class SyncRepository {
-  SyncRepository(this._api, this._db, this._storage);
+  SyncRepository(this._api, this._db, this._storage, this._photos);
 
   final ApiClient _api;
   final AppDatabase _db;
   final AuthStorage _storage;
+  final PhotosRepository _photos;
   static const _uuid = Uuid();
 
   // ledger tablolari — delete operasyonu uretilmez.
   static const _ledgerTables = {'stock_movements'};
 
   // Pull/push tablo sirasi: FK bagimliliklari (parent once).
+  // medical_record_photos pull-only (binary /sync/photos icin push edilir).
   static const _tables = [
     'villages',
     'drugs',
@@ -63,12 +74,14 @@ class SyncRepository {
     'appointments',
     'medical_records',
     'medical_record_drugs',
+    'medical_record_photos',
     'stocks',
     'stock_movements',
   ];
 
   Future<SyncResult> sync() async {
     final pushRes = await push();
+    final photoRes = await uploadPendingPhotos();
     final pulledCount = await pull();
     return SyncResult(
       pushedCount: pushRes.pushedCount,
@@ -76,7 +89,69 @@ class SyncRepository {
       conflictCount: pushRes.conflictCount,
       rejectedCount: pushRes.rejectedCount,
       pulledCount: pulledCount,
+      photosUploaded: photoRes.$1,
+      photosFailed: photoRes.$2,
     );
+  }
+
+  // ============================================================ PHOTOS
+
+  // /sync/photos endpoint'ine multipart yukleme. Her foto ayri istek —
+  // tek transaction yok. Hata durumunda foto failed isaretlenir, sonraki
+  // sync'te tekrar denenir.
+  Future<(int uploaded, int failed)> uploadPendingPhotos() async {
+    final pending = await _photos.pendingUploads();
+    if (pending.isEmpty) return (0, 0);
+
+    var uploaded = 0;
+    var failed = 0;
+
+    for (final photo in pending) {
+      final localPath = photo.localPath;
+      if (localPath == null) continue;
+      final file = File(localPath);
+      if (!file.existsSync()) {
+        await _photos.markFailed(
+          id: photo.id,
+          reason: 'Lokal dosya bulunamadi: $localPath',
+        );
+        failed++;
+        continue;
+      }
+
+      try {
+        final form = FormData.fromMap({
+          'id': photo.id,
+          'medical_record_id': photo.medicalRecordId,
+          'animal_id': photo.animalId,
+          'taken_at': photo.takenAt.toUtc().toIso8601String(),
+          if (photo.caption != null) 'caption': photo.caption,
+          'photo': await MultipartFile.fromFile(
+            file.path,
+            filename: photo.originalFilename ?? '${photo.id}.jpg',
+          ),
+        });
+
+        final response = await _api.dio.post<Map<String, dynamic>>(
+          '/sync/photos',
+          data: form,
+          options: Options(contentType: 'multipart/form-data'),
+        );
+
+        final body = response.data ?? const {};
+        await _photos.markUploaded(
+          id: photo.id,
+          serverStoragePath: (body['storage_path'] as String?) ?? '',
+          newVersion: body['version'] as int?,
+        );
+        uploaded++;
+      } catch (e) {
+        await _photos.markFailed(id: photo.id, reason: e.toString());
+        failed++;
+      }
+    }
+
+    return (uploaded, failed);
   }
 
   // ============================================================ PUSH
@@ -681,6 +756,11 @@ class SyncRepository {
               mrDrugFromServer(j),
             );
         break;
+      case 'medical_record_photos':
+        await _db.into(_db.medicalRecordPhotos).insertOnConflictUpdate(
+              mrPhotoFromServer(j),
+            );
+        break;
       case 'stocks':
         await _db
             .into(_db.stocks)
@@ -721,6 +801,7 @@ final syncRepositoryProvider = Provider<SyncRepository>((ref) {
     ref.watch(apiClientProvider),
     ref.watch(appDatabaseProvider),
     ref.watch(authStorageProvider),
+    ref.watch(photosRepositoryProvider),
   );
 });
 

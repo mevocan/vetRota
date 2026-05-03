@@ -44,21 +44,31 @@ class AuthRepository {
         throw AuthException('Sunucudan token alinamadi.');
       }
 
-      // /me cagirip clinic_id'yi alalim — JWT decode etmek yerine
-      // sunucuya soruyoruz, daha az kuplanmis.
-      final me = await _api.get<Map<String, dynamic>>('/auth/me');
-      final clinicId = me.data?['clinic_id'] as String?;
-      if (clinicId == null) {
-        throw AuthException('Klinik bilgisi alinamadi.');
-      }
-
+      // ONCE token'i storage'a yaz — yoksa /me cagrisi Bearer header'siz
+      // gider ve 401 doner. /me basarisiz olursa session temizlenir.
       await _storage.persistSession(
         token: token,
-        clinicId: clinicId,
+        clinicId: '', // gecici, /me'den sonra guncellenir
         email: email,
       );
 
-      return LoginResult(token: token, clinicId: clinicId);
+      try {
+        final me = await _api.get<Map<String, dynamic>>('/auth/me');
+        final clinicId = me.data?['clinic_id'] as String?;
+        if (clinicId == null || clinicId.isEmpty) {
+          await _storage.clearSession();
+          throw AuthException('Klinik bilgisi alinamadi.');
+        }
+        await _storage.persistSession(
+          token: token,
+          clinicId: clinicId,
+          email: email,
+        );
+        return LoginResult(token: token, clinicId: clinicId);
+      } catch (_) {
+        await _storage.clearSession();
+        rethrow;
+      }
     } on DioException catch (e) {
       final status = e.response?.statusCode;
       if (status == 401) {

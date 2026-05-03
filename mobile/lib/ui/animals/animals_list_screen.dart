@@ -34,6 +34,8 @@ class _AnimalsListScreenState extends ConsumerState<AnimalsListScreen> {
             'Sync: ${result.acceptedCount} kabul'
             '${result.conflictCount > 0 ? ' · ${result.conflictCount} catisma' : ''}'
             '${result.rejectedCount > 0 ? ' · ${result.rejectedCount} reddedildi' : ''}'
+            '${result.photosUploaded > 0 ? ' · ${result.photosUploaded} foto' : ''}'
+            '${result.photosFailed > 0 ? ' · ${result.photosFailed} foto-hata' : ''}'
             ' · ${result.pulledCount} cekildi',
           ),
         ),

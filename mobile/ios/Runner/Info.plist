@@ -4,6 +4,12 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Muayene fotograflarini cekmek icin kamera erisimi gerekli.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Var olan fotograflari muayeneye eklemek icin galeri erisimi gerekli.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Foto cekme sirasinda mikrofon kullanilmaz.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

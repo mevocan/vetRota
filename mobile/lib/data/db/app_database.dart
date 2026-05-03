@@ -179,6 +179,31 @@ class MedicalRecordDrugs extends Table with SyncColumns {
   Set<Column> get primaryKey => {id};
 }
 
+// M4: muayene fotograflari. localPath cihazdaki dosya, serverStoragePath
+// upload sonrasi backend yolu. uploadStatus pending iken push queue
+// tarafindan multipart yuklenir.
+enum LocalUploadStatus { pending, uploaded, failed }
+
+@DataClassName('MedicalRecordPhotoRow')
+class MedicalRecordPhotos extends Table with SyncColumns {
+  TextColumn get medicalRecordId => text()();
+  TextColumn get animalId => text()();
+  TextColumn get localPath => text().nullable()();
+  TextColumn get serverStoragePath => text().nullable()();
+  TextColumn get originalFilename => text().nullable()();
+  TextColumn get mimeType => text().nullable()();
+  IntColumn get sizeBytes => integer().nullable()();
+  IntColumn get widthPx => integer().nullable()();
+  IntColumn get heightPx => integer().nullable()();
+  DateTimeColumn get takenAt => dateTime()();
+  TextColumn get caption => text().nullable()();
+  IntColumn get uploadStatus => intEnum<LocalUploadStatus>()
+      .withDefault(Constant(LocalUploadStatus.pending.index))();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 // Sync metadata: cursor + last sync timestamp.
 @DataClassName('SyncMetaRow')
 class SyncMeta extends Table {
@@ -213,14 +238,26 @@ class SyncConflicts extends Table {
   Stocks,
   StockMovements,
   MedicalRecordDrugs,
+  MedicalRecordPhotos,
   SyncMeta,
   SyncConflicts,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_open());
 
+  // schemaVersion 1 -> 2: M4 medical_record_photos eklendi.
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onCreate: (m) => m.createAll(),
+        onUpgrade: (m, from, to) async {
+          if (from < 2) {
+            await m.createTable(medicalRecordPhotos);
+          }
+        },
+      );
 
   static QueryExecutor _open() {
     return driftDatabase(name: 'vetrota_local');

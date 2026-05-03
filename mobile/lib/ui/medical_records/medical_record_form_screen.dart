@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../config/env.dart';
 import '../../data/db/app_database.dart';
 import '../../data/medical_records/medical_records_repository.dart';
+import '../../data/photos/photos_repository.dart';
 
 const Color _green = Color(Env.primaryColorHex);
 
@@ -38,6 +42,11 @@ class _MedicalRecordFormScreenState
 
   // Form ici ilac satirlari (lokal state).
   final List<_DrugLine> _drugLines = [];
+
+  // Form ici cekilen fotograflar — kayit zamaninda PhotosRepository'ye
+  // yazilir (muayene id'si oncesinde uretilir, transaction).
+  final List<XFile> _pickedPhotos = [];
+  final ImagePicker _picker = ImagePicker();
 
   static const _visitTypes = [
     ('routine', 'Rutin'),
@@ -82,7 +91,7 @@ class _MedicalRecordFormScreenState
 
     setState(() => _saving = true);
     try {
-      await ref.read(medicalRecordsRepositoryProvider).create(
+      final mr = await ref.read(medicalRecordsRepositoryProvider).create(
             animalId: widget.animal.id,
             examinedAt: _examinedAt,
             visitType: _visitType,
@@ -96,9 +105,30 @@ class _MedicalRecordFormScreenState
             followUpNeeded: _followUp,
             drugs: usages,
           );
+
+      // Fotograflari kayit sonrasi disk'e kopyala + Drift'e yaz.
+      // Sync queue (M4.5) sonra /sync/photos'a multipart yukler.
+      if (_pickedPhotos.isNotEmpty) {
+        final photosRepo = ref.read(photosRepositoryProvider);
+        for (final picked in _pickedPhotos) {
+          await photosRepo.savePickedPhoto(
+            sourceFile: File(picked.path),
+            medicalRecordId: mr.id,
+            animalId: widget.animal.id,
+            takenAt: _examinedAt,
+          );
+        }
+      }
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Muayene kaydedildi (sync bekliyor)')),
+          SnackBar(
+            content: Text(
+              'Muayene kaydedildi'
+              '${_pickedPhotos.isNotEmpty ? ' (${_pickedPhotos.length} foto)' : ''}'
+              ' (sync bekliyor)',
+            ),
+          ),
         );
         Navigator.of(context).pop();
       }
@@ -106,6 +136,21 @@ class _MedicalRecordFormScreenState
       _showError('Kayit hatasi: $e');
     } finally {
       if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  Future<void> _pickPhoto(ImageSource source) async {
+    try {
+      final picked = await _picker.pickImage(
+        source: source,
+        maxWidth: 2048,
+        maxHeight: 2048,
+        imageQuality: 85,
+      );
+      if (picked == null) return;
+      setState(() => _pickedPhotos.add(picked));
+    } catch (e) {
+      _showError('Foto alinamadi: $e');
     }
   }
 
@@ -268,6 +313,31 @@ class _MedicalRecordFormScreenState
               ),
               const Divider(height: 32),
               const Text(
+                'Fotograflar',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 8),
+              _PhotoStrip(
+                photos: _pickedPhotos,
+                onRemove: (i) => setState(() => _pickedPhotos.removeAt(i)),
+              ),
+              Row(
+                children: [
+                  TextButton.icon(
+                    onPressed: () => _pickPhoto(ImageSource.camera),
+                    icon: const Icon(Icons.photo_camera_outlined),
+                    label: const Text('Cek'),
+                  ),
+                  const SizedBox(width: 8),
+                  TextButton.icon(
+                    onPressed: () => _pickPhoto(ImageSource.gallery),
+                    icon: const Icon(Icons.photo_library_outlined),
+                    label: const Text('Galeriden sec'),
+                  ),
+                ],
+              ),
+              const Divider(height: 32),
+              const Text(
                 'Kullanilan ilaclar (stok dususu)',
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
@@ -343,6 +413,59 @@ class _MedicalRecordFormScreenState
 
 final _decimalFormatter =
     FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]'));
+
+class _PhotoStrip extends StatelessWidget {
+  const _PhotoStrip({required this.photos, required this.onRemove});
+  final List<XFile> photos;
+  final void Function(int index) onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    if (photos.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 8),
+        child: Text(
+          'Henuz foto eklenmedi.',
+          style: TextStyle(color: Colors.black54),
+        ),
+      );
+    }
+    return SizedBox(
+      height: 96,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: photos.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
+        itemBuilder: (_, i) => Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.file(
+                File(photos[i].path),
+                width: 96,
+                height: 96,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Positioned(
+              top: -4,
+              right: -4,
+              child: IconButton(
+                iconSize: 18,
+                icon: const CircleAvatar(
+                  radius: 12,
+                  backgroundColor: Colors.black54,
+                  child: Icon(Icons.close, size: 14, color: Colors.white),
+                ),
+                onPressed: () => onRemove(i),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class _DrugLine {
   String? drugId;

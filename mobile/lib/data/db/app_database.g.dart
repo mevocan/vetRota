@@ -9567,6 +9567,1232 @@ class MedicalRecordDrugsCompanion
   }
 }
 
+class $MedicalRecordPhotosTable extends MedicalRecordPhotos
+    with TableInfo<$MedicalRecordPhotosTable, MedicalRecordPhotoRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MedicalRecordPhotosTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _lastModifiedAtMeta = const VerificationMeta(
+    'lastModifiedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastModifiedAt =
+      GeneratedColumn<DateTime>(
+        'last_modified_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _originDeviceIdMeta = const VerificationMeta(
+    'originDeviceId',
+  );
+  @override
+  late final GeneratedColumn<String> originDeviceId = GeneratedColumn<String>(
+    'origin_device_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _clinicIdMeta = const VerificationMeta(
+    'clinicId',
+  );
+  @override
+  late final GeneratedColumn<String> clinicId = GeneratedColumn<String>(
+    'clinic_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<LocalSyncStatus, int>
+  localSyncStatus =
+      GeneratedColumn<int>(
+        'local_sync_status',
+        aliasedName,
+        false,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+        defaultValue: Constant(LocalSyncStatus.synced.index),
+      ).withConverter<LocalSyncStatus>(
+        $MedicalRecordPhotosTable.$converterlocalSyncStatus,
+      );
+  static const VerificationMeta _localUpdatedAtMeta = const VerificationMeta(
+    'localUpdatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> localUpdatedAt =
+      GeneratedColumn<DateTime>(
+        'local_updated_at',
+        aliasedName,
+        false,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+        defaultValue: currentDateAndTime,
+      );
+  static const VerificationMeta _lastErrorMeta = const VerificationMeta(
+    'lastError',
+  );
+  @override
+  late final GeneratedColumn<String> lastError = GeneratedColumn<String>(
+    'last_error',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _deletedLocalMeta = const VerificationMeta(
+    'deletedLocal',
+  );
+  @override
+  late final GeneratedColumn<bool> deletedLocal = GeneratedColumn<bool>(
+    'deleted_local',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("deleted_local" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _medicalRecordIdMeta = const VerificationMeta(
+    'medicalRecordId',
+  );
+  @override
+  late final GeneratedColumn<String> medicalRecordId = GeneratedColumn<String>(
+    'medical_record_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _animalIdMeta = const VerificationMeta(
+    'animalId',
+  );
+  @override
+  late final GeneratedColumn<String> animalId = GeneratedColumn<String>(
+    'animal_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _localPathMeta = const VerificationMeta(
+    'localPath',
+  );
+  @override
+  late final GeneratedColumn<String> localPath = GeneratedColumn<String>(
+    'local_path',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _serverStoragePathMeta = const VerificationMeta(
+    'serverStoragePath',
+  );
+  @override
+  late final GeneratedColumn<String> serverStoragePath =
+      GeneratedColumn<String>(
+        'server_storage_path',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _originalFilenameMeta = const VerificationMeta(
+    'originalFilename',
+  );
+  @override
+  late final GeneratedColumn<String> originalFilename = GeneratedColumn<String>(
+    'original_filename',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _mimeTypeMeta = const VerificationMeta(
+    'mimeType',
+  );
+  @override
+  late final GeneratedColumn<String> mimeType = GeneratedColumn<String>(
+    'mime_type',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _sizeBytesMeta = const VerificationMeta(
+    'sizeBytes',
+  );
+  @override
+  late final GeneratedColumn<int> sizeBytes = GeneratedColumn<int>(
+    'size_bytes',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _widthPxMeta = const VerificationMeta(
+    'widthPx',
+  );
+  @override
+  late final GeneratedColumn<int> widthPx = GeneratedColumn<int>(
+    'width_px',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _heightPxMeta = const VerificationMeta(
+    'heightPx',
+  );
+  @override
+  late final GeneratedColumn<int> heightPx = GeneratedColumn<int>(
+    'height_px',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _takenAtMeta = const VerificationMeta(
+    'takenAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> takenAt = GeneratedColumn<DateTime>(
+    'taken_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _captionMeta = const VerificationMeta(
+    'caption',
+  );
+  @override
+  late final GeneratedColumn<String> caption = GeneratedColumn<String>(
+    'caption',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<LocalUploadStatus, int>
+  uploadStatus =
+      GeneratedColumn<int>(
+        'upload_status',
+        aliasedName,
+        false,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+        defaultValue: Constant(LocalUploadStatus.pending.index),
+      ).withConverter<LocalUploadStatus>(
+        $MedicalRecordPhotosTable.$converteruploadStatus,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    version,
+    lastModifiedAt,
+    originDeviceId,
+    clinicId,
+    localSyncStatus,
+    localUpdatedAt,
+    lastError,
+    deletedLocal,
+    medicalRecordId,
+    animalId,
+    localPath,
+    serverStoragePath,
+    originalFilename,
+    mimeType,
+    sizeBytes,
+    widthPx,
+    heightPx,
+    takenAt,
+    caption,
+    uploadStatus,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'medical_record_photos';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<MedicalRecordPhotoRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    }
+    if (data.containsKey('last_modified_at')) {
+      context.handle(
+        _lastModifiedAtMeta,
+        lastModifiedAt.isAcceptableOrUnknown(
+          data['last_modified_at']!,
+          _lastModifiedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('origin_device_id')) {
+      context.handle(
+        _originDeviceIdMeta,
+        originDeviceId.isAcceptableOrUnknown(
+          data['origin_device_id']!,
+          _originDeviceIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('clinic_id')) {
+      context.handle(
+        _clinicIdMeta,
+        clinicId.isAcceptableOrUnknown(data['clinic_id']!, _clinicIdMeta),
+      );
+    }
+    if (data.containsKey('local_updated_at')) {
+      context.handle(
+        _localUpdatedAtMeta,
+        localUpdatedAt.isAcceptableOrUnknown(
+          data['local_updated_at']!,
+          _localUpdatedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_error')) {
+      context.handle(
+        _lastErrorMeta,
+        lastError.isAcceptableOrUnknown(data['last_error']!, _lastErrorMeta),
+      );
+    }
+    if (data.containsKey('deleted_local')) {
+      context.handle(
+        _deletedLocalMeta,
+        deletedLocal.isAcceptableOrUnknown(
+          data['deleted_local']!,
+          _deletedLocalMeta,
+        ),
+      );
+    }
+    if (data.containsKey('medical_record_id')) {
+      context.handle(
+        _medicalRecordIdMeta,
+        medicalRecordId.isAcceptableOrUnknown(
+          data['medical_record_id']!,
+          _medicalRecordIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_medicalRecordIdMeta);
+    }
+    if (data.containsKey('animal_id')) {
+      context.handle(
+        _animalIdMeta,
+        animalId.isAcceptableOrUnknown(data['animal_id']!, _animalIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_animalIdMeta);
+    }
+    if (data.containsKey('local_path')) {
+      context.handle(
+        _localPathMeta,
+        localPath.isAcceptableOrUnknown(data['local_path']!, _localPathMeta),
+      );
+    }
+    if (data.containsKey('server_storage_path')) {
+      context.handle(
+        _serverStoragePathMeta,
+        serverStoragePath.isAcceptableOrUnknown(
+          data['server_storage_path']!,
+          _serverStoragePathMeta,
+        ),
+      );
+    }
+    if (data.containsKey('original_filename')) {
+      context.handle(
+        _originalFilenameMeta,
+        originalFilename.isAcceptableOrUnknown(
+          data['original_filename']!,
+          _originalFilenameMeta,
+        ),
+      );
+    }
+    if (data.containsKey('mime_type')) {
+      context.handle(
+        _mimeTypeMeta,
+        mimeType.isAcceptableOrUnknown(data['mime_type']!, _mimeTypeMeta),
+      );
+    }
+    if (data.containsKey('size_bytes')) {
+      context.handle(
+        _sizeBytesMeta,
+        sizeBytes.isAcceptableOrUnknown(data['size_bytes']!, _sizeBytesMeta),
+      );
+    }
+    if (data.containsKey('width_px')) {
+      context.handle(
+        _widthPxMeta,
+        widthPx.isAcceptableOrUnknown(data['width_px']!, _widthPxMeta),
+      );
+    }
+    if (data.containsKey('height_px')) {
+      context.handle(
+        _heightPxMeta,
+        heightPx.isAcceptableOrUnknown(data['height_px']!, _heightPxMeta),
+      );
+    }
+    if (data.containsKey('taken_at')) {
+      context.handle(
+        _takenAtMeta,
+        takenAt.isAcceptableOrUnknown(data['taken_at']!, _takenAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_takenAtMeta);
+    }
+    if (data.containsKey('caption')) {
+      context.handle(
+        _captionMeta,
+        caption.isAcceptableOrUnknown(data['caption']!, _captionMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  MedicalRecordPhotoRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MedicalRecordPhotoRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      lastModifiedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_modified_at'],
+      ),
+      originDeviceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}origin_device_id'],
+      ),
+      clinicId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}clinic_id'],
+      ),
+      localSyncStatus: $MedicalRecordPhotosTable.$converterlocalSyncStatus
+          .fromSql(
+            attachedDatabase.typeMapping.read(
+              DriftSqlType.int,
+              data['${effectivePrefix}local_sync_status'],
+            )!,
+          ),
+      localUpdatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}local_updated_at'],
+      )!,
+      lastError: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_error'],
+      ),
+      deletedLocal: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}deleted_local'],
+      )!,
+      medicalRecordId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}medical_record_id'],
+      )!,
+      animalId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}animal_id'],
+      )!,
+      localPath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}local_path'],
+      ),
+      serverStoragePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}server_storage_path'],
+      ),
+      originalFilename: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}original_filename'],
+      ),
+      mimeType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mime_type'],
+      ),
+      sizeBytes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}size_bytes'],
+      ),
+      widthPx: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}width_px'],
+      ),
+      heightPx: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}height_px'],
+      ),
+      takenAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}taken_at'],
+      )!,
+      caption: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}caption'],
+      ),
+      uploadStatus: $MedicalRecordPhotosTable.$converteruploadStatus.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}upload_status'],
+        )!,
+      ),
+    );
+  }
+
+  @override
+  $MedicalRecordPhotosTable createAlias(String alias) {
+    return $MedicalRecordPhotosTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<LocalSyncStatus, int, int>
+  $converterlocalSyncStatus = const EnumIndexConverter<LocalSyncStatus>(
+    LocalSyncStatus.values,
+  );
+  static JsonTypeConverter2<LocalUploadStatus, int, int>
+  $converteruploadStatus = const EnumIndexConverter<LocalUploadStatus>(
+    LocalUploadStatus.values,
+  );
+}
+
+class MedicalRecordPhotoRow extends DataClass
+    implements Insertable<MedicalRecordPhotoRow> {
+  final String id;
+  final int version;
+  final DateTime? lastModifiedAt;
+  final String? originDeviceId;
+  final String? clinicId;
+  final LocalSyncStatus localSyncStatus;
+  final DateTime localUpdatedAt;
+  final String? lastError;
+  final bool deletedLocal;
+  final String medicalRecordId;
+  final String animalId;
+  final String? localPath;
+  final String? serverStoragePath;
+  final String? originalFilename;
+  final String? mimeType;
+  final int? sizeBytes;
+  final int? widthPx;
+  final int? heightPx;
+  final DateTime takenAt;
+  final String? caption;
+  final LocalUploadStatus uploadStatus;
+  const MedicalRecordPhotoRow({
+    required this.id,
+    required this.version,
+    this.lastModifiedAt,
+    this.originDeviceId,
+    this.clinicId,
+    required this.localSyncStatus,
+    required this.localUpdatedAt,
+    this.lastError,
+    required this.deletedLocal,
+    required this.medicalRecordId,
+    required this.animalId,
+    this.localPath,
+    this.serverStoragePath,
+    this.originalFilename,
+    this.mimeType,
+    this.sizeBytes,
+    this.widthPx,
+    this.heightPx,
+    required this.takenAt,
+    this.caption,
+    required this.uploadStatus,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || lastModifiedAt != null) {
+      map['last_modified_at'] = Variable<DateTime>(lastModifiedAt);
+    }
+    if (!nullToAbsent || originDeviceId != null) {
+      map['origin_device_id'] = Variable<String>(originDeviceId);
+    }
+    if (!nullToAbsent || clinicId != null) {
+      map['clinic_id'] = Variable<String>(clinicId);
+    }
+    {
+      map['local_sync_status'] = Variable<int>(
+        $MedicalRecordPhotosTable.$converterlocalSyncStatus.toSql(
+          localSyncStatus,
+        ),
+      );
+    }
+    map['local_updated_at'] = Variable<DateTime>(localUpdatedAt);
+    if (!nullToAbsent || lastError != null) {
+      map['last_error'] = Variable<String>(lastError);
+    }
+    map['deleted_local'] = Variable<bool>(deletedLocal);
+    map['medical_record_id'] = Variable<String>(medicalRecordId);
+    map['animal_id'] = Variable<String>(animalId);
+    if (!nullToAbsent || localPath != null) {
+      map['local_path'] = Variable<String>(localPath);
+    }
+    if (!nullToAbsent || serverStoragePath != null) {
+      map['server_storage_path'] = Variable<String>(serverStoragePath);
+    }
+    if (!nullToAbsent || originalFilename != null) {
+      map['original_filename'] = Variable<String>(originalFilename);
+    }
+    if (!nullToAbsent || mimeType != null) {
+      map['mime_type'] = Variable<String>(mimeType);
+    }
+    if (!nullToAbsent || sizeBytes != null) {
+      map['size_bytes'] = Variable<int>(sizeBytes);
+    }
+    if (!nullToAbsent || widthPx != null) {
+      map['width_px'] = Variable<int>(widthPx);
+    }
+    if (!nullToAbsent || heightPx != null) {
+      map['height_px'] = Variable<int>(heightPx);
+    }
+    map['taken_at'] = Variable<DateTime>(takenAt);
+    if (!nullToAbsent || caption != null) {
+      map['caption'] = Variable<String>(caption);
+    }
+    {
+      map['upload_status'] = Variable<int>(
+        $MedicalRecordPhotosTable.$converteruploadStatus.toSql(uploadStatus),
+      );
+    }
+    return map;
+  }
+
+  MedicalRecordPhotosCompanion toCompanion(bool nullToAbsent) {
+    return MedicalRecordPhotosCompanion(
+      id: Value(id),
+      version: Value(version),
+      lastModifiedAt: lastModifiedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastModifiedAt),
+      originDeviceId: originDeviceId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(originDeviceId),
+      clinicId: clinicId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(clinicId),
+      localSyncStatus: Value(localSyncStatus),
+      localUpdatedAt: Value(localUpdatedAt),
+      lastError: lastError == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastError),
+      deletedLocal: Value(deletedLocal),
+      medicalRecordId: Value(medicalRecordId),
+      animalId: Value(animalId),
+      localPath: localPath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(localPath),
+      serverStoragePath: serverStoragePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(serverStoragePath),
+      originalFilename: originalFilename == null && nullToAbsent
+          ? const Value.absent()
+          : Value(originalFilename),
+      mimeType: mimeType == null && nullToAbsent
+          ? const Value.absent()
+          : Value(mimeType),
+      sizeBytes: sizeBytes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sizeBytes),
+      widthPx: widthPx == null && nullToAbsent
+          ? const Value.absent()
+          : Value(widthPx),
+      heightPx: heightPx == null && nullToAbsent
+          ? const Value.absent()
+          : Value(heightPx),
+      takenAt: Value(takenAt),
+      caption: caption == null && nullToAbsent
+          ? const Value.absent()
+          : Value(caption),
+      uploadStatus: Value(uploadStatus),
+    );
+  }
+
+  factory MedicalRecordPhotoRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MedicalRecordPhotoRow(
+      id: serializer.fromJson<String>(json['id']),
+      version: serializer.fromJson<int>(json['version']),
+      lastModifiedAt: serializer.fromJson<DateTime?>(json['lastModifiedAt']),
+      originDeviceId: serializer.fromJson<String?>(json['originDeviceId']),
+      clinicId: serializer.fromJson<String?>(json['clinicId']),
+      localSyncStatus: $MedicalRecordPhotosTable.$converterlocalSyncStatus
+          .fromJson(serializer.fromJson<int>(json['localSyncStatus'])),
+      localUpdatedAt: serializer.fromJson<DateTime>(json['localUpdatedAt']),
+      lastError: serializer.fromJson<String?>(json['lastError']),
+      deletedLocal: serializer.fromJson<bool>(json['deletedLocal']),
+      medicalRecordId: serializer.fromJson<String>(json['medicalRecordId']),
+      animalId: serializer.fromJson<String>(json['animalId']),
+      localPath: serializer.fromJson<String?>(json['localPath']),
+      serverStoragePath: serializer.fromJson<String?>(
+        json['serverStoragePath'],
+      ),
+      originalFilename: serializer.fromJson<String?>(json['originalFilename']),
+      mimeType: serializer.fromJson<String?>(json['mimeType']),
+      sizeBytes: serializer.fromJson<int?>(json['sizeBytes']),
+      widthPx: serializer.fromJson<int?>(json['widthPx']),
+      heightPx: serializer.fromJson<int?>(json['heightPx']),
+      takenAt: serializer.fromJson<DateTime>(json['takenAt']),
+      caption: serializer.fromJson<String?>(json['caption']),
+      uploadStatus: $MedicalRecordPhotosTable.$converteruploadStatus.fromJson(
+        serializer.fromJson<int>(json['uploadStatus']),
+      ),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'version': serializer.toJson<int>(version),
+      'lastModifiedAt': serializer.toJson<DateTime?>(lastModifiedAt),
+      'originDeviceId': serializer.toJson<String?>(originDeviceId),
+      'clinicId': serializer.toJson<String?>(clinicId),
+      'localSyncStatus': serializer.toJson<int>(
+        $MedicalRecordPhotosTable.$converterlocalSyncStatus.toJson(
+          localSyncStatus,
+        ),
+      ),
+      'localUpdatedAt': serializer.toJson<DateTime>(localUpdatedAt),
+      'lastError': serializer.toJson<String?>(lastError),
+      'deletedLocal': serializer.toJson<bool>(deletedLocal),
+      'medicalRecordId': serializer.toJson<String>(medicalRecordId),
+      'animalId': serializer.toJson<String>(animalId),
+      'localPath': serializer.toJson<String?>(localPath),
+      'serverStoragePath': serializer.toJson<String?>(serverStoragePath),
+      'originalFilename': serializer.toJson<String?>(originalFilename),
+      'mimeType': serializer.toJson<String?>(mimeType),
+      'sizeBytes': serializer.toJson<int?>(sizeBytes),
+      'widthPx': serializer.toJson<int?>(widthPx),
+      'heightPx': serializer.toJson<int?>(heightPx),
+      'takenAt': serializer.toJson<DateTime>(takenAt),
+      'caption': serializer.toJson<String?>(caption),
+      'uploadStatus': serializer.toJson<int>(
+        $MedicalRecordPhotosTable.$converteruploadStatus.toJson(uploadStatus),
+      ),
+    };
+  }
+
+  MedicalRecordPhotoRow copyWith({
+    String? id,
+    int? version,
+    Value<DateTime?> lastModifiedAt = const Value.absent(),
+    Value<String?> originDeviceId = const Value.absent(),
+    Value<String?> clinicId = const Value.absent(),
+    LocalSyncStatus? localSyncStatus,
+    DateTime? localUpdatedAt,
+    Value<String?> lastError = const Value.absent(),
+    bool? deletedLocal,
+    String? medicalRecordId,
+    String? animalId,
+    Value<String?> localPath = const Value.absent(),
+    Value<String?> serverStoragePath = const Value.absent(),
+    Value<String?> originalFilename = const Value.absent(),
+    Value<String?> mimeType = const Value.absent(),
+    Value<int?> sizeBytes = const Value.absent(),
+    Value<int?> widthPx = const Value.absent(),
+    Value<int?> heightPx = const Value.absent(),
+    DateTime? takenAt,
+    Value<String?> caption = const Value.absent(),
+    LocalUploadStatus? uploadStatus,
+  }) => MedicalRecordPhotoRow(
+    id: id ?? this.id,
+    version: version ?? this.version,
+    lastModifiedAt: lastModifiedAt.present
+        ? lastModifiedAt.value
+        : this.lastModifiedAt,
+    originDeviceId: originDeviceId.present
+        ? originDeviceId.value
+        : this.originDeviceId,
+    clinicId: clinicId.present ? clinicId.value : this.clinicId,
+    localSyncStatus: localSyncStatus ?? this.localSyncStatus,
+    localUpdatedAt: localUpdatedAt ?? this.localUpdatedAt,
+    lastError: lastError.present ? lastError.value : this.lastError,
+    deletedLocal: deletedLocal ?? this.deletedLocal,
+    medicalRecordId: medicalRecordId ?? this.medicalRecordId,
+    animalId: animalId ?? this.animalId,
+    localPath: localPath.present ? localPath.value : this.localPath,
+    serverStoragePath: serverStoragePath.present
+        ? serverStoragePath.value
+        : this.serverStoragePath,
+    originalFilename: originalFilename.present
+        ? originalFilename.value
+        : this.originalFilename,
+    mimeType: mimeType.present ? mimeType.value : this.mimeType,
+    sizeBytes: sizeBytes.present ? sizeBytes.value : this.sizeBytes,
+    widthPx: widthPx.present ? widthPx.value : this.widthPx,
+    heightPx: heightPx.present ? heightPx.value : this.heightPx,
+    takenAt: takenAt ?? this.takenAt,
+    caption: caption.present ? caption.value : this.caption,
+    uploadStatus: uploadStatus ?? this.uploadStatus,
+  );
+  MedicalRecordPhotoRow copyWithCompanion(MedicalRecordPhotosCompanion data) {
+    return MedicalRecordPhotoRow(
+      id: data.id.present ? data.id.value : this.id,
+      version: data.version.present ? data.version.value : this.version,
+      lastModifiedAt: data.lastModifiedAt.present
+          ? data.lastModifiedAt.value
+          : this.lastModifiedAt,
+      originDeviceId: data.originDeviceId.present
+          ? data.originDeviceId.value
+          : this.originDeviceId,
+      clinicId: data.clinicId.present ? data.clinicId.value : this.clinicId,
+      localSyncStatus: data.localSyncStatus.present
+          ? data.localSyncStatus.value
+          : this.localSyncStatus,
+      localUpdatedAt: data.localUpdatedAt.present
+          ? data.localUpdatedAt.value
+          : this.localUpdatedAt,
+      lastError: data.lastError.present ? data.lastError.value : this.lastError,
+      deletedLocal: data.deletedLocal.present
+          ? data.deletedLocal.value
+          : this.deletedLocal,
+      medicalRecordId: data.medicalRecordId.present
+          ? data.medicalRecordId.value
+          : this.medicalRecordId,
+      animalId: data.animalId.present ? data.animalId.value : this.animalId,
+      localPath: data.localPath.present ? data.localPath.value : this.localPath,
+      serverStoragePath: data.serverStoragePath.present
+          ? data.serverStoragePath.value
+          : this.serverStoragePath,
+      originalFilename: data.originalFilename.present
+          ? data.originalFilename.value
+          : this.originalFilename,
+      mimeType: data.mimeType.present ? data.mimeType.value : this.mimeType,
+      sizeBytes: data.sizeBytes.present ? data.sizeBytes.value : this.sizeBytes,
+      widthPx: data.widthPx.present ? data.widthPx.value : this.widthPx,
+      heightPx: data.heightPx.present ? data.heightPx.value : this.heightPx,
+      takenAt: data.takenAt.present ? data.takenAt.value : this.takenAt,
+      caption: data.caption.present ? data.caption.value : this.caption,
+      uploadStatus: data.uploadStatus.present
+          ? data.uploadStatus.value
+          : this.uploadStatus,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MedicalRecordPhotoRow(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('lastModifiedAt: $lastModifiedAt, ')
+          ..write('originDeviceId: $originDeviceId, ')
+          ..write('clinicId: $clinicId, ')
+          ..write('localSyncStatus: $localSyncStatus, ')
+          ..write('localUpdatedAt: $localUpdatedAt, ')
+          ..write('lastError: $lastError, ')
+          ..write('deletedLocal: $deletedLocal, ')
+          ..write('medicalRecordId: $medicalRecordId, ')
+          ..write('animalId: $animalId, ')
+          ..write('localPath: $localPath, ')
+          ..write('serverStoragePath: $serverStoragePath, ')
+          ..write('originalFilename: $originalFilename, ')
+          ..write('mimeType: $mimeType, ')
+          ..write('sizeBytes: $sizeBytes, ')
+          ..write('widthPx: $widthPx, ')
+          ..write('heightPx: $heightPx, ')
+          ..write('takenAt: $takenAt, ')
+          ..write('caption: $caption, ')
+          ..write('uploadStatus: $uploadStatus')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+    version,
+    lastModifiedAt,
+    originDeviceId,
+    clinicId,
+    localSyncStatus,
+    localUpdatedAt,
+    lastError,
+    deletedLocal,
+    medicalRecordId,
+    animalId,
+    localPath,
+    serverStoragePath,
+    originalFilename,
+    mimeType,
+    sizeBytes,
+    widthPx,
+    heightPx,
+    takenAt,
+    caption,
+    uploadStatus,
+  ]);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MedicalRecordPhotoRow &&
+          other.id == this.id &&
+          other.version == this.version &&
+          other.lastModifiedAt == this.lastModifiedAt &&
+          other.originDeviceId == this.originDeviceId &&
+          other.clinicId == this.clinicId &&
+          other.localSyncStatus == this.localSyncStatus &&
+          other.localUpdatedAt == this.localUpdatedAt &&
+          other.lastError == this.lastError &&
+          other.deletedLocal == this.deletedLocal &&
+          other.medicalRecordId == this.medicalRecordId &&
+          other.animalId == this.animalId &&
+          other.localPath == this.localPath &&
+          other.serverStoragePath == this.serverStoragePath &&
+          other.originalFilename == this.originalFilename &&
+          other.mimeType == this.mimeType &&
+          other.sizeBytes == this.sizeBytes &&
+          other.widthPx == this.widthPx &&
+          other.heightPx == this.heightPx &&
+          other.takenAt == this.takenAt &&
+          other.caption == this.caption &&
+          other.uploadStatus == this.uploadStatus);
+}
+
+class MedicalRecordPhotosCompanion
+    extends UpdateCompanion<MedicalRecordPhotoRow> {
+  final Value<String> id;
+  final Value<int> version;
+  final Value<DateTime?> lastModifiedAt;
+  final Value<String?> originDeviceId;
+  final Value<String?> clinicId;
+  final Value<LocalSyncStatus> localSyncStatus;
+  final Value<DateTime> localUpdatedAt;
+  final Value<String?> lastError;
+  final Value<bool> deletedLocal;
+  final Value<String> medicalRecordId;
+  final Value<String> animalId;
+  final Value<String?> localPath;
+  final Value<String?> serverStoragePath;
+  final Value<String?> originalFilename;
+  final Value<String?> mimeType;
+  final Value<int?> sizeBytes;
+  final Value<int?> widthPx;
+  final Value<int?> heightPx;
+  final Value<DateTime> takenAt;
+  final Value<String?> caption;
+  final Value<LocalUploadStatus> uploadStatus;
+  final Value<int> rowid;
+  const MedicalRecordPhotosCompanion({
+    this.id = const Value.absent(),
+    this.version = const Value.absent(),
+    this.lastModifiedAt = const Value.absent(),
+    this.originDeviceId = const Value.absent(),
+    this.clinicId = const Value.absent(),
+    this.localSyncStatus = const Value.absent(),
+    this.localUpdatedAt = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.deletedLocal = const Value.absent(),
+    this.medicalRecordId = const Value.absent(),
+    this.animalId = const Value.absent(),
+    this.localPath = const Value.absent(),
+    this.serverStoragePath = const Value.absent(),
+    this.originalFilename = const Value.absent(),
+    this.mimeType = const Value.absent(),
+    this.sizeBytes = const Value.absent(),
+    this.widthPx = const Value.absent(),
+    this.heightPx = const Value.absent(),
+    this.takenAt = const Value.absent(),
+    this.caption = const Value.absent(),
+    this.uploadStatus = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  MedicalRecordPhotosCompanion.insert({
+    required String id,
+    this.version = const Value.absent(),
+    this.lastModifiedAt = const Value.absent(),
+    this.originDeviceId = const Value.absent(),
+    this.clinicId = const Value.absent(),
+    this.localSyncStatus = const Value.absent(),
+    this.localUpdatedAt = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.deletedLocal = const Value.absent(),
+    required String medicalRecordId,
+    required String animalId,
+    this.localPath = const Value.absent(),
+    this.serverStoragePath = const Value.absent(),
+    this.originalFilename = const Value.absent(),
+    this.mimeType = const Value.absent(),
+    this.sizeBytes = const Value.absent(),
+    this.widthPx = const Value.absent(),
+    this.heightPx = const Value.absent(),
+    required DateTime takenAt,
+    this.caption = const Value.absent(),
+    this.uploadStatus = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       medicalRecordId = Value(medicalRecordId),
+       animalId = Value(animalId),
+       takenAt = Value(takenAt);
+  static Insertable<MedicalRecordPhotoRow> custom({
+    Expression<String>? id,
+    Expression<int>? version,
+    Expression<DateTime>? lastModifiedAt,
+    Expression<String>? originDeviceId,
+    Expression<String>? clinicId,
+    Expression<int>? localSyncStatus,
+    Expression<DateTime>? localUpdatedAt,
+    Expression<String>? lastError,
+    Expression<bool>? deletedLocal,
+    Expression<String>? medicalRecordId,
+    Expression<String>? animalId,
+    Expression<String>? localPath,
+    Expression<String>? serverStoragePath,
+    Expression<String>? originalFilename,
+    Expression<String>? mimeType,
+    Expression<int>? sizeBytes,
+    Expression<int>? widthPx,
+    Expression<int>? heightPx,
+    Expression<DateTime>? takenAt,
+    Expression<String>? caption,
+    Expression<int>? uploadStatus,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (version != null) 'version': version,
+      if (lastModifiedAt != null) 'last_modified_at': lastModifiedAt,
+      if (originDeviceId != null) 'origin_device_id': originDeviceId,
+      if (clinicId != null) 'clinic_id': clinicId,
+      if (localSyncStatus != null) 'local_sync_status': localSyncStatus,
+      if (localUpdatedAt != null) 'local_updated_at': localUpdatedAt,
+      if (lastError != null) 'last_error': lastError,
+      if (deletedLocal != null) 'deleted_local': deletedLocal,
+      if (medicalRecordId != null) 'medical_record_id': medicalRecordId,
+      if (animalId != null) 'animal_id': animalId,
+      if (localPath != null) 'local_path': localPath,
+      if (serverStoragePath != null) 'server_storage_path': serverStoragePath,
+      if (originalFilename != null) 'original_filename': originalFilename,
+      if (mimeType != null) 'mime_type': mimeType,
+      if (sizeBytes != null) 'size_bytes': sizeBytes,
+      if (widthPx != null) 'width_px': widthPx,
+      if (heightPx != null) 'height_px': heightPx,
+      if (takenAt != null) 'taken_at': takenAt,
+      if (caption != null) 'caption': caption,
+      if (uploadStatus != null) 'upload_status': uploadStatus,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  MedicalRecordPhotosCompanion copyWith({
+    Value<String>? id,
+    Value<int>? version,
+    Value<DateTime?>? lastModifiedAt,
+    Value<String?>? originDeviceId,
+    Value<String?>? clinicId,
+    Value<LocalSyncStatus>? localSyncStatus,
+    Value<DateTime>? localUpdatedAt,
+    Value<String?>? lastError,
+    Value<bool>? deletedLocal,
+    Value<String>? medicalRecordId,
+    Value<String>? animalId,
+    Value<String?>? localPath,
+    Value<String?>? serverStoragePath,
+    Value<String?>? originalFilename,
+    Value<String?>? mimeType,
+    Value<int?>? sizeBytes,
+    Value<int?>? widthPx,
+    Value<int?>? heightPx,
+    Value<DateTime>? takenAt,
+    Value<String?>? caption,
+    Value<LocalUploadStatus>? uploadStatus,
+    Value<int>? rowid,
+  }) {
+    return MedicalRecordPhotosCompanion(
+      id: id ?? this.id,
+      version: version ?? this.version,
+      lastModifiedAt: lastModifiedAt ?? this.lastModifiedAt,
+      originDeviceId: originDeviceId ?? this.originDeviceId,
+      clinicId: clinicId ?? this.clinicId,
+      localSyncStatus: localSyncStatus ?? this.localSyncStatus,
+      localUpdatedAt: localUpdatedAt ?? this.localUpdatedAt,
+      lastError: lastError ?? this.lastError,
+      deletedLocal: deletedLocal ?? this.deletedLocal,
+      medicalRecordId: medicalRecordId ?? this.medicalRecordId,
+      animalId: animalId ?? this.animalId,
+      localPath: localPath ?? this.localPath,
+      serverStoragePath: serverStoragePath ?? this.serverStoragePath,
+      originalFilename: originalFilename ?? this.originalFilename,
+      mimeType: mimeType ?? this.mimeType,
+      sizeBytes: sizeBytes ?? this.sizeBytes,
+      widthPx: widthPx ?? this.widthPx,
+      heightPx: heightPx ?? this.heightPx,
+      takenAt: takenAt ?? this.takenAt,
+      caption: caption ?? this.caption,
+      uploadStatus: uploadStatus ?? this.uploadStatus,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (lastModifiedAt.present) {
+      map['last_modified_at'] = Variable<DateTime>(lastModifiedAt.value);
+    }
+    if (originDeviceId.present) {
+      map['origin_device_id'] = Variable<String>(originDeviceId.value);
+    }
+    if (clinicId.present) {
+      map['clinic_id'] = Variable<String>(clinicId.value);
+    }
+    if (localSyncStatus.present) {
+      map['local_sync_status'] = Variable<int>(
+        $MedicalRecordPhotosTable.$converterlocalSyncStatus.toSql(
+          localSyncStatus.value,
+        ),
+      );
+    }
+    if (localUpdatedAt.present) {
+      map['local_updated_at'] = Variable<DateTime>(localUpdatedAt.value);
+    }
+    if (lastError.present) {
+      map['last_error'] = Variable<String>(lastError.value);
+    }
+    if (deletedLocal.present) {
+      map['deleted_local'] = Variable<bool>(deletedLocal.value);
+    }
+    if (medicalRecordId.present) {
+      map['medical_record_id'] = Variable<String>(medicalRecordId.value);
+    }
+    if (animalId.present) {
+      map['animal_id'] = Variable<String>(animalId.value);
+    }
+    if (localPath.present) {
+      map['local_path'] = Variable<String>(localPath.value);
+    }
+    if (serverStoragePath.present) {
+      map['server_storage_path'] = Variable<String>(serverStoragePath.value);
+    }
+    if (originalFilename.present) {
+      map['original_filename'] = Variable<String>(originalFilename.value);
+    }
+    if (mimeType.present) {
+      map['mime_type'] = Variable<String>(mimeType.value);
+    }
+    if (sizeBytes.present) {
+      map['size_bytes'] = Variable<int>(sizeBytes.value);
+    }
+    if (widthPx.present) {
+      map['width_px'] = Variable<int>(widthPx.value);
+    }
+    if (heightPx.present) {
+      map['height_px'] = Variable<int>(heightPx.value);
+    }
+    if (takenAt.present) {
+      map['taken_at'] = Variable<DateTime>(takenAt.value);
+    }
+    if (caption.present) {
+      map['caption'] = Variable<String>(caption.value);
+    }
+    if (uploadStatus.present) {
+      map['upload_status'] = Variable<int>(
+        $MedicalRecordPhotosTable.$converteruploadStatus.toSql(
+          uploadStatus.value,
+        ),
+      );
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MedicalRecordPhotosCompanion(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('lastModifiedAt: $lastModifiedAt, ')
+          ..write('originDeviceId: $originDeviceId, ')
+          ..write('clinicId: $clinicId, ')
+          ..write('localSyncStatus: $localSyncStatus, ')
+          ..write('localUpdatedAt: $localUpdatedAt, ')
+          ..write('lastError: $lastError, ')
+          ..write('deletedLocal: $deletedLocal, ')
+          ..write('medicalRecordId: $medicalRecordId, ')
+          ..write('animalId: $animalId, ')
+          ..write('localPath: $localPath, ')
+          ..write('serverStoragePath: $serverStoragePath, ')
+          ..write('originalFilename: $originalFilename, ')
+          ..write('mimeType: $mimeType, ')
+          ..write('sizeBytes: $sizeBytes, ')
+          ..write('widthPx: $widthPx, ')
+          ..write('heightPx: $heightPx, ')
+          ..write('takenAt: $takenAt, ')
+          ..write('caption: $caption, ')
+          ..write('uploadStatus: $uploadStatus, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $SyncMetaTable extends SyncMeta
     with TableInfo<$SyncMetaTable, SyncMetaRow> {
   @override
@@ -10228,6 +11454,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $StockMovementsTable stockMovements = $StockMovementsTable(this);
   late final $MedicalRecordDrugsTable medicalRecordDrugs =
       $MedicalRecordDrugsTable(this);
+  late final $MedicalRecordPhotosTable medicalRecordPhotos =
+      $MedicalRecordPhotosTable(this);
   late final $SyncMetaTable syncMeta = $SyncMetaTable(this);
   late final $SyncConflictsTable syncConflicts = $SyncConflictsTable(this);
   @override
@@ -10244,6 +11472,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     stocks,
     stockMovements,
     medicalRecordDrugs,
+    medicalRecordPhotos,
     syncMeta,
     syncConflicts,
   ];
@@ -14481,6 +15710,548 @@ typedef $$MedicalRecordDrugsTableProcessedTableManager =
       MedicalRecordDrugRow,
       PrefetchHooks Function()
     >;
+typedef $$MedicalRecordPhotosTableCreateCompanionBuilder =
+    MedicalRecordPhotosCompanion Function({
+      required String id,
+      Value<int> version,
+      Value<DateTime?> lastModifiedAt,
+      Value<String?> originDeviceId,
+      Value<String?> clinicId,
+      Value<LocalSyncStatus> localSyncStatus,
+      Value<DateTime> localUpdatedAt,
+      Value<String?> lastError,
+      Value<bool> deletedLocal,
+      required String medicalRecordId,
+      required String animalId,
+      Value<String?> localPath,
+      Value<String?> serverStoragePath,
+      Value<String?> originalFilename,
+      Value<String?> mimeType,
+      Value<int?> sizeBytes,
+      Value<int?> widthPx,
+      Value<int?> heightPx,
+      required DateTime takenAt,
+      Value<String?> caption,
+      Value<LocalUploadStatus> uploadStatus,
+      Value<int> rowid,
+    });
+typedef $$MedicalRecordPhotosTableUpdateCompanionBuilder =
+    MedicalRecordPhotosCompanion Function({
+      Value<String> id,
+      Value<int> version,
+      Value<DateTime?> lastModifiedAt,
+      Value<String?> originDeviceId,
+      Value<String?> clinicId,
+      Value<LocalSyncStatus> localSyncStatus,
+      Value<DateTime> localUpdatedAt,
+      Value<String?> lastError,
+      Value<bool> deletedLocal,
+      Value<String> medicalRecordId,
+      Value<String> animalId,
+      Value<String?> localPath,
+      Value<String?> serverStoragePath,
+      Value<String?> originalFilename,
+      Value<String?> mimeType,
+      Value<int?> sizeBytes,
+      Value<int?> widthPx,
+      Value<int?> heightPx,
+      Value<DateTime> takenAt,
+      Value<String?> caption,
+      Value<LocalUploadStatus> uploadStatus,
+      Value<int> rowid,
+    });
+
+class $$MedicalRecordPhotosTableFilterComposer
+    extends Composer<_$AppDatabase, $MedicalRecordPhotosTable> {
+  $$MedicalRecordPhotosTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastModifiedAt => $composableBuilder(
+    column: $table.lastModifiedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get originDeviceId => $composableBuilder(
+    column: $table.originDeviceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get clinicId => $composableBuilder(
+    column: $table.clinicId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<LocalSyncStatus, LocalSyncStatus, int>
+  get localSyncStatus => $composableBuilder(
+    column: $table.localSyncStatus,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<DateTime> get localUpdatedAt => $composableBuilder(
+    column: $table.localUpdatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get deletedLocal => $composableBuilder(
+    column: $table.deletedLocal,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get medicalRecordId => $composableBuilder(
+    column: $table.medicalRecordId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get animalId => $composableBuilder(
+    column: $table.animalId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get localPath => $composableBuilder(
+    column: $table.localPath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get serverStoragePath => $composableBuilder(
+    column: $table.serverStoragePath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get originalFilename => $composableBuilder(
+    column: $table.originalFilename,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mimeType => $composableBuilder(
+    column: $table.mimeType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get sizeBytes => $composableBuilder(
+    column: $table.sizeBytes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get widthPx => $composableBuilder(
+    column: $table.widthPx,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get heightPx => $composableBuilder(
+    column: $table.heightPx,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get takenAt => $composableBuilder(
+    column: $table.takenAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get caption => $composableBuilder(
+    column: $table.caption,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<LocalUploadStatus, LocalUploadStatus, int>
+  get uploadStatus => $composableBuilder(
+    column: $table.uploadStatus,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+}
+
+class $$MedicalRecordPhotosTableOrderingComposer
+    extends Composer<_$AppDatabase, $MedicalRecordPhotosTable> {
+  $$MedicalRecordPhotosTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastModifiedAt => $composableBuilder(
+    column: $table.lastModifiedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get originDeviceId => $composableBuilder(
+    column: $table.originDeviceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get clinicId => $composableBuilder(
+    column: $table.clinicId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get localSyncStatus => $composableBuilder(
+    column: $table.localSyncStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get localUpdatedAt => $composableBuilder(
+    column: $table.localUpdatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get deletedLocal => $composableBuilder(
+    column: $table.deletedLocal,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get medicalRecordId => $composableBuilder(
+    column: $table.medicalRecordId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get animalId => $composableBuilder(
+    column: $table.animalId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get localPath => $composableBuilder(
+    column: $table.localPath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get serverStoragePath => $composableBuilder(
+    column: $table.serverStoragePath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get originalFilename => $composableBuilder(
+    column: $table.originalFilename,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mimeType => $composableBuilder(
+    column: $table.mimeType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get sizeBytes => $composableBuilder(
+    column: $table.sizeBytes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get widthPx => $composableBuilder(
+    column: $table.widthPx,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get heightPx => $composableBuilder(
+    column: $table.heightPx,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get takenAt => $composableBuilder(
+    column: $table.takenAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get caption => $composableBuilder(
+    column: $table.caption,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get uploadStatus => $composableBuilder(
+    column: $table.uploadStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$MedicalRecordPhotosTableAnnotationComposer
+    extends Composer<_$AppDatabase, $MedicalRecordPhotosTable> {
+  $$MedicalRecordPhotosTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastModifiedAt => $composableBuilder(
+    column: $table.lastModifiedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get originDeviceId => $composableBuilder(
+    column: $table.originDeviceId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get clinicId =>
+      $composableBuilder(column: $table.clinicId, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<LocalSyncStatus, int> get localSyncStatus =>
+      $composableBuilder(
+        column: $table.localSyncStatus,
+        builder: (column) => column,
+      );
+
+  GeneratedColumn<DateTime> get localUpdatedAt => $composableBuilder(
+    column: $table.localUpdatedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get lastError =>
+      $composableBuilder(column: $table.lastError, builder: (column) => column);
+
+  GeneratedColumn<bool> get deletedLocal => $composableBuilder(
+    column: $table.deletedLocal,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get medicalRecordId => $composableBuilder(
+    column: $table.medicalRecordId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get animalId =>
+      $composableBuilder(column: $table.animalId, builder: (column) => column);
+
+  GeneratedColumn<String> get localPath =>
+      $composableBuilder(column: $table.localPath, builder: (column) => column);
+
+  GeneratedColumn<String> get serverStoragePath => $composableBuilder(
+    column: $table.serverStoragePath,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get originalFilename => $composableBuilder(
+    column: $table.originalFilename,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get mimeType =>
+      $composableBuilder(column: $table.mimeType, builder: (column) => column);
+
+  GeneratedColumn<int> get sizeBytes =>
+      $composableBuilder(column: $table.sizeBytes, builder: (column) => column);
+
+  GeneratedColumn<int> get widthPx =>
+      $composableBuilder(column: $table.widthPx, builder: (column) => column);
+
+  GeneratedColumn<int> get heightPx =>
+      $composableBuilder(column: $table.heightPx, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get takenAt =>
+      $composableBuilder(column: $table.takenAt, builder: (column) => column);
+
+  GeneratedColumn<String> get caption =>
+      $composableBuilder(column: $table.caption, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<LocalUploadStatus, int> get uploadStatus =>
+      $composableBuilder(
+        column: $table.uploadStatus,
+        builder: (column) => column,
+      );
+}
+
+class $$MedicalRecordPhotosTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $MedicalRecordPhotosTable,
+          MedicalRecordPhotoRow,
+          $$MedicalRecordPhotosTableFilterComposer,
+          $$MedicalRecordPhotosTableOrderingComposer,
+          $$MedicalRecordPhotosTableAnnotationComposer,
+          $$MedicalRecordPhotosTableCreateCompanionBuilder,
+          $$MedicalRecordPhotosTableUpdateCompanionBuilder,
+          (
+            MedicalRecordPhotoRow,
+            BaseReferences<
+              _$AppDatabase,
+              $MedicalRecordPhotosTable,
+              MedicalRecordPhotoRow
+            >,
+          ),
+          MedicalRecordPhotoRow,
+          PrefetchHooks Function()
+        > {
+  $$MedicalRecordPhotosTableTableManager(
+    _$AppDatabase db,
+    $MedicalRecordPhotosTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$MedicalRecordPhotosTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$MedicalRecordPhotosTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$MedicalRecordPhotosTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<DateTime?> lastModifiedAt = const Value.absent(),
+                Value<String?> originDeviceId = const Value.absent(),
+                Value<String?> clinicId = const Value.absent(),
+                Value<LocalSyncStatus> localSyncStatus = const Value.absent(),
+                Value<DateTime> localUpdatedAt = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
+                Value<bool> deletedLocal = const Value.absent(),
+                Value<String> medicalRecordId = const Value.absent(),
+                Value<String> animalId = const Value.absent(),
+                Value<String?> localPath = const Value.absent(),
+                Value<String?> serverStoragePath = const Value.absent(),
+                Value<String?> originalFilename = const Value.absent(),
+                Value<String?> mimeType = const Value.absent(),
+                Value<int?> sizeBytes = const Value.absent(),
+                Value<int?> widthPx = const Value.absent(),
+                Value<int?> heightPx = const Value.absent(),
+                Value<DateTime> takenAt = const Value.absent(),
+                Value<String?> caption = const Value.absent(),
+                Value<LocalUploadStatus> uploadStatus = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => MedicalRecordPhotosCompanion(
+                id: id,
+                version: version,
+                lastModifiedAt: lastModifiedAt,
+                originDeviceId: originDeviceId,
+                clinicId: clinicId,
+                localSyncStatus: localSyncStatus,
+                localUpdatedAt: localUpdatedAt,
+                lastError: lastError,
+                deletedLocal: deletedLocal,
+                medicalRecordId: medicalRecordId,
+                animalId: animalId,
+                localPath: localPath,
+                serverStoragePath: serverStoragePath,
+                originalFilename: originalFilename,
+                mimeType: mimeType,
+                sizeBytes: sizeBytes,
+                widthPx: widthPx,
+                heightPx: heightPx,
+                takenAt: takenAt,
+                caption: caption,
+                uploadStatus: uploadStatus,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                Value<int> version = const Value.absent(),
+                Value<DateTime?> lastModifiedAt = const Value.absent(),
+                Value<String?> originDeviceId = const Value.absent(),
+                Value<String?> clinicId = const Value.absent(),
+                Value<LocalSyncStatus> localSyncStatus = const Value.absent(),
+                Value<DateTime> localUpdatedAt = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
+                Value<bool> deletedLocal = const Value.absent(),
+                required String medicalRecordId,
+                required String animalId,
+                Value<String?> localPath = const Value.absent(),
+                Value<String?> serverStoragePath = const Value.absent(),
+                Value<String?> originalFilename = const Value.absent(),
+                Value<String?> mimeType = const Value.absent(),
+                Value<int?> sizeBytes = const Value.absent(),
+                Value<int?> widthPx = const Value.absent(),
+                Value<int?> heightPx = const Value.absent(),
+                required DateTime takenAt,
+                Value<String?> caption = const Value.absent(),
+                Value<LocalUploadStatus> uploadStatus = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => MedicalRecordPhotosCompanion.insert(
+                id: id,
+                version: version,
+                lastModifiedAt: lastModifiedAt,
+                originDeviceId: originDeviceId,
+                clinicId: clinicId,
+                localSyncStatus: localSyncStatus,
+                localUpdatedAt: localUpdatedAt,
+                lastError: lastError,
+                deletedLocal: deletedLocal,
+                medicalRecordId: medicalRecordId,
+                animalId: animalId,
+                localPath: localPath,
+                serverStoragePath: serverStoragePath,
+                originalFilename: originalFilename,
+                mimeType: mimeType,
+                sizeBytes: sizeBytes,
+                widthPx: widthPx,
+                heightPx: heightPx,
+                takenAt: takenAt,
+                caption: caption,
+                uploadStatus: uploadStatus,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$MedicalRecordPhotosTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $MedicalRecordPhotosTable,
+      MedicalRecordPhotoRow,
+      $$MedicalRecordPhotosTableFilterComposer,
+      $$MedicalRecordPhotosTableOrderingComposer,
+      $$MedicalRecordPhotosTableAnnotationComposer,
+      $$MedicalRecordPhotosTableCreateCompanionBuilder,
+      $$MedicalRecordPhotosTableUpdateCompanionBuilder,
+      (
+        MedicalRecordPhotoRow,
+        BaseReferences<
+          _$AppDatabase,
+          $MedicalRecordPhotosTable,
+          MedicalRecordPhotoRow
+        >,
+      ),
+      MedicalRecordPhotoRow,
+      PrefetchHooks Function()
+    >;
 typedef $$SyncMetaTableCreateCompanionBuilder =
     SyncMetaCompanion Function({
       required String key,
@@ -14866,6 +16637,8 @@ class $AppDatabaseManager {
       $$StockMovementsTableTableManager(_db, _db.stockMovements);
   $$MedicalRecordDrugsTableTableManager get medicalRecordDrugs =>
       $$MedicalRecordDrugsTableTableManager(_db, _db.medicalRecordDrugs);
+  $$MedicalRecordPhotosTableTableManager get medicalRecordPhotos =>
+      $$MedicalRecordPhotosTableTableManager(_db, _db.medicalRecordPhotos);
   $$SyncMetaTableTableManager get syncMeta =>
       $$SyncMetaTableTableManager(_db, _db.syncMeta);
   $$SyncConflictsTableTableManager get syncConflicts =>

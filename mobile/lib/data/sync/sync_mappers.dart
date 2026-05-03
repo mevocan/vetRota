@@ -245,6 +245,34 @@ MedicalRecordDrugsCompanion mrDrugFromServer(Map<String, dynamic> j) {
   );
 }
 
+// ========== MEDICAL RECORD PHOTOS ==========
+//
+// Push gondermeyiz (binary /sync/photos kanalindan); sadece pull mapper'i.
+
+MedicalRecordPhotosCompanion mrPhotoFromServer(Map<String, dynamic> j) {
+  return MedicalRecordPhotosCompanion(
+    id: Value(j['id'] as String),
+    medicalRecordId: Value(j['medical_record_id'] as String),
+    animalId: Value(j['animal_id'] as String),
+    serverStoragePath: Value(j['storage_path'] as String?),
+    originalFilename: Value(j['original_filename'] as String?),
+    mimeType: Value(j['mime_type'] as String?),
+    sizeBytes: Value((j['size_bytes'] as num?)?.toInt()),
+    widthPx: Value((j['width'] as num?)?.toInt()),
+    heightPx: Value((j['height'] as num?)?.toInt()),
+    takenAt: Value(_parseIso(j['taken_at'])!),
+    caption: Value(j['caption'] as String?),
+    uploadStatus: const Value(LocalUploadStatus.uploaded),
+    version: Value(j['version'] as int? ?? 0),
+    lastModifiedAt: Value(_parseIso(j['last_modified_at'])),
+    originDeviceId: Value(j['origin_device_id'] as String?),
+    clinicId: Value(j['clinic_id'] as String?),
+    deletedLocal: Value(j['deleted_at'] != null),
+    localSyncStatus: const Value(LocalSyncStatus.synced),
+    localUpdatedAt: Value(DateTime.now()),
+  );
+}
+
 // ========== DRUGS ==========
 
 Map<String, dynamic> drugToData(DrugRow r) => {
