@@ -145,7 +145,7 @@ override yapilir. `RefreshDatabase` her test once tabloyu wipe eder.
 | 8 | Push queue manager (`sync_status='pending'` → batch) | ✅ | `SyncRepository.push()` 9 tabloda pending kayıtları toplar; ULID `client_sync_id`; `accepted/conflicts/rejected` bucket'larına göre `localSyncStatus` + `version` günceller; `sync_conflicts` tablosuna log düşer |
 | 9 | Pull queue manager (cursor + delta) | ✅ | `SyncRepository.pull()` cursor loop (max 50 sayfa); `last_synced_at` + `pull_cursor` `sync_meta`'da; `insertOnConflictUpdate` ile upsert; `deleted_at != null` → `deletedLocal=true` |
 | 10 | Conflict UI (badge + bildirim) | ✅ | AppBar'da bekleyen sayısı + çatışma rozeti; `ConflictsScreen` `sync_conflicts` listesi gösterir |
-| 11 | Airplane-mode demo testi | ⬜ | Aşağıdaki **M3.6/11 Manuel Test Rehberi** ile yapılır |
+| 11 | Airplane-mode demo testi | 🟡 | Senaryo 1 (smoke) ✅ 2026-05-03 emulator'da geçti — login + hayvan ekle + sync. Senaryo 2-5 (airplane-mode, echo, LWW, idempotent retry) sahada test bekliyor. Bug düzeltildi: AuthRepository token'ı `/me` çağrısından önce storage'a yazıyor (yoksa interceptor Bearer ekleyemiyordu, 401 dönüyordu) |
 
 ---
 

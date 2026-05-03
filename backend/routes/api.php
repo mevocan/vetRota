@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\DrugController;
 use App\Http\Controllers\Api\FarmerController;
 use App\Http\Controllers\Api\MedicalRecordController;
 use App\Http\Controllers\Api\StockMovementController;
+use App\Http\Controllers\Api\V1\Sync\SyncPhotoController;
 use App\Http\Controllers\Api\V1\Sync\SyncPullController;
 use App\Http\Controllers\Api\V1\Sync\SyncPushController;
 use App\Http\Controllers\Api\V1\Sync\SyncStatusController;
@@ -47,5 +48,7 @@ Route::middleware('auth:api')->group(function (): void {
         Route::post('push', SyncPushController::class)->name('sync.push');
         Route::get('pull', SyncPullController::class)->name('sync.pull');
         Route::get('status', SyncStatusController::class)->name('sync.status');
+        // M4.2: muayene fotograflari icin ayri multipart kanal.
+        Route::post('photos', SyncPhotoController::class)->name('sync.photos');
     });
 });

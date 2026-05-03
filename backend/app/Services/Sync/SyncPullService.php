@@ -29,6 +29,7 @@ class SyncPullService
         'appointments',
         'medical_records',
         'medical_record_drugs',
+        'medical_record_photos',
         'drugs',
         'stocks',
         'stock_movements',
@@ -40,7 +41,8 @@ class SyncPullService
     /** softDeletes olan tablolar (deleted_at kolonu var). */
     private array $softDeleteTables = [
         'villages', 'farmers', 'animals', 'appointments',
-        'medical_records', 'medical_record_drugs', 'drugs', 'stocks',
+        'medical_records', 'medical_record_drugs', 'medical_record_photos',
+        'drugs', 'stocks',
     ];
 
     public function execute(
