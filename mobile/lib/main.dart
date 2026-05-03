@@ -1,16 +1,15 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'config/env.dart';
+import 'data/auth/auth_repository.dart';
+import 'ui/animals/animals_list_screen.dart';
 
 void main() {
-  runApp(const VetRotaApp());
+  runApp(const ProviderScope(child: VetRotaApp()));
 }
 
-const Color _vetrotaGreen = Color(0xFF2E7D32);
-
-// Android emulator: 10.0.2.2 host loopback. Fiziksel cihazda LAN IP'ye degistir.
-const String _apiBase = 'http://10.0.2.2:8000/api/v1';
+const Color _vetrotaGreen = Color(Env.primaryColorHex);
 
 class VetRotaApp extends StatelessWidget {
   const VetRotaApp({super.key});
@@ -19,28 +18,58 @@ class VetRotaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'VetRota',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: _vetrotaGreen),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: _vetrotaGreen,
+          primary: _vetrotaGreen,
+        ),
         useMaterial3: true,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: _vetrotaGreen,
+          foregroundColor: Colors.white,
+          elevation: 0,
+        ),
       ),
-      home: const LoginScreen(),
+      home: const _SessionGate(),
     );
   }
 }
 
-class LoginScreen extends StatefulWidget {
+// Boot ekrani: secure storage'dan token var mi diye bakar, ona gore
+// LoginScreen veya HomeScreen acar.
+class _SessionGate extends ConsumerWidget {
+  const _SessionGate();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final session = ref.watch(sessionPresentProvider);
+    return session.when(
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (e, _) => Scaffold(
+        body: Center(child: Text('Oturum kontrol hatasi: $e')),
+      ),
+      data: (hasSession) =>
+          hasSession ? const AnimalsListScreen() : const LoginScreen(),
+    );
+  }
+}
+
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailController = TextEditingController(text: 'ahmet@vetrota.com.tr');
   final _passwordController = TextEditingController(text: 'sifre1234');
+  final _formKey = GlobalKey<FormState>();
   bool _loading = false;
   String? _error;
-  String? _token;
 
   @override
   void dispose() {
@@ -50,31 +79,22 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) return;
     setState(() {
       _loading = true;
       _error = null;
-      _token = null;
     });
     try {
-      final response = await http.post(
-        Uri.parse('$_apiBase/auth/login'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: jsonEncode({
-          'email': _emailController.text.trim(),
-          'password': _passwordController.text,
-        }),
-      );
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body) as Map<String, dynamic>;
-        setState(() => _token = data['access_token'] as String);
-      } else {
-        setState(() => _error = 'Giriş başarısız (${response.statusCode}).');
-      }
+      await ref.read(authRepositoryProvider).login(
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+          );
+      // Session provider'i invalidate et ki _SessionGate yeniden okusun.
+      ref.invalidate(sessionPresentProvider);
+    } on AuthException catch (e) {
+      if (mounted) setState(() => _error = e.message);
     } catch (e) {
-      setState(() => _error = 'Bağlantı hatası: $e');
+      if (mounted) setState(() => _error = 'Beklenmeyen hata: $e');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -83,84 +103,80 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('VetRota'),
-        backgroundColor: _vetrotaGreen,
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(title: const Text('VetRota')),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 400),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Text(
-                    'Veteriner panel girişi',
-                    style: TextStyle(fontSize: 18),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 24),
-                  TextField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: 'E-posta',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Şifre',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  FilledButton(
-                    onPressed: _loading ? null : _login,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: _vetrotaGreen,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    child: _loading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Text('Giriş yap'),
-                  ),
-                  if (_error != null) ...[
-                    const SizedBox(height: 16),
-                    Text(
-                      _error!,
-                      style: const TextStyle(color: Colors.red),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                  if (_token != null) ...[
-                    const SizedBox(height: 16),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const SizedBox(height: 12),
                     const Text(
-                      'Giris basarili',
-                      style: TextStyle(color: _vetrotaGreen, fontSize: 16),
+                      'Veteriner panel girisi',
+                      style: TextStyle(fontSize: 18),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 8),
-                    SelectableText(
-                      'Token: ${_token!.substring(0, 32)}...',
-                      style: const TextStyle(fontSize: 11, fontFamily: 'monospace'),
-                      textAlign: TextAlign.center,
+                    const SizedBox(height: 24),
+                    TextFormField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      autocorrect: false,
+                      decoration: const InputDecoration(
+                        labelText: 'E-posta',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (v) => (v == null || !v.contains('@'))
+                          ? 'Gecerli bir e-posta girin'
+                          : null,
                     ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Sifre',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (v) => (v == null || v.length < 4)
+                          ? 'Sifre cok kisa'
+                          : null,
+                    ),
+                    const SizedBox(height: 24),
+                    FilledButton(
+                      onPressed: _loading ? null : _login,
+                      style: FilledButton.styleFrom(
+                        backgroundColor: _vetrotaGreen,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      child: _loading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Text(
+                              'Giris yap',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                    ),
+                    if (_error != null) ...[
+                      const SizedBox(height: 16),
+                      Text(
+                        _error!,
+                        style: const TextStyle(color: Colors.red),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ),
@@ -169,3 +185,4 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+
