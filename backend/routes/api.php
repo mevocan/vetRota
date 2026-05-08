@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\DrugController;
 use App\Http\Controllers\Api\FarmerController;
 use App\Http\Controllers\Api\MedicalRecordController;
 use App\Http\Controllers\Api\StockMovementController;
+use App\Http\Controllers\Api\V1\Reports\DailyReportController;
 use App\Http\Controllers\Api\V1\Sync\SyncPhotoController;
 use App\Http\Controllers\Api\V1\Sync\SyncPullController;
 use App\Http\Controllers\Api\V1\Sync\SyncPushController;
@@ -41,6 +42,11 @@ Route::middleware('auth:api')->group(function (): void {
     Route::apiResource('appointments', AppointmentController::class);
     // Koy dropdown icin read-only.
     Route::get('villages', [VillageController::class, 'index']);
+
+    // M5.2: gunluk rapor (server-only, sync disi).
+    Route::get('reports/daily/{date}', [DailyReportController::class, 'show'])
+        ->where('date', '\d{4}-\d{2}-\d{2}')
+        ->name('reports.daily.show');
 
     // M3.3: Sync push. device.match middleware JWT'deki device_id ile
     // header X-Device-Id eslesmesini zorunlu kilar.
