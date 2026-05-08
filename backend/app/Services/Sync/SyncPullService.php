@@ -35,6 +35,7 @@ class SyncPullService
         'stock_movements',
         'routes',
         'route_stops',
+        'vaccine_schedules',
     ];
 
     /** clinic_id filtresi olmayan global tablolar. */
@@ -44,7 +45,7 @@ class SyncPullService
     private array $softDeleteTables = [
         'villages', 'farmers', 'animals', 'appointments',
         'medical_records', 'medical_record_drugs', 'medical_record_photos',
-        'drugs', 'stocks', 'routes', 'route_stops',
+        'drugs', 'stocks', 'routes', 'route_stops', 'vaccine_schedules',
     ];
 
     public function execute(
