@@ -118,13 +118,17 @@ Buradaki hata sonraki tüm işleri çöpe atar.
   saklanır, internete gelince sunucuya yüklenir. Hayvan detayında aynı
   hayvanın geçmiş fotoğrafları kronolojik yan yana gösterilir.
 
-### M5 — "Randevu + Rota optimizasyonu + Gün sonu raporu"
+### M5 — "Randevu + Rota optimizasyonu + Gün sonu raporu" 🟡
 - **Bağımlılık:** M3
 - **Tamamlandı kriteri:** Veteriner günlük randevularını Flutter'da
   görür; "Rotayı optimize et" butonu ile randevular mesafeye göre
   sıralanır (nearest-neighbor). Harita üzerinde sırayla gösterilir.
   Gün sonu sync'te PDF raporu üretilir (muayene sayısı, mesafe, ilaç,
   gelir).
+- **Durum (2026-05-08):** M5.1–M5.8 ✅ kod (backend + mobile,
+  flutter analyze temiz). M5.9 cihaz smoke testi bekliyor —
+  `M5SmokeSeeder` hazır (5 köy lat/lng + 5 randevu). Detay:
+  `docs/m5-progress.md`. Sıradaki: M6.
 
 ### M6 — "SMS portalı + Çiftçi portal sayfası + Aşı hatırlatma"
 - **Bağımlılık:** M2 (sync'ten bağımsız)
