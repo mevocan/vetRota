@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\DrugController;
 use App\Http\Controllers\Api\FarmerController;
 use App\Http\Controllers\Api\MedicalRecordController;
 use App\Http\Controllers\Api\StockMovementController;
+use App\Http\Controllers\Api\V1\FarmerPortal\FarmerPortalController;
 use App\Http\Controllers\Api\V1\Reports\DailyReportController;
 use App\Http\Controllers\Api\V1\Sync\SyncPhotoController;
 use App\Http\Controllers\Api\V1\Sync\SyncPullController;
@@ -16,6 +17,11 @@ use App\Http\Controllers\Api\V1\Sync\SyncPushController;
 use App\Http\Controllers\Api\V1\Sync\SyncStatusController;
 use App\Http\Controllers\Api\VillageController;
 use Illuminate\Support\Facades\Route;
+
+// M6.7: Ciftci portal — auth'suz, token ile dogrulanir.
+Route::get('farmer-portal/{token}', [FarmerPortalController::class, 'show'])
+    ->where('token', '[A-Za-z0-9]{16,64}')
+    ->name('farmer-portal.show');
 
 Route::prefix('auth')->group(function (): void {
     Route::post('login', [AuthController::class, 'login']);

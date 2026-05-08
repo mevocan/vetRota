@@ -62,9 +62,9 @@ SMS queue'ya `vaccination_reminder` tipiyle iter.
 | M6.4 | Backend: Randevu oluşunca SMS hatırlatma (Observer/Event → SendSmsJob dispatch) | ⏳ AppointmentObserver yazıldı, idempotent (sms_messages lookup), Docker test bekliyor |
 | M6.5 | Backend: `vaccine_schedules` + `vaccination_reminders` migration + Eloquent + observer (deceased animal → schedule deactivate) | ⏳ Migration + modeller + sync trigger + SyncPullService listesinde, deceased observer M6.7'ye ertelendi |
 | M6.6 | Backend: Aşı planı CRUD endpoint + `vaccinations:scan` scheduler command | 🟡 Komut + Kernel scheduler (08:00 Europe/Istanbul) yazıldı; CRUD endpoint M6.9 web'de |
-| M6.7 | Backend: Çiftçi portal endpoint — `GET /api/v1/farmer-portal/{token}` (token verify, animals + son muayene + yaklaşan aşı) | ⬜ Bekliyor |
-| M6.8 | Web: Nuxt `/farmer/[token]` SSR sayfası (public, login'siz) | ⬜ Bekliyor |
-| M6.9 | Web: Klinik panelinde "Aşı planları" sayfası (CRUD listesi/formu) | ⬜ Bekliyor |
+| M6.7 | Backend: Çiftçi portal endpoint — `GET /api/v1/farmer-portal/{token}` (token verify, animals + son muayene + yaklaşan aşı) | ⏳ Yazıldı, route auth'suz, 410 enumeration-safe |
+| M6.8 | Web: Nuxt `/farmer/[token]` SSR sayfası (public, login'siz) | ⏳ Yazıldı, layout=false, 410 ekrani, hayvan listesi + son muayene + yaklasan asilar |
+| M6.9 | Web: Klinik panelinde "Aşı planları" sayfası (CRUD listesi/formu) | ⬜ Bekliyor (önce backend VaccineSchedule CRUD endpoint gerekli) |
 | M6.10 | Smoke: randevu oluştur → SMS log'u kontrol et → portal token'ı tarayıcıda aç → Nuxt sayfası 200 + içerik | ⬜ Bekliyor |
 
 **Durum sembolleri:** ✅ Tamam · ⏳ Yazıldı (test edilmedi) · 🟡 Kısmi · ⚠️ Bloke · ⬜ Bekliyor
