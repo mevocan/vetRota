@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\DrugController;
 use App\Http\Controllers\Api\FarmerController;
 use App\Http\Controllers\Api\MedicalRecordController;
 use App\Http\Controllers\Api\StockMovementController;
+use App\Http\Controllers\Api\VaccineScheduleController;
 use App\Http\Controllers\Api\V1\FarmerPortal\FarmerPortalController;
 use App\Http\Controllers\Api\V1\Reports\DailyReportController;
 use App\Http\Controllers\Api\V1\Sync\SyncPhotoController;
@@ -46,6 +47,9 @@ Route::middleware('auth:api')->group(function (): void {
     Route::post('stock-movements', [StockMovementController::class, 'store']);
     // M2 vertical slice 5: Randevular.
     Route::apiResource('appointments', AppointmentController::class);
+    // M6.9: Asi planlari CRUD.
+    Route::apiResource('vaccine-schedules', VaccineScheduleController::class)
+        ->parameters(['vaccine-schedules' => 'vaccineSchedule']);
     // Koy dropdown icin read-only.
     Route::get('villages', [VillageController::class, 'index']);
 
