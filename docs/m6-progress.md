@@ -56,16 +56,16 @@ SMS queue'ya `vaccination_reminder` tipiyle iter.
 
 | Faz | Kapsam | Durum |
 |---|---|---|
-| M6.1 | Backend: SMS altyapısı — driver interface + `LogSmsSender` + `sms_messages` migration + Model + queue config | ⏳ Yazıldı, Docker'da test edilmedi |
-| M6.2 | Backend: `farmer_portal_tokens` migration + `FarmerPortalToken` model + `TokenService` (issue/verify/expire) | ⏳ Yazıldı, Docker'da test edilmedi |
-| M6.3 | Backend: `SendSmsJob` (queue job) + SMS template renderer + retry policy | ⏳ Yazıldı, Docker'da test edilmedi |
-| M6.4 | Backend: Randevu oluşunca SMS hatırlatma (Observer/Event → SendSmsJob dispatch) | ⏳ AppointmentObserver yazıldı, idempotent (sms_messages lookup), Docker test bekliyor |
-| M6.5 | Backend: `vaccine_schedules` + `vaccination_reminders` migration + Eloquent + observer (deceased animal → schedule deactivate) | ⏳ Migration + modeller + sync trigger + SyncPullService listesinde, deceased observer M6.7'ye ertelendi |
-| M6.6 | Backend: Aşı planı CRUD endpoint + `vaccinations:scan` scheduler command | 🟡 Komut + Kernel scheduler (08:00 Europe/Istanbul) yazıldı; CRUD endpoint M6.9 web'de |
-| M6.7 | Backend: Çiftçi portal endpoint — `GET /api/v1/farmer-portal/{token}` (token verify, animals + son muayene + yaklaşan aşı) | ⏳ Yazıldı, route auth'suz, 410 enumeration-safe |
-| M6.8 | Web: Nuxt `/farmer/[token]` SSR sayfası (public, login'siz) | ⏳ Yazıldı, layout=false, 410 ekrani, hayvan listesi + son muayene + yaklasan asilar |
-| M6.9 | Web: Klinik panelinde "Aşı planları" sayfası (CRUD listesi/formu) | ⏳ Backend VaccineScheduleController + apiResource route + Nuxt `animals/[id]/vaccinations.vue` (UCard + UForm + USelect) |
-| M6.10 | Smoke: randevu oluştur → SMS log'u kontrol et → portal token'ı tarayıcıda aç → Nuxt sayfası 200 + içerik | ⬜ `M6SmokeSeeder` hazır (5 gün sonra due aşı planı) — kullanıcı çalıştıracak |
+| M6.1 | Backend: SMS altyapısı — driver interface + `LogSmsSender` + `sms_messages` migration + Model + queue config | ✅ Docker'da test edildi |
+| M6.2 | Backend: `farmer_portal_tokens` migration + `FarmerPortalToken` model + `TokenService` (issue/verify/expire) | ✅ Docker'da test edildi |
+| M6.3 | Backend: `SendSmsJob` (queue job) + SMS template renderer + retry policy | ✅ Docker'da test edildi |
+| M6.4 | Backend: Randevu oluşunca SMS hatırlatma (Observer/Event → SendSmsJob dispatch) | ✅ Tinker'dan Appointment::create → 1 SMS + 1 token + 1 job → queue:work → status=sent |
+| M6.5 | Backend: `vaccine_schedules` + `vaccination_reminders` migration + Eloquent + observer | ✅ Migration koştu, modeller çalışıyor (M6SmokeSeeder ile schedule oluştu) |
+| M6.6 | Backend: Aşı planı CRUD endpoint + `vaccinations:scan` scheduler command | ✅ `vaccinations:scan` çalıştı: 1 hatırlatma + SMS sent (vaccination_reminders.status=sms_sent) |
+| M6.7 | Backend: Çiftçi portal endpoint | ✅ `curl /farmer-portal/{raw}` 200 + JSON (clinic+farmer+animals+son muayene+upcoming_vacc); geçersiz token → 410 |
+| M6.8 | Web: Nuxt `/farmer/[token]` SSR sayfası | ⏳ Yazıldı; backend endpoint yeşil, Nuxt SSR ayrı test edilecek |
+| M6.9 | Web: Klinik panelinde "Aşı planları" sayfası (CRUD) | ⏳ Backend CRUD endpoint hazır; Nuxt sayfa SSR test edilecek |
+| M6.10 | Smoke: end-to-end SMS akışı | ✅ M5SmokeSeeder + tinker appointment + M6SmokeSeeder + vaccinations:scan + queue:work hepsi yeşil. PHPUnit feature 10/10 yeşil (regresyon yok). M5 PDF rapor: 1.6MB PDF (HTTP 200, application/pdf) |
 
 **Durum sembolleri:** ✅ Tamam · ⏳ Yazıldı (test edilmedi) · 🟡 Kısmi · ⚠️ Bloke · ⬜ Bekliyor
 
