@@ -51,12 +51,12 @@ manuel "Bugünün raporu" butonu ile tetiklenir.
 | M5.1 | Backend: `routes` + `route_stops` migration + Eloquent modeller + sync kolonları | ✅ Migration + sync trigger + SyncPullService listesine eklendi |
 | M5.2 | Backend: `daily_reports` migration + Eloquent + report data API endpoint | ✅ Server-only tablo, `GET /reports/daily/{date}` JSON döner |
 | M5.3 | Backend: `dompdf` kurulum + report PDF generator (Blade template) + `GET /reports/daily/{date}` | ✅ `?format=pdf` ile binary PDF + `storage/app/reports/...` cache |
-| M5.4 | Flutter: `flutter_map` kurulum + Drift `routes`/`route_stops` tabloları | ⏳ Yazıldı, cihazda smoke yapılmadı |
-| M5.5 | Flutter: Bugünün randevuları ekranı (`AppointmentsTodayScreen`) — liste + harita toggle | ⬜ Bekliyor |
-| M5.6 | Flutter: "Rotayı optimize et" — nearest-neighbor + sıralı pin gösterimi + polyline | ⬜ Bekliyor |
-| M5.7 | Flutter: Randevu detayı → "Tamamlandı" işaretle (status=completed) + isteğe bağlı muayene formuna geç | ⬜ Bekliyor |
-| M5.8 | Flutter: "Bugünün raporu" — backend'e tetikle, PDF indir, paylaş/aç | ⬜ Bekliyor |
-| M5.9 | Smoke test (cihaz): bugünün randevularını gör, optimize et, tamamla, raporu indir | ⬜ Bekliyor |
+| M5.4 | Flutter: `flutter_map` kurulum + Drift `routes`/`route_stops` tabloları | ✅ flutter analyze temiz |
+| M5.5 | Flutter: Bugünün randevuları ekranı (`AppointmentsTodayScreen`) — liste + harita toggle | ✅ AppointmentsRepository + SegmentedButton + FlutterMap markers |
+| M5.6 | Flutter: "Rotayı optimize et" — nearest-neighbor + sıralı pin gösterimi + polyline | ✅ `route_optimizer.dart` (saf Dart + test) + Drift'e route + numaralı pin + polyline |
+| M5.7 | Flutter: Randevu detayı → "Tamamlandı" işaretle (status=completed) + isteğe bağlı muayene formuna geç | ✅ Bottom sheet, status=completed, MR formuna animal pre-fill |
+| M5.8 | Flutter: "Bugünün raporu" — backend'e tetikle, PDF indir, paylaş/aç | ✅ ReportsRepository + open_filex + AppBar butonu |
+| M5.9 | Smoke test (cihaz): bugünün randevularını gör, optimize et, tamamla, raporu indir | ⬜ Cihazda elle test bekliyor |
 
 **Durum sembolleri:** ✅ Tamam · ⏳ Yazıldı (test edilmedi) · 🟡 Kısmi · ⚠️ Bloke · ⬜ Bekliyor
 

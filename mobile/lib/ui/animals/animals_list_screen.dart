@@ -6,6 +6,7 @@ import '../../data/animals/animals_repository.dart';
 import '../../data/auth/auth_repository.dart';
 import '../../data/db/app_database.dart';
 import '../../data/sync/sync_repository.dart';
+import '../appointments/appointments_today_screen.dart';
 import '../sync/conflicts_screen.dart';
 import 'animal_detail_screen.dart';
 import 'animal_form_screen.dart';
@@ -60,6 +61,17 @@ class _AnimalsListScreenState extends ConsumerState<AnimalsListScreen> {
       appBar: AppBar(
         title: const Text('Hayvanlar'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.event),
+            tooltip: 'Bugunun randevulari',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const AppointmentsTodayScreen(),
+                ),
+              );
+            },
+          ),
           // Catisma rozeti
           conflictsAsync.maybeWhen(
             data: (rows) => rows.isEmpty
