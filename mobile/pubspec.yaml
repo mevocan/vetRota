@@ -34,6 +34,12 @@ dependencies:
   # Foto cekme + galeri (M4)
   image_picker: ^1.1.2
 
+  # Harita + rota (M5)
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  # PDF aç/paylaş
+  open_filex: ^4.5.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

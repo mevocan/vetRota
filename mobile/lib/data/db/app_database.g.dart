@@ -10793,6 +10793,1895 @@ class MedicalRecordPhotosCompanion
   }
 }
 
+class $RoutesTable extends Routes with TableInfo<$RoutesTable, RouteRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RoutesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _lastModifiedAtMeta = const VerificationMeta(
+    'lastModifiedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastModifiedAt =
+      GeneratedColumn<DateTime>(
+        'last_modified_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _originDeviceIdMeta = const VerificationMeta(
+    'originDeviceId',
+  );
+  @override
+  late final GeneratedColumn<String> originDeviceId = GeneratedColumn<String>(
+    'origin_device_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _clinicIdMeta = const VerificationMeta(
+    'clinicId',
+  );
+  @override
+  late final GeneratedColumn<String> clinicId = GeneratedColumn<String>(
+    'clinic_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<LocalSyncStatus, int>
+  localSyncStatus = GeneratedColumn<int>(
+    'local_sync_status',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: Constant(LocalSyncStatus.synced.index),
+  ).withConverter<LocalSyncStatus>($RoutesTable.$converterlocalSyncStatus);
+  static const VerificationMeta _localUpdatedAtMeta = const VerificationMeta(
+    'localUpdatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> localUpdatedAt =
+      GeneratedColumn<DateTime>(
+        'local_updated_at',
+        aliasedName,
+        false,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+        defaultValue: currentDateAndTime,
+      );
+  static const VerificationMeta _lastErrorMeta = const VerificationMeta(
+    'lastError',
+  );
+  @override
+  late final GeneratedColumn<String> lastError = GeneratedColumn<String>(
+    'last_error',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _deletedLocalMeta = const VerificationMeta(
+    'deletedLocal',
+  );
+  @override
+  late final GeneratedColumn<bool> deletedLocal = GeneratedColumn<bool>(
+    'deleted_local',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("deleted_local" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _vetIdMeta = const VerificationMeta('vetId');
+  @override
+  late final GeneratedColumn<int> vetId = GeneratedColumn<int>(
+    'vet_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
+    'date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _totalDistanceKmMeta = const VerificationMeta(
+    'totalDistanceKm',
+  );
+  @override
+  late final GeneratedColumn<double> totalDistanceKm = GeneratedColumn<double>(
+    'total_distance_km',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _totalDurationMinMeta = const VerificationMeta(
+    'totalDurationMin',
+  );
+  @override
+  late final GeneratedColumn<int> totalDurationMin = GeneratedColumn<int>(
+    'total_duration_min',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _startLatMeta = const VerificationMeta(
+    'startLat',
+  );
+  @override
+  late final GeneratedColumn<double> startLat = GeneratedColumn<double>(
+    'start_lat',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _startLngMeta = const VerificationMeta(
+    'startLng',
+  );
+  @override
+  late final GeneratedColumn<double> startLng = GeneratedColumn<double>(
+    'start_lng',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    version,
+    lastModifiedAt,
+    originDeviceId,
+    clinicId,
+    localSyncStatus,
+    localUpdatedAt,
+    lastError,
+    deletedLocal,
+    vetId,
+    date,
+    totalDistanceKm,
+    totalDurationMin,
+    startLat,
+    startLng,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'routes';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<RouteRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    }
+    if (data.containsKey('last_modified_at')) {
+      context.handle(
+        _lastModifiedAtMeta,
+        lastModifiedAt.isAcceptableOrUnknown(
+          data['last_modified_at']!,
+          _lastModifiedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('origin_device_id')) {
+      context.handle(
+        _originDeviceIdMeta,
+        originDeviceId.isAcceptableOrUnknown(
+          data['origin_device_id']!,
+          _originDeviceIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('clinic_id')) {
+      context.handle(
+        _clinicIdMeta,
+        clinicId.isAcceptableOrUnknown(data['clinic_id']!, _clinicIdMeta),
+      );
+    }
+    if (data.containsKey('local_updated_at')) {
+      context.handle(
+        _localUpdatedAtMeta,
+        localUpdatedAt.isAcceptableOrUnknown(
+          data['local_updated_at']!,
+          _localUpdatedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_error')) {
+      context.handle(
+        _lastErrorMeta,
+        lastError.isAcceptableOrUnknown(data['last_error']!, _lastErrorMeta),
+      );
+    }
+    if (data.containsKey('deleted_local')) {
+      context.handle(
+        _deletedLocalMeta,
+        deletedLocal.isAcceptableOrUnknown(
+          data['deleted_local']!,
+          _deletedLocalMeta,
+        ),
+      );
+    }
+    if (data.containsKey('vet_id')) {
+      context.handle(
+        _vetIdMeta,
+        vetId.isAcceptableOrUnknown(data['vet_id']!, _vetIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_vetIdMeta);
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+        _dateMeta,
+        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
+    if (data.containsKey('total_distance_km')) {
+      context.handle(
+        _totalDistanceKmMeta,
+        totalDistanceKm.isAcceptableOrUnknown(
+          data['total_distance_km']!,
+          _totalDistanceKmMeta,
+        ),
+      );
+    }
+    if (data.containsKey('total_duration_min')) {
+      context.handle(
+        _totalDurationMinMeta,
+        totalDurationMin.isAcceptableOrUnknown(
+          data['total_duration_min']!,
+          _totalDurationMinMeta,
+        ),
+      );
+    }
+    if (data.containsKey('start_lat')) {
+      context.handle(
+        _startLatMeta,
+        startLat.isAcceptableOrUnknown(data['start_lat']!, _startLatMeta),
+      );
+    }
+    if (data.containsKey('start_lng')) {
+      context.handle(
+        _startLngMeta,
+        startLng.isAcceptableOrUnknown(data['start_lng']!, _startLngMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  RouteRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RouteRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      lastModifiedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_modified_at'],
+      ),
+      originDeviceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}origin_device_id'],
+      ),
+      clinicId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}clinic_id'],
+      ),
+      localSyncStatus: $RoutesTable.$converterlocalSyncStatus.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}local_sync_status'],
+        )!,
+      ),
+      localUpdatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}local_updated_at'],
+      )!,
+      lastError: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_error'],
+      ),
+      deletedLocal: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}deleted_local'],
+      )!,
+      vetId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}vet_id'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}date'],
+      )!,
+      totalDistanceKm: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}total_distance_km'],
+      ),
+      totalDurationMin: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_duration_min'],
+      ),
+      startLat: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}start_lat'],
+      ),
+      startLng: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}start_lng'],
+      ),
+    );
+  }
+
+  @override
+  $RoutesTable createAlias(String alias) {
+    return $RoutesTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<LocalSyncStatus, int, int>
+  $converterlocalSyncStatus = const EnumIndexConverter<LocalSyncStatus>(
+    LocalSyncStatus.values,
+  );
+}
+
+class RouteRow extends DataClass implements Insertable<RouteRow> {
+  final String id;
+  final int version;
+  final DateTime? lastModifiedAt;
+  final String? originDeviceId;
+  final String? clinicId;
+  final LocalSyncStatus localSyncStatus;
+  final DateTime localUpdatedAt;
+  final String? lastError;
+  final bool deletedLocal;
+  final int vetId;
+  final DateTime date;
+  final double? totalDistanceKm;
+  final int? totalDurationMin;
+  final double? startLat;
+  final double? startLng;
+  const RouteRow({
+    required this.id,
+    required this.version,
+    this.lastModifiedAt,
+    this.originDeviceId,
+    this.clinicId,
+    required this.localSyncStatus,
+    required this.localUpdatedAt,
+    this.lastError,
+    required this.deletedLocal,
+    required this.vetId,
+    required this.date,
+    this.totalDistanceKm,
+    this.totalDurationMin,
+    this.startLat,
+    this.startLng,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || lastModifiedAt != null) {
+      map['last_modified_at'] = Variable<DateTime>(lastModifiedAt);
+    }
+    if (!nullToAbsent || originDeviceId != null) {
+      map['origin_device_id'] = Variable<String>(originDeviceId);
+    }
+    if (!nullToAbsent || clinicId != null) {
+      map['clinic_id'] = Variable<String>(clinicId);
+    }
+    {
+      map['local_sync_status'] = Variable<int>(
+        $RoutesTable.$converterlocalSyncStatus.toSql(localSyncStatus),
+      );
+    }
+    map['local_updated_at'] = Variable<DateTime>(localUpdatedAt);
+    if (!nullToAbsent || lastError != null) {
+      map['last_error'] = Variable<String>(lastError);
+    }
+    map['deleted_local'] = Variable<bool>(deletedLocal);
+    map['vet_id'] = Variable<int>(vetId);
+    map['date'] = Variable<DateTime>(date);
+    if (!nullToAbsent || totalDistanceKm != null) {
+      map['total_distance_km'] = Variable<double>(totalDistanceKm);
+    }
+    if (!nullToAbsent || totalDurationMin != null) {
+      map['total_duration_min'] = Variable<int>(totalDurationMin);
+    }
+    if (!nullToAbsent || startLat != null) {
+      map['start_lat'] = Variable<double>(startLat);
+    }
+    if (!nullToAbsent || startLng != null) {
+      map['start_lng'] = Variable<double>(startLng);
+    }
+    return map;
+  }
+
+  RoutesCompanion toCompanion(bool nullToAbsent) {
+    return RoutesCompanion(
+      id: Value(id),
+      version: Value(version),
+      lastModifiedAt: lastModifiedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastModifiedAt),
+      originDeviceId: originDeviceId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(originDeviceId),
+      clinicId: clinicId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(clinicId),
+      localSyncStatus: Value(localSyncStatus),
+      localUpdatedAt: Value(localUpdatedAt),
+      lastError: lastError == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastError),
+      deletedLocal: Value(deletedLocal),
+      vetId: Value(vetId),
+      date: Value(date),
+      totalDistanceKm: totalDistanceKm == null && nullToAbsent
+          ? const Value.absent()
+          : Value(totalDistanceKm),
+      totalDurationMin: totalDurationMin == null && nullToAbsent
+          ? const Value.absent()
+          : Value(totalDurationMin),
+      startLat: startLat == null && nullToAbsent
+          ? const Value.absent()
+          : Value(startLat),
+      startLng: startLng == null && nullToAbsent
+          ? const Value.absent()
+          : Value(startLng),
+    );
+  }
+
+  factory RouteRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RouteRow(
+      id: serializer.fromJson<String>(json['id']),
+      version: serializer.fromJson<int>(json['version']),
+      lastModifiedAt: serializer.fromJson<DateTime?>(json['lastModifiedAt']),
+      originDeviceId: serializer.fromJson<String?>(json['originDeviceId']),
+      clinicId: serializer.fromJson<String?>(json['clinicId']),
+      localSyncStatus: $RoutesTable.$converterlocalSyncStatus.fromJson(
+        serializer.fromJson<int>(json['localSyncStatus']),
+      ),
+      localUpdatedAt: serializer.fromJson<DateTime>(json['localUpdatedAt']),
+      lastError: serializer.fromJson<String?>(json['lastError']),
+      deletedLocal: serializer.fromJson<bool>(json['deletedLocal']),
+      vetId: serializer.fromJson<int>(json['vetId']),
+      date: serializer.fromJson<DateTime>(json['date']),
+      totalDistanceKm: serializer.fromJson<double?>(json['totalDistanceKm']),
+      totalDurationMin: serializer.fromJson<int?>(json['totalDurationMin']),
+      startLat: serializer.fromJson<double?>(json['startLat']),
+      startLng: serializer.fromJson<double?>(json['startLng']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'version': serializer.toJson<int>(version),
+      'lastModifiedAt': serializer.toJson<DateTime?>(lastModifiedAt),
+      'originDeviceId': serializer.toJson<String?>(originDeviceId),
+      'clinicId': serializer.toJson<String?>(clinicId),
+      'localSyncStatus': serializer.toJson<int>(
+        $RoutesTable.$converterlocalSyncStatus.toJson(localSyncStatus),
+      ),
+      'localUpdatedAt': serializer.toJson<DateTime>(localUpdatedAt),
+      'lastError': serializer.toJson<String?>(lastError),
+      'deletedLocal': serializer.toJson<bool>(deletedLocal),
+      'vetId': serializer.toJson<int>(vetId),
+      'date': serializer.toJson<DateTime>(date),
+      'totalDistanceKm': serializer.toJson<double?>(totalDistanceKm),
+      'totalDurationMin': serializer.toJson<int?>(totalDurationMin),
+      'startLat': serializer.toJson<double?>(startLat),
+      'startLng': serializer.toJson<double?>(startLng),
+    };
+  }
+
+  RouteRow copyWith({
+    String? id,
+    int? version,
+    Value<DateTime?> lastModifiedAt = const Value.absent(),
+    Value<String?> originDeviceId = const Value.absent(),
+    Value<String?> clinicId = const Value.absent(),
+    LocalSyncStatus? localSyncStatus,
+    DateTime? localUpdatedAt,
+    Value<String?> lastError = const Value.absent(),
+    bool? deletedLocal,
+    int? vetId,
+    DateTime? date,
+    Value<double?> totalDistanceKm = const Value.absent(),
+    Value<int?> totalDurationMin = const Value.absent(),
+    Value<double?> startLat = const Value.absent(),
+    Value<double?> startLng = const Value.absent(),
+  }) => RouteRow(
+    id: id ?? this.id,
+    version: version ?? this.version,
+    lastModifiedAt: lastModifiedAt.present
+        ? lastModifiedAt.value
+        : this.lastModifiedAt,
+    originDeviceId: originDeviceId.present
+        ? originDeviceId.value
+        : this.originDeviceId,
+    clinicId: clinicId.present ? clinicId.value : this.clinicId,
+    localSyncStatus: localSyncStatus ?? this.localSyncStatus,
+    localUpdatedAt: localUpdatedAt ?? this.localUpdatedAt,
+    lastError: lastError.present ? lastError.value : this.lastError,
+    deletedLocal: deletedLocal ?? this.deletedLocal,
+    vetId: vetId ?? this.vetId,
+    date: date ?? this.date,
+    totalDistanceKm: totalDistanceKm.present
+        ? totalDistanceKm.value
+        : this.totalDistanceKm,
+    totalDurationMin: totalDurationMin.present
+        ? totalDurationMin.value
+        : this.totalDurationMin,
+    startLat: startLat.present ? startLat.value : this.startLat,
+    startLng: startLng.present ? startLng.value : this.startLng,
+  );
+  RouteRow copyWithCompanion(RoutesCompanion data) {
+    return RouteRow(
+      id: data.id.present ? data.id.value : this.id,
+      version: data.version.present ? data.version.value : this.version,
+      lastModifiedAt: data.lastModifiedAt.present
+          ? data.lastModifiedAt.value
+          : this.lastModifiedAt,
+      originDeviceId: data.originDeviceId.present
+          ? data.originDeviceId.value
+          : this.originDeviceId,
+      clinicId: data.clinicId.present ? data.clinicId.value : this.clinicId,
+      localSyncStatus: data.localSyncStatus.present
+          ? data.localSyncStatus.value
+          : this.localSyncStatus,
+      localUpdatedAt: data.localUpdatedAt.present
+          ? data.localUpdatedAt.value
+          : this.localUpdatedAt,
+      lastError: data.lastError.present ? data.lastError.value : this.lastError,
+      deletedLocal: data.deletedLocal.present
+          ? data.deletedLocal.value
+          : this.deletedLocal,
+      vetId: data.vetId.present ? data.vetId.value : this.vetId,
+      date: data.date.present ? data.date.value : this.date,
+      totalDistanceKm: data.totalDistanceKm.present
+          ? data.totalDistanceKm.value
+          : this.totalDistanceKm,
+      totalDurationMin: data.totalDurationMin.present
+          ? data.totalDurationMin.value
+          : this.totalDurationMin,
+      startLat: data.startLat.present ? data.startLat.value : this.startLat,
+      startLng: data.startLng.present ? data.startLng.value : this.startLng,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RouteRow(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('lastModifiedAt: $lastModifiedAt, ')
+          ..write('originDeviceId: $originDeviceId, ')
+          ..write('clinicId: $clinicId, ')
+          ..write('localSyncStatus: $localSyncStatus, ')
+          ..write('localUpdatedAt: $localUpdatedAt, ')
+          ..write('lastError: $lastError, ')
+          ..write('deletedLocal: $deletedLocal, ')
+          ..write('vetId: $vetId, ')
+          ..write('date: $date, ')
+          ..write('totalDistanceKm: $totalDistanceKm, ')
+          ..write('totalDurationMin: $totalDurationMin, ')
+          ..write('startLat: $startLat, ')
+          ..write('startLng: $startLng')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    version,
+    lastModifiedAt,
+    originDeviceId,
+    clinicId,
+    localSyncStatus,
+    localUpdatedAt,
+    lastError,
+    deletedLocal,
+    vetId,
+    date,
+    totalDistanceKm,
+    totalDurationMin,
+    startLat,
+    startLng,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RouteRow &&
+          other.id == this.id &&
+          other.version == this.version &&
+          other.lastModifiedAt == this.lastModifiedAt &&
+          other.originDeviceId == this.originDeviceId &&
+          other.clinicId == this.clinicId &&
+          other.localSyncStatus == this.localSyncStatus &&
+          other.localUpdatedAt == this.localUpdatedAt &&
+          other.lastError == this.lastError &&
+          other.deletedLocal == this.deletedLocal &&
+          other.vetId == this.vetId &&
+          other.date == this.date &&
+          other.totalDistanceKm == this.totalDistanceKm &&
+          other.totalDurationMin == this.totalDurationMin &&
+          other.startLat == this.startLat &&
+          other.startLng == this.startLng);
+}
+
+class RoutesCompanion extends UpdateCompanion<RouteRow> {
+  final Value<String> id;
+  final Value<int> version;
+  final Value<DateTime?> lastModifiedAt;
+  final Value<String?> originDeviceId;
+  final Value<String?> clinicId;
+  final Value<LocalSyncStatus> localSyncStatus;
+  final Value<DateTime> localUpdatedAt;
+  final Value<String?> lastError;
+  final Value<bool> deletedLocal;
+  final Value<int> vetId;
+  final Value<DateTime> date;
+  final Value<double?> totalDistanceKm;
+  final Value<int?> totalDurationMin;
+  final Value<double?> startLat;
+  final Value<double?> startLng;
+  final Value<int> rowid;
+  const RoutesCompanion({
+    this.id = const Value.absent(),
+    this.version = const Value.absent(),
+    this.lastModifiedAt = const Value.absent(),
+    this.originDeviceId = const Value.absent(),
+    this.clinicId = const Value.absent(),
+    this.localSyncStatus = const Value.absent(),
+    this.localUpdatedAt = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.deletedLocal = const Value.absent(),
+    this.vetId = const Value.absent(),
+    this.date = const Value.absent(),
+    this.totalDistanceKm = const Value.absent(),
+    this.totalDurationMin = const Value.absent(),
+    this.startLat = const Value.absent(),
+    this.startLng = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  RoutesCompanion.insert({
+    required String id,
+    this.version = const Value.absent(),
+    this.lastModifiedAt = const Value.absent(),
+    this.originDeviceId = const Value.absent(),
+    this.clinicId = const Value.absent(),
+    this.localSyncStatus = const Value.absent(),
+    this.localUpdatedAt = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.deletedLocal = const Value.absent(),
+    required int vetId,
+    required DateTime date,
+    this.totalDistanceKm = const Value.absent(),
+    this.totalDurationMin = const Value.absent(),
+    this.startLat = const Value.absent(),
+    this.startLng = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       vetId = Value(vetId),
+       date = Value(date);
+  static Insertable<RouteRow> custom({
+    Expression<String>? id,
+    Expression<int>? version,
+    Expression<DateTime>? lastModifiedAt,
+    Expression<String>? originDeviceId,
+    Expression<String>? clinicId,
+    Expression<int>? localSyncStatus,
+    Expression<DateTime>? localUpdatedAt,
+    Expression<String>? lastError,
+    Expression<bool>? deletedLocal,
+    Expression<int>? vetId,
+    Expression<DateTime>? date,
+    Expression<double>? totalDistanceKm,
+    Expression<int>? totalDurationMin,
+    Expression<double>? startLat,
+    Expression<double>? startLng,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (version != null) 'version': version,
+      if (lastModifiedAt != null) 'last_modified_at': lastModifiedAt,
+      if (originDeviceId != null) 'origin_device_id': originDeviceId,
+      if (clinicId != null) 'clinic_id': clinicId,
+      if (localSyncStatus != null) 'local_sync_status': localSyncStatus,
+      if (localUpdatedAt != null) 'local_updated_at': localUpdatedAt,
+      if (lastError != null) 'last_error': lastError,
+      if (deletedLocal != null) 'deleted_local': deletedLocal,
+      if (vetId != null) 'vet_id': vetId,
+      if (date != null) 'date': date,
+      if (totalDistanceKm != null) 'total_distance_km': totalDistanceKm,
+      if (totalDurationMin != null) 'total_duration_min': totalDurationMin,
+      if (startLat != null) 'start_lat': startLat,
+      if (startLng != null) 'start_lng': startLng,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  RoutesCompanion copyWith({
+    Value<String>? id,
+    Value<int>? version,
+    Value<DateTime?>? lastModifiedAt,
+    Value<String?>? originDeviceId,
+    Value<String?>? clinicId,
+    Value<LocalSyncStatus>? localSyncStatus,
+    Value<DateTime>? localUpdatedAt,
+    Value<String?>? lastError,
+    Value<bool>? deletedLocal,
+    Value<int>? vetId,
+    Value<DateTime>? date,
+    Value<double?>? totalDistanceKm,
+    Value<int?>? totalDurationMin,
+    Value<double?>? startLat,
+    Value<double?>? startLng,
+    Value<int>? rowid,
+  }) {
+    return RoutesCompanion(
+      id: id ?? this.id,
+      version: version ?? this.version,
+      lastModifiedAt: lastModifiedAt ?? this.lastModifiedAt,
+      originDeviceId: originDeviceId ?? this.originDeviceId,
+      clinicId: clinicId ?? this.clinicId,
+      localSyncStatus: localSyncStatus ?? this.localSyncStatus,
+      localUpdatedAt: localUpdatedAt ?? this.localUpdatedAt,
+      lastError: lastError ?? this.lastError,
+      deletedLocal: deletedLocal ?? this.deletedLocal,
+      vetId: vetId ?? this.vetId,
+      date: date ?? this.date,
+      totalDistanceKm: totalDistanceKm ?? this.totalDistanceKm,
+      totalDurationMin: totalDurationMin ?? this.totalDurationMin,
+      startLat: startLat ?? this.startLat,
+      startLng: startLng ?? this.startLng,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (lastModifiedAt.present) {
+      map['last_modified_at'] = Variable<DateTime>(lastModifiedAt.value);
+    }
+    if (originDeviceId.present) {
+      map['origin_device_id'] = Variable<String>(originDeviceId.value);
+    }
+    if (clinicId.present) {
+      map['clinic_id'] = Variable<String>(clinicId.value);
+    }
+    if (localSyncStatus.present) {
+      map['local_sync_status'] = Variable<int>(
+        $RoutesTable.$converterlocalSyncStatus.toSql(localSyncStatus.value),
+      );
+    }
+    if (localUpdatedAt.present) {
+      map['local_updated_at'] = Variable<DateTime>(localUpdatedAt.value);
+    }
+    if (lastError.present) {
+      map['last_error'] = Variable<String>(lastError.value);
+    }
+    if (deletedLocal.present) {
+      map['deleted_local'] = Variable<bool>(deletedLocal.value);
+    }
+    if (vetId.present) {
+      map['vet_id'] = Variable<int>(vetId.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<DateTime>(date.value);
+    }
+    if (totalDistanceKm.present) {
+      map['total_distance_km'] = Variable<double>(totalDistanceKm.value);
+    }
+    if (totalDurationMin.present) {
+      map['total_duration_min'] = Variable<int>(totalDurationMin.value);
+    }
+    if (startLat.present) {
+      map['start_lat'] = Variable<double>(startLat.value);
+    }
+    if (startLng.present) {
+      map['start_lng'] = Variable<double>(startLng.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RoutesCompanion(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('lastModifiedAt: $lastModifiedAt, ')
+          ..write('originDeviceId: $originDeviceId, ')
+          ..write('clinicId: $clinicId, ')
+          ..write('localSyncStatus: $localSyncStatus, ')
+          ..write('localUpdatedAt: $localUpdatedAt, ')
+          ..write('lastError: $lastError, ')
+          ..write('deletedLocal: $deletedLocal, ')
+          ..write('vetId: $vetId, ')
+          ..write('date: $date, ')
+          ..write('totalDistanceKm: $totalDistanceKm, ')
+          ..write('totalDurationMin: $totalDurationMin, ')
+          ..write('startLat: $startLat, ')
+          ..write('startLng: $startLng, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $RouteStopsTable extends RouteStops
+    with TableInfo<$RouteStopsTable, RouteStopRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RouteStopsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _lastModifiedAtMeta = const VerificationMeta(
+    'lastModifiedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastModifiedAt =
+      GeneratedColumn<DateTime>(
+        'last_modified_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _originDeviceIdMeta = const VerificationMeta(
+    'originDeviceId',
+  );
+  @override
+  late final GeneratedColumn<String> originDeviceId = GeneratedColumn<String>(
+    'origin_device_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _clinicIdMeta = const VerificationMeta(
+    'clinicId',
+  );
+  @override
+  late final GeneratedColumn<String> clinicId = GeneratedColumn<String>(
+    'clinic_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<LocalSyncStatus, int>
+  localSyncStatus = GeneratedColumn<int>(
+    'local_sync_status',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: Constant(LocalSyncStatus.synced.index),
+  ).withConverter<LocalSyncStatus>($RouteStopsTable.$converterlocalSyncStatus);
+  static const VerificationMeta _localUpdatedAtMeta = const VerificationMeta(
+    'localUpdatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> localUpdatedAt =
+      GeneratedColumn<DateTime>(
+        'local_updated_at',
+        aliasedName,
+        false,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+        defaultValue: currentDateAndTime,
+      );
+  static const VerificationMeta _lastErrorMeta = const VerificationMeta(
+    'lastError',
+  );
+  @override
+  late final GeneratedColumn<String> lastError = GeneratedColumn<String>(
+    'last_error',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _deletedLocalMeta = const VerificationMeta(
+    'deletedLocal',
+  );
+  @override
+  late final GeneratedColumn<bool> deletedLocal = GeneratedColumn<bool>(
+    'deleted_local',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("deleted_local" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _routeIdMeta = const VerificationMeta(
+    'routeId',
+  );
+  @override
+  late final GeneratedColumn<String> routeId = GeneratedColumn<String>(
+    'route_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _appointmentIdMeta = const VerificationMeta(
+    'appointmentId',
+  );
+  @override
+  late final GeneratedColumn<String> appointmentId = GeneratedColumn<String>(
+    'appointment_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _sequenceMeta = const VerificationMeta(
+    'sequence',
+  );
+  @override
+  late final GeneratedColumn<int> sequence = GeneratedColumn<int>(
+    'sequence',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _latMeta = const VerificationMeta('lat');
+  @override
+  late final GeneratedColumn<double> lat = GeneratedColumn<double>(
+    'lat',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _lngMeta = const VerificationMeta('lng');
+  @override
+  late final GeneratedColumn<double> lng = GeneratedColumn<double>(
+    'lng',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _distanceFromPrevKmMeta =
+      const VerificationMeta('distanceFromPrevKm');
+  @override
+  late final GeneratedColumn<double> distanceFromPrevKm =
+      GeneratedColumn<double>(
+        'distance_from_prev_km',
+        aliasedName,
+        true,
+        type: DriftSqlType.double,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('pending'),
+  );
+  static const VerificationMeta _visitedAtMeta = const VerificationMeta(
+    'visitedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> visitedAt = GeneratedColumn<DateTime>(
+    'visited_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    version,
+    lastModifiedAt,
+    originDeviceId,
+    clinicId,
+    localSyncStatus,
+    localUpdatedAt,
+    lastError,
+    deletedLocal,
+    routeId,
+    appointmentId,
+    sequence,
+    lat,
+    lng,
+    distanceFromPrevKm,
+    status,
+    visitedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'route_stops';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<RouteStopRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    }
+    if (data.containsKey('last_modified_at')) {
+      context.handle(
+        _lastModifiedAtMeta,
+        lastModifiedAt.isAcceptableOrUnknown(
+          data['last_modified_at']!,
+          _lastModifiedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('origin_device_id')) {
+      context.handle(
+        _originDeviceIdMeta,
+        originDeviceId.isAcceptableOrUnknown(
+          data['origin_device_id']!,
+          _originDeviceIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('clinic_id')) {
+      context.handle(
+        _clinicIdMeta,
+        clinicId.isAcceptableOrUnknown(data['clinic_id']!, _clinicIdMeta),
+      );
+    }
+    if (data.containsKey('local_updated_at')) {
+      context.handle(
+        _localUpdatedAtMeta,
+        localUpdatedAt.isAcceptableOrUnknown(
+          data['local_updated_at']!,
+          _localUpdatedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_error')) {
+      context.handle(
+        _lastErrorMeta,
+        lastError.isAcceptableOrUnknown(data['last_error']!, _lastErrorMeta),
+      );
+    }
+    if (data.containsKey('deleted_local')) {
+      context.handle(
+        _deletedLocalMeta,
+        deletedLocal.isAcceptableOrUnknown(
+          data['deleted_local']!,
+          _deletedLocalMeta,
+        ),
+      );
+    }
+    if (data.containsKey('route_id')) {
+      context.handle(
+        _routeIdMeta,
+        routeId.isAcceptableOrUnknown(data['route_id']!, _routeIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_routeIdMeta);
+    }
+    if (data.containsKey('appointment_id')) {
+      context.handle(
+        _appointmentIdMeta,
+        appointmentId.isAcceptableOrUnknown(
+          data['appointment_id']!,
+          _appointmentIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('sequence')) {
+      context.handle(
+        _sequenceMeta,
+        sequence.isAcceptableOrUnknown(data['sequence']!, _sequenceMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sequenceMeta);
+    }
+    if (data.containsKey('lat')) {
+      context.handle(
+        _latMeta,
+        lat.isAcceptableOrUnknown(data['lat']!, _latMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_latMeta);
+    }
+    if (data.containsKey('lng')) {
+      context.handle(
+        _lngMeta,
+        lng.isAcceptableOrUnknown(data['lng']!, _lngMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_lngMeta);
+    }
+    if (data.containsKey('distance_from_prev_km')) {
+      context.handle(
+        _distanceFromPrevKmMeta,
+        distanceFromPrevKm.isAcceptableOrUnknown(
+          data['distance_from_prev_km']!,
+          _distanceFromPrevKmMeta,
+        ),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('visited_at')) {
+      context.handle(
+        _visitedAtMeta,
+        visitedAt.isAcceptableOrUnknown(data['visited_at']!, _visitedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  RouteStopRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RouteStopRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      lastModifiedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_modified_at'],
+      ),
+      originDeviceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}origin_device_id'],
+      ),
+      clinicId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}clinic_id'],
+      ),
+      localSyncStatus: $RouteStopsTable.$converterlocalSyncStatus.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}local_sync_status'],
+        )!,
+      ),
+      localUpdatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}local_updated_at'],
+      )!,
+      lastError: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_error'],
+      ),
+      deletedLocal: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}deleted_local'],
+      )!,
+      routeId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}route_id'],
+      )!,
+      appointmentId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}appointment_id'],
+      ),
+      sequence: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sequence'],
+      )!,
+      lat: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}lat'],
+      )!,
+      lng: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}lng'],
+      )!,
+      distanceFromPrevKm: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}distance_from_prev_km'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      visitedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}visited_at'],
+      ),
+    );
+  }
+
+  @override
+  $RouteStopsTable createAlias(String alias) {
+    return $RouteStopsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<LocalSyncStatus, int, int>
+  $converterlocalSyncStatus = const EnumIndexConverter<LocalSyncStatus>(
+    LocalSyncStatus.values,
+  );
+}
+
+class RouteStopRow extends DataClass implements Insertable<RouteStopRow> {
+  final String id;
+  final int version;
+  final DateTime? lastModifiedAt;
+  final String? originDeviceId;
+  final String? clinicId;
+  final LocalSyncStatus localSyncStatus;
+  final DateTime localUpdatedAt;
+  final String? lastError;
+  final bool deletedLocal;
+  final String routeId;
+  final String? appointmentId;
+  final int sequence;
+  final double lat;
+  final double lng;
+  final double? distanceFromPrevKm;
+  final String status;
+  final DateTime? visitedAt;
+  const RouteStopRow({
+    required this.id,
+    required this.version,
+    this.lastModifiedAt,
+    this.originDeviceId,
+    this.clinicId,
+    required this.localSyncStatus,
+    required this.localUpdatedAt,
+    this.lastError,
+    required this.deletedLocal,
+    required this.routeId,
+    this.appointmentId,
+    required this.sequence,
+    required this.lat,
+    required this.lng,
+    this.distanceFromPrevKm,
+    required this.status,
+    this.visitedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || lastModifiedAt != null) {
+      map['last_modified_at'] = Variable<DateTime>(lastModifiedAt);
+    }
+    if (!nullToAbsent || originDeviceId != null) {
+      map['origin_device_id'] = Variable<String>(originDeviceId);
+    }
+    if (!nullToAbsent || clinicId != null) {
+      map['clinic_id'] = Variable<String>(clinicId);
+    }
+    {
+      map['local_sync_status'] = Variable<int>(
+        $RouteStopsTable.$converterlocalSyncStatus.toSql(localSyncStatus),
+      );
+    }
+    map['local_updated_at'] = Variable<DateTime>(localUpdatedAt);
+    if (!nullToAbsent || lastError != null) {
+      map['last_error'] = Variable<String>(lastError);
+    }
+    map['deleted_local'] = Variable<bool>(deletedLocal);
+    map['route_id'] = Variable<String>(routeId);
+    if (!nullToAbsent || appointmentId != null) {
+      map['appointment_id'] = Variable<String>(appointmentId);
+    }
+    map['sequence'] = Variable<int>(sequence);
+    map['lat'] = Variable<double>(lat);
+    map['lng'] = Variable<double>(lng);
+    if (!nullToAbsent || distanceFromPrevKm != null) {
+      map['distance_from_prev_km'] = Variable<double>(distanceFromPrevKm);
+    }
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || visitedAt != null) {
+      map['visited_at'] = Variable<DateTime>(visitedAt);
+    }
+    return map;
+  }
+
+  RouteStopsCompanion toCompanion(bool nullToAbsent) {
+    return RouteStopsCompanion(
+      id: Value(id),
+      version: Value(version),
+      lastModifiedAt: lastModifiedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastModifiedAt),
+      originDeviceId: originDeviceId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(originDeviceId),
+      clinicId: clinicId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(clinicId),
+      localSyncStatus: Value(localSyncStatus),
+      localUpdatedAt: Value(localUpdatedAt),
+      lastError: lastError == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastError),
+      deletedLocal: Value(deletedLocal),
+      routeId: Value(routeId),
+      appointmentId: appointmentId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(appointmentId),
+      sequence: Value(sequence),
+      lat: Value(lat),
+      lng: Value(lng),
+      distanceFromPrevKm: distanceFromPrevKm == null && nullToAbsent
+          ? const Value.absent()
+          : Value(distanceFromPrevKm),
+      status: Value(status),
+      visitedAt: visitedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(visitedAt),
+    );
+  }
+
+  factory RouteStopRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RouteStopRow(
+      id: serializer.fromJson<String>(json['id']),
+      version: serializer.fromJson<int>(json['version']),
+      lastModifiedAt: serializer.fromJson<DateTime?>(json['lastModifiedAt']),
+      originDeviceId: serializer.fromJson<String?>(json['originDeviceId']),
+      clinicId: serializer.fromJson<String?>(json['clinicId']),
+      localSyncStatus: $RouteStopsTable.$converterlocalSyncStatus.fromJson(
+        serializer.fromJson<int>(json['localSyncStatus']),
+      ),
+      localUpdatedAt: serializer.fromJson<DateTime>(json['localUpdatedAt']),
+      lastError: serializer.fromJson<String?>(json['lastError']),
+      deletedLocal: serializer.fromJson<bool>(json['deletedLocal']),
+      routeId: serializer.fromJson<String>(json['routeId']),
+      appointmentId: serializer.fromJson<String?>(json['appointmentId']),
+      sequence: serializer.fromJson<int>(json['sequence']),
+      lat: serializer.fromJson<double>(json['lat']),
+      lng: serializer.fromJson<double>(json['lng']),
+      distanceFromPrevKm: serializer.fromJson<double?>(
+        json['distanceFromPrevKm'],
+      ),
+      status: serializer.fromJson<String>(json['status']),
+      visitedAt: serializer.fromJson<DateTime?>(json['visitedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'version': serializer.toJson<int>(version),
+      'lastModifiedAt': serializer.toJson<DateTime?>(lastModifiedAt),
+      'originDeviceId': serializer.toJson<String?>(originDeviceId),
+      'clinicId': serializer.toJson<String?>(clinicId),
+      'localSyncStatus': serializer.toJson<int>(
+        $RouteStopsTable.$converterlocalSyncStatus.toJson(localSyncStatus),
+      ),
+      'localUpdatedAt': serializer.toJson<DateTime>(localUpdatedAt),
+      'lastError': serializer.toJson<String?>(lastError),
+      'deletedLocal': serializer.toJson<bool>(deletedLocal),
+      'routeId': serializer.toJson<String>(routeId),
+      'appointmentId': serializer.toJson<String?>(appointmentId),
+      'sequence': serializer.toJson<int>(sequence),
+      'lat': serializer.toJson<double>(lat),
+      'lng': serializer.toJson<double>(lng),
+      'distanceFromPrevKm': serializer.toJson<double?>(distanceFromPrevKm),
+      'status': serializer.toJson<String>(status),
+      'visitedAt': serializer.toJson<DateTime?>(visitedAt),
+    };
+  }
+
+  RouteStopRow copyWith({
+    String? id,
+    int? version,
+    Value<DateTime?> lastModifiedAt = const Value.absent(),
+    Value<String?> originDeviceId = const Value.absent(),
+    Value<String?> clinicId = const Value.absent(),
+    LocalSyncStatus? localSyncStatus,
+    DateTime? localUpdatedAt,
+    Value<String?> lastError = const Value.absent(),
+    bool? deletedLocal,
+    String? routeId,
+    Value<String?> appointmentId = const Value.absent(),
+    int? sequence,
+    double? lat,
+    double? lng,
+    Value<double?> distanceFromPrevKm = const Value.absent(),
+    String? status,
+    Value<DateTime?> visitedAt = const Value.absent(),
+  }) => RouteStopRow(
+    id: id ?? this.id,
+    version: version ?? this.version,
+    lastModifiedAt: lastModifiedAt.present
+        ? lastModifiedAt.value
+        : this.lastModifiedAt,
+    originDeviceId: originDeviceId.present
+        ? originDeviceId.value
+        : this.originDeviceId,
+    clinicId: clinicId.present ? clinicId.value : this.clinicId,
+    localSyncStatus: localSyncStatus ?? this.localSyncStatus,
+    localUpdatedAt: localUpdatedAt ?? this.localUpdatedAt,
+    lastError: lastError.present ? lastError.value : this.lastError,
+    deletedLocal: deletedLocal ?? this.deletedLocal,
+    routeId: routeId ?? this.routeId,
+    appointmentId: appointmentId.present
+        ? appointmentId.value
+        : this.appointmentId,
+    sequence: sequence ?? this.sequence,
+    lat: lat ?? this.lat,
+    lng: lng ?? this.lng,
+    distanceFromPrevKm: distanceFromPrevKm.present
+        ? distanceFromPrevKm.value
+        : this.distanceFromPrevKm,
+    status: status ?? this.status,
+    visitedAt: visitedAt.present ? visitedAt.value : this.visitedAt,
+  );
+  RouteStopRow copyWithCompanion(RouteStopsCompanion data) {
+    return RouteStopRow(
+      id: data.id.present ? data.id.value : this.id,
+      version: data.version.present ? data.version.value : this.version,
+      lastModifiedAt: data.lastModifiedAt.present
+          ? data.lastModifiedAt.value
+          : this.lastModifiedAt,
+      originDeviceId: data.originDeviceId.present
+          ? data.originDeviceId.value
+          : this.originDeviceId,
+      clinicId: data.clinicId.present ? data.clinicId.value : this.clinicId,
+      localSyncStatus: data.localSyncStatus.present
+          ? data.localSyncStatus.value
+          : this.localSyncStatus,
+      localUpdatedAt: data.localUpdatedAt.present
+          ? data.localUpdatedAt.value
+          : this.localUpdatedAt,
+      lastError: data.lastError.present ? data.lastError.value : this.lastError,
+      deletedLocal: data.deletedLocal.present
+          ? data.deletedLocal.value
+          : this.deletedLocal,
+      routeId: data.routeId.present ? data.routeId.value : this.routeId,
+      appointmentId: data.appointmentId.present
+          ? data.appointmentId.value
+          : this.appointmentId,
+      sequence: data.sequence.present ? data.sequence.value : this.sequence,
+      lat: data.lat.present ? data.lat.value : this.lat,
+      lng: data.lng.present ? data.lng.value : this.lng,
+      distanceFromPrevKm: data.distanceFromPrevKm.present
+          ? data.distanceFromPrevKm.value
+          : this.distanceFromPrevKm,
+      status: data.status.present ? data.status.value : this.status,
+      visitedAt: data.visitedAt.present ? data.visitedAt.value : this.visitedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RouteStopRow(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('lastModifiedAt: $lastModifiedAt, ')
+          ..write('originDeviceId: $originDeviceId, ')
+          ..write('clinicId: $clinicId, ')
+          ..write('localSyncStatus: $localSyncStatus, ')
+          ..write('localUpdatedAt: $localUpdatedAt, ')
+          ..write('lastError: $lastError, ')
+          ..write('deletedLocal: $deletedLocal, ')
+          ..write('routeId: $routeId, ')
+          ..write('appointmentId: $appointmentId, ')
+          ..write('sequence: $sequence, ')
+          ..write('lat: $lat, ')
+          ..write('lng: $lng, ')
+          ..write('distanceFromPrevKm: $distanceFromPrevKm, ')
+          ..write('status: $status, ')
+          ..write('visitedAt: $visitedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    version,
+    lastModifiedAt,
+    originDeviceId,
+    clinicId,
+    localSyncStatus,
+    localUpdatedAt,
+    lastError,
+    deletedLocal,
+    routeId,
+    appointmentId,
+    sequence,
+    lat,
+    lng,
+    distanceFromPrevKm,
+    status,
+    visitedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RouteStopRow &&
+          other.id == this.id &&
+          other.version == this.version &&
+          other.lastModifiedAt == this.lastModifiedAt &&
+          other.originDeviceId == this.originDeviceId &&
+          other.clinicId == this.clinicId &&
+          other.localSyncStatus == this.localSyncStatus &&
+          other.localUpdatedAt == this.localUpdatedAt &&
+          other.lastError == this.lastError &&
+          other.deletedLocal == this.deletedLocal &&
+          other.routeId == this.routeId &&
+          other.appointmentId == this.appointmentId &&
+          other.sequence == this.sequence &&
+          other.lat == this.lat &&
+          other.lng == this.lng &&
+          other.distanceFromPrevKm == this.distanceFromPrevKm &&
+          other.status == this.status &&
+          other.visitedAt == this.visitedAt);
+}
+
+class RouteStopsCompanion extends UpdateCompanion<RouteStopRow> {
+  final Value<String> id;
+  final Value<int> version;
+  final Value<DateTime?> lastModifiedAt;
+  final Value<String?> originDeviceId;
+  final Value<String?> clinicId;
+  final Value<LocalSyncStatus> localSyncStatus;
+  final Value<DateTime> localUpdatedAt;
+  final Value<String?> lastError;
+  final Value<bool> deletedLocal;
+  final Value<String> routeId;
+  final Value<String?> appointmentId;
+  final Value<int> sequence;
+  final Value<double> lat;
+  final Value<double> lng;
+  final Value<double?> distanceFromPrevKm;
+  final Value<String> status;
+  final Value<DateTime?> visitedAt;
+  final Value<int> rowid;
+  const RouteStopsCompanion({
+    this.id = const Value.absent(),
+    this.version = const Value.absent(),
+    this.lastModifiedAt = const Value.absent(),
+    this.originDeviceId = const Value.absent(),
+    this.clinicId = const Value.absent(),
+    this.localSyncStatus = const Value.absent(),
+    this.localUpdatedAt = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.deletedLocal = const Value.absent(),
+    this.routeId = const Value.absent(),
+    this.appointmentId = const Value.absent(),
+    this.sequence = const Value.absent(),
+    this.lat = const Value.absent(),
+    this.lng = const Value.absent(),
+    this.distanceFromPrevKm = const Value.absent(),
+    this.status = const Value.absent(),
+    this.visitedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  RouteStopsCompanion.insert({
+    required String id,
+    this.version = const Value.absent(),
+    this.lastModifiedAt = const Value.absent(),
+    this.originDeviceId = const Value.absent(),
+    this.clinicId = const Value.absent(),
+    this.localSyncStatus = const Value.absent(),
+    this.localUpdatedAt = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.deletedLocal = const Value.absent(),
+    required String routeId,
+    this.appointmentId = const Value.absent(),
+    required int sequence,
+    required double lat,
+    required double lng,
+    this.distanceFromPrevKm = const Value.absent(),
+    this.status = const Value.absent(),
+    this.visitedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       routeId = Value(routeId),
+       sequence = Value(sequence),
+       lat = Value(lat),
+       lng = Value(lng);
+  static Insertable<RouteStopRow> custom({
+    Expression<String>? id,
+    Expression<int>? version,
+    Expression<DateTime>? lastModifiedAt,
+    Expression<String>? originDeviceId,
+    Expression<String>? clinicId,
+    Expression<int>? localSyncStatus,
+    Expression<DateTime>? localUpdatedAt,
+    Expression<String>? lastError,
+    Expression<bool>? deletedLocal,
+    Expression<String>? routeId,
+    Expression<String>? appointmentId,
+    Expression<int>? sequence,
+    Expression<double>? lat,
+    Expression<double>? lng,
+    Expression<double>? distanceFromPrevKm,
+    Expression<String>? status,
+    Expression<DateTime>? visitedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (version != null) 'version': version,
+      if (lastModifiedAt != null) 'last_modified_at': lastModifiedAt,
+      if (originDeviceId != null) 'origin_device_id': originDeviceId,
+      if (clinicId != null) 'clinic_id': clinicId,
+      if (localSyncStatus != null) 'local_sync_status': localSyncStatus,
+      if (localUpdatedAt != null) 'local_updated_at': localUpdatedAt,
+      if (lastError != null) 'last_error': lastError,
+      if (deletedLocal != null) 'deleted_local': deletedLocal,
+      if (routeId != null) 'route_id': routeId,
+      if (appointmentId != null) 'appointment_id': appointmentId,
+      if (sequence != null) 'sequence': sequence,
+      if (lat != null) 'lat': lat,
+      if (lng != null) 'lng': lng,
+      if (distanceFromPrevKm != null)
+        'distance_from_prev_km': distanceFromPrevKm,
+      if (status != null) 'status': status,
+      if (visitedAt != null) 'visited_at': visitedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  RouteStopsCompanion copyWith({
+    Value<String>? id,
+    Value<int>? version,
+    Value<DateTime?>? lastModifiedAt,
+    Value<String?>? originDeviceId,
+    Value<String?>? clinicId,
+    Value<LocalSyncStatus>? localSyncStatus,
+    Value<DateTime>? localUpdatedAt,
+    Value<String?>? lastError,
+    Value<bool>? deletedLocal,
+    Value<String>? routeId,
+    Value<String?>? appointmentId,
+    Value<int>? sequence,
+    Value<double>? lat,
+    Value<double>? lng,
+    Value<double?>? distanceFromPrevKm,
+    Value<String>? status,
+    Value<DateTime?>? visitedAt,
+    Value<int>? rowid,
+  }) {
+    return RouteStopsCompanion(
+      id: id ?? this.id,
+      version: version ?? this.version,
+      lastModifiedAt: lastModifiedAt ?? this.lastModifiedAt,
+      originDeviceId: originDeviceId ?? this.originDeviceId,
+      clinicId: clinicId ?? this.clinicId,
+      localSyncStatus: localSyncStatus ?? this.localSyncStatus,
+      localUpdatedAt: localUpdatedAt ?? this.localUpdatedAt,
+      lastError: lastError ?? this.lastError,
+      deletedLocal: deletedLocal ?? this.deletedLocal,
+      routeId: routeId ?? this.routeId,
+      appointmentId: appointmentId ?? this.appointmentId,
+      sequence: sequence ?? this.sequence,
+      lat: lat ?? this.lat,
+      lng: lng ?? this.lng,
+      distanceFromPrevKm: distanceFromPrevKm ?? this.distanceFromPrevKm,
+      status: status ?? this.status,
+      visitedAt: visitedAt ?? this.visitedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (lastModifiedAt.present) {
+      map['last_modified_at'] = Variable<DateTime>(lastModifiedAt.value);
+    }
+    if (originDeviceId.present) {
+      map['origin_device_id'] = Variable<String>(originDeviceId.value);
+    }
+    if (clinicId.present) {
+      map['clinic_id'] = Variable<String>(clinicId.value);
+    }
+    if (localSyncStatus.present) {
+      map['local_sync_status'] = Variable<int>(
+        $RouteStopsTable.$converterlocalSyncStatus.toSql(localSyncStatus.value),
+      );
+    }
+    if (localUpdatedAt.present) {
+      map['local_updated_at'] = Variable<DateTime>(localUpdatedAt.value);
+    }
+    if (lastError.present) {
+      map['last_error'] = Variable<String>(lastError.value);
+    }
+    if (deletedLocal.present) {
+      map['deleted_local'] = Variable<bool>(deletedLocal.value);
+    }
+    if (routeId.present) {
+      map['route_id'] = Variable<String>(routeId.value);
+    }
+    if (appointmentId.present) {
+      map['appointment_id'] = Variable<String>(appointmentId.value);
+    }
+    if (sequence.present) {
+      map['sequence'] = Variable<int>(sequence.value);
+    }
+    if (lat.present) {
+      map['lat'] = Variable<double>(lat.value);
+    }
+    if (lng.present) {
+      map['lng'] = Variable<double>(lng.value);
+    }
+    if (distanceFromPrevKm.present) {
+      map['distance_from_prev_km'] = Variable<double>(distanceFromPrevKm.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (visitedAt.present) {
+      map['visited_at'] = Variable<DateTime>(visitedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RouteStopsCompanion(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('lastModifiedAt: $lastModifiedAt, ')
+          ..write('originDeviceId: $originDeviceId, ')
+          ..write('clinicId: $clinicId, ')
+          ..write('localSyncStatus: $localSyncStatus, ')
+          ..write('localUpdatedAt: $localUpdatedAt, ')
+          ..write('lastError: $lastError, ')
+          ..write('deletedLocal: $deletedLocal, ')
+          ..write('routeId: $routeId, ')
+          ..write('appointmentId: $appointmentId, ')
+          ..write('sequence: $sequence, ')
+          ..write('lat: $lat, ')
+          ..write('lng: $lng, ')
+          ..write('distanceFromPrevKm: $distanceFromPrevKm, ')
+          ..write('status: $status, ')
+          ..write('visitedAt: $visitedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $SyncMetaTable extends SyncMeta
     with TableInfo<$SyncMetaTable, SyncMetaRow> {
   @override
@@ -11456,6 +13345,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $MedicalRecordDrugsTable(this);
   late final $MedicalRecordPhotosTable medicalRecordPhotos =
       $MedicalRecordPhotosTable(this);
+  late final $RoutesTable routes = $RoutesTable(this);
+  late final $RouteStopsTable routeStops = $RouteStopsTable(this);
   late final $SyncMetaTable syncMeta = $SyncMetaTable(this);
   late final $SyncConflictsTable syncConflicts = $SyncConflictsTable(this);
   @override
@@ -11473,6 +13364,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     stockMovements,
     medicalRecordDrugs,
     medicalRecordPhotos,
+    routes,
+    routeStops,
     syncMeta,
     syncConflicts,
   ];
@@ -16252,6 +18145,850 @@ typedef $$MedicalRecordPhotosTableProcessedTableManager =
       MedicalRecordPhotoRow,
       PrefetchHooks Function()
     >;
+typedef $$RoutesTableCreateCompanionBuilder =
+    RoutesCompanion Function({
+      required String id,
+      Value<int> version,
+      Value<DateTime?> lastModifiedAt,
+      Value<String?> originDeviceId,
+      Value<String?> clinicId,
+      Value<LocalSyncStatus> localSyncStatus,
+      Value<DateTime> localUpdatedAt,
+      Value<String?> lastError,
+      Value<bool> deletedLocal,
+      required int vetId,
+      required DateTime date,
+      Value<double?> totalDistanceKm,
+      Value<int?> totalDurationMin,
+      Value<double?> startLat,
+      Value<double?> startLng,
+      Value<int> rowid,
+    });
+typedef $$RoutesTableUpdateCompanionBuilder =
+    RoutesCompanion Function({
+      Value<String> id,
+      Value<int> version,
+      Value<DateTime?> lastModifiedAt,
+      Value<String?> originDeviceId,
+      Value<String?> clinicId,
+      Value<LocalSyncStatus> localSyncStatus,
+      Value<DateTime> localUpdatedAt,
+      Value<String?> lastError,
+      Value<bool> deletedLocal,
+      Value<int> vetId,
+      Value<DateTime> date,
+      Value<double?> totalDistanceKm,
+      Value<int?> totalDurationMin,
+      Value<double?> startLat,
+      Value<double?> startLng,
+      Value<int> rowid,
+    });
+
+class $$RoutesTableFilterComposer
+    extends Composer<_$AppDatabase, $RoutesTable> {
+  $$RoutesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastModifiedAt => $composableBuilder(
+    column: $table.lastModifiedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get originDeviceId => $composableBuilder(
+    column: $table.originDeviceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get clinicId => $composableBuilder(
+    column: $table.clinicId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<LocalSyncStatus, LocalSyncStatus, int>
+  get localSyncStatus => $composableBuilder(
+    column: $table.localSyncStatus,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<DateTime> get localUpdatedAt => $composableBuilder(
+    column: $table.localUpdatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get deletedLocal => $composableBuilder(
+    column: $table.deletedLocal,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get vetId => $composableBuilder(
+    column: $table.vetId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get totalDistanceKm => $composableBuilder(
+    column: $table.totalDistanceKm,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get totalDurationMin => $composableBuilder(
+    column: $table.totalDurationMin,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get startLat => $composableBuilder(
+    column: $table.startLat,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get startLng => $composableBuilder(
+    column: $table.startLng,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$RoutesTableOrderingComposer
+    extends Composer<_$AppDatabase, $RoutesTable> {
+  $$RoutesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastModifiedAt => $composableBuilder(
+    column: $table.lastModifiedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get originDeviceId => $composableBuilder(
+    column: $table.originDeviceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get clinicId => $composableBuilder(
+    column: $table.clinicId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get localSyncStatus => $composableBuilder(
+    column: $table.localSyncStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get localUpdatedAt => $composableBuilder(
+    column: $table.localUpdatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get deletedLocal => $composableBuilder(
+    column: $table.deletedLocal,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get vetId => $composableBuilder(
+    column: $table.vetId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get totalDistanceKm => $composableBuilder(
+    column: $table.totalDistanceKm,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get totalDurationMin => $composableBuilder(
+    column: $table.totalDurationMin,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get startLat => $composableBuilder(
+    column: $table.startLat,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get startLng => $composableBuilder(
+    column: $table.startLng,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$RoutesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $RoutesTable> {
+  $$RoutesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastModifiedAt => $composableBuilder(
+    column: $table.lastModifiedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get originDeviceId => $composableBuilder(
+    column: $table.originDeviceId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get clinicId =>
+      $composableBuilder(column: $table.clinicId, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<LocalSyncStatus, int> get localSyncStatus =>
+      $composableBuilder(
+        column: $table.localSyncStatus,
+        builder: (column) => column,
+      );
+
+  GeneratedColumn<DateTime> get localUpdatedAt => $composableBuilder(
+    column: $table.localUpdatedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get lastError =>
+      $composableBuilder(column: $table.lastError, builder: (column) => column);
+
+  GeneratedColumn<bool> get deletedLocal => $composableBuilder(
+    column: $table.deletedLocal,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get vetId =>
+      $composableBuilder(column: $table.vetId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<double> get totalDistanceKm => $composableBuilder(
+    column: $table.totalDistanceKm,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get totalDurationMin => $composableBuilder(
+    column: $table.totalDurationMin,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get startLat =>
+      $composableBuilder(column: $table.startLat, builder: (column) => column);
+
+  GeneratedColumn<double> get startLng =>
+      $composableBuilder(column: $table.startLng, builder: (column) => column);
+}
+
+class $$RoutesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $RoutesTable,
+          RouteRow,
+          $$RoutesTableFilterComposer,
+          $$RoutesTableOrderingComposer,
+          $$RoutesTableAnnotationComposer,
+          $$RoutesTableCreateCompanionBuilder,
+          $$RoutesTableUpdateCompanionBuilder,
+          (RouteRow, BaseReferences<_$AppDatabase, $RoutesTable, RouteRow>),
+          RouteRow,
+          PrefetchHooks Function()
+        > {
+  $$RoutesTableTableManager(_$AppDatabase db, $RoutesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$RoutesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$RoutesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$RoutesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<DateTime?> lastModifiedAt = const Value.absent(),
+                Value<String?> originDeviceId = const Value.absent(),
+                Value<String?> clinicId = const Value.absent(),
+                Value<LocalSyncStatus> localSyncStatus = const Value.absent(),
+                Value<DateTime> localUpdatedAt = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
+                Value<bool> deletedLocal = const Value.absent(),
+                Value<int> vetId = const Value.absent(),
+                Value<DateTime> date = const Value.absent(),
+                Value<double?> totalDistanceKm = const Value.absent(),
+                Value<int?> totalDurationMin = const Value.absent(),
+                Value<double?> startLat = const Value.absent(),
+                Value<double?> startLng = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => RoutesCompanion(
+                id: id,
+                version: version,
+                lastModifiedAt: lastModifiedAt,
+                originDeviceId: originDeviceId,
+                clinicId: clinicId,
+                localSyncStatus: localSyncStatus,
+                localUpdatedAt: localUpdatedAt,
+                lastError: lastError,
+                deletedLocal: deletedLocal,
+                vetId: vetId,
+                date: date,
+                totalDistanceKm: totalDistanceKm,
+                totalDurationMin: totalDurationMin,
+                startLat: startLat,
+                startLng: startLng,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                Value<int> version = const Value.absent(),
+                Value<DateTime?> lastModifiedAt = const Value.absent(),
+                Value<String?> originDeviceId = const Value.absent(),
+                Value<String?> clinicId = const Value.absent(),
+                Value<LocalSyncStatus> localSyncStatus = const Value.absent(),
+                Value<DateTime> localUpdatedAt = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
+                Value<bool> deletedLocal = const Value.absent(),
+                required int vetId,
+                required DateTime date,
+                Value<double?> totalDistanceKm = const Value.absent(),
+                Value<int?> totalDurationMin = const Value.absent(),
+                Value<double?> startLat = const Value.absent(),
+                Value<double?> startLng = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => RoutesCompanion.insert(
+                id: id,
+                version: version,
+                lastModifiedAt: lastModifiedAt,
+                originDeviceId: originDeviceId,
+                clinicId: clinicId,
+                localSyncStatus: localSyncStatus,
+                localUpdatedAt: localUpdatedAt,
+                lastError: lastError,
+                deletedLocal: deletedLocal,
+                vetId: vetId,
+                date: date,
+                totalDistanceKm: totalDistanceKm,
+                totalDurationMin: totalDurationMin,
+                startLat: startLat,
+                startLng: startLng,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$RoutesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $RoutesTable,
+      RouteRow,
+      $$RoutesTableFilterComposer,
+      $$RoutesTableOrderingComposer,
+      $$RoutesTableAnnotationComposer,
+      $$RoutesTableCreateCompanionBuilder,
+      $$RoutesTableUpdateCompanionBuilder,
+      (RouteRow, BaseReferences<_$AppDatabase, $RoutesTable, RouteRow>),
+      RouteRow,
+      PrefetchHooks Function()
+    >;
+typedef $$RouteStopsTableCreateCompanionBuilder =
+    RouteStopsCompanion Function({
+      required String id,
+      Value<int> version,
+      Value<DateTime?> lastModifiedAt,
+      Value<String?> originDeviceId,
+      Value<String?> clinicId,
+      Value<LocalSyncStatus> localSyncStatus,
+      Value<DateTime> localUpdatedAt,
+      Value<String?> lastError,
+      Value<bool> deletedLocal,
+      required String routeId,
+      Value<String?> appointmentId,
+      required int sequence,
+      required double lat,
+      required double lng,
+      Value<double?> distanceFromPrevKm,
+      Value<String> status,
+      Value<DateTime?> visitedAt,
+      Value<int> rowid,
+    });
+typedef $$RouteStopsTableUpdateCompanionBuilder =
+    RouteStopsCompanion Function({
+      Value<String> id,
+      Value<int> version,
+      Value<DateTime?> lastModifiedAt,
+      Value<String?> originDeviceId,
+      Value<String?> clinicId,
+      Value<LocalSyncStatus> localSyncStatus,
+      Value<DateTime> localUpdatedAt,
+      Value<String?> lastError,
+      Value<bool> deletedLocal,
+      Value<String> routeId,
+      Value<String?> appointmentId,
+      Value<int> sequence,
+      Value<double> lat,
+      Value<double> lng,
+      Value<double?> distanceFromPrevKm,
+      Value<String> status,
+      Value<DateTime?> visitedAt,
+      Value<int> rowid,
+    });
+
+class $$RouteStopsTableFilterComposer
+    extends Composer<_$AppDatabase, $RouteStopsTable> {
+  $$RouteStopsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastModifiedAt => $composableBuilder(
+    column: $table.lastModifiedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get originDeviceId => $composableBuilder(
+    column: $table.originDeviceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get clinicId => $composableBuilder(
+    column: $table.clinicId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<LocalSyncStatus, LocalSyncStatus, int>
+  get localSyncStatus => $composableBuilder(
+    column: $table.localSyncStatus,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<DateTime> get localUpdatedAt => $composableBuilder(
+    column: $table.localUpdatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get deletedLocal => $composableBuilder(
+    column: $table.deletedLocal,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get routeId => $composableBuilder(
+    column: $table.routeId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get appointmentId => $composableBuilder(
+    column: $table.appointmentId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get sequence => $composableBuilder(
+    column: $table.sequence,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get lat => $composableBuilder(
+    column: $table.lat,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get lng => $composableBuilder(
+    column: $table.lng,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get distanceFromPrevKm => $composableBuilder(
+    column: $table.distanceFromPrevKm,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get visitedAt => $composableBuilder(
+    column: $table.visitedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$RouteStopsTableOrderingComposer
+    extends Composer<_$AppDatabase, $RouteStopsTable> {
+  $$RouteStopsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastModifiedAt => $composableBuilder(
+    column: $table.lastModifiedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get originDeviceId => $composableBuilder(
+    column: $table.originDeviceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get clinicId => $composableBuilder(
+    column: $table.clinicId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get localSyncStatus => $composableBuilder(
+    column: $table.localSyncStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get localUpdatedAt => $composableBuilder(
+    column: $table.localUpdatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get deletedLocal => $composableBuilder(
+    column: $table.deletedLocal,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get routeId => $composableBuilder(
+    column: $table.routeId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get appointmentId => $composableBuilder(
+    column: $table.appointmentId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get sequence => $composableBuilder(
+    column: $table.sequence,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get lat => $composableBuilder(
+    column: $table.lat,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get lng => $composableBuilder(
+    column: $table.lng,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get distanceFromPrevKm => $composableBuilder(
+    column: $table.distanceFromPrevKm,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get visitedAt => $composableBuilder(
+    column: $table.visitedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$RouteStopsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $RouteStopsTable> {
+  $$RouteStopsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastModifiedAt => $composableBuilder(
+    column: $table.lastModifiedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get originDeviceId => $composableBuilder(
+    column: $table.originDeviceId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get clinicId =>
+      $composableBuilder(column: $table.clinicId, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<LocalSyncStatus, int> get localSyncStatus =>
+      $composableBuilder(
+        column: $table.localSyncStatus,
+        builder: (column) => column,
+      );
+
+  GeneratedColumn<DateTime> get localUpdatedAt => $composableBuilder(
+    column: $table.localUpdatedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get lastError =>
+      $composableBuilder(column: $table.lastError, builder: (column) => column);
+
+  GeneratedColumn<bool> get deletedLocal => $composableBuilder(
+    column: $table.deletedLocal,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get routeId =>
+      $composableBuilder(column: $table.routeId, builder: (column) => column);
+
+  GeneratedColumn<String> get appointmentId => $composableBuilder(
+    column: $table.appointmentId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get sequence =>
+      $composableBuilder(column: $table.sequence, builder: (column) => column);
+
+  GeneratedColumn<double> get lat =>
+      $composableBuilder(column: $table.lat, builder: (column) => column);
+
+  GeneratedColumn<double> get lng =>
+      $composableBuilder(column: $table.lng, builder: (column) => column);
+
+  GeneratedColumn<double> get distanceFromPrevKm => $composableBuilder(
+    column: $table.distanceFromPrevKm,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get visitedAt =>
+      $composableBuilder(column: $table.visitedAt, builder: (column) => column);
+}
+
+class $$RouteStopsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $RouteStopsTable,
+          RouteStopRow,
+          $$RouteStopsTableFilterComposer,
+          $$RouteStopsTableOrderingComposer,
+          $$RouteStopsTableAnnotationComposer,
+          $$RouteStopsTableCreateCompanionBuilder,
+          $$RouteStopsTableUpdateCompanionBuilder,
+          (
+            RouteStopRow,
+            BaseReferences<_$AppDatabase, $RouteStopsTable, RouteStopRow>,
+          ),
+          RouteStopRow,
+          PrefetchHooks Function()
+        > {
+  $$RouteStopsTableTableManager(_$AppDatabase db, $RouteStopsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$RouteStopsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$RouteStopsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$RouteStopsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<DateTime?> lastModifiedAt = const Value.absent(),
+                Value<String?> originDeviceId = const Value.absent(),
+                Value<String?> clinicId = const Value.absent(),
+                Value<LocalSyncStatus> localSyncStatus = const Value.absent(),
+                Value<DateTime> localUpdatedAt = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
+                Value<bool> deletedLocal = const Value.absent(),
+                Value<String> routeId = const Value.absent(),
+                Value<String?> appointmentId = const Value.absent(),
+                Value<int> sequence = const Value.absent(),
+                Value<double> lat = const Value.absent(),
+                Value<double> lng = const Value.absent(),
+                Value<double?> distanceFromPrevKm = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<DateTime?> visitedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => RouteStopsCompanion(
+                id: id,
+                version: version,
+                lastModifiedAt: lastModifiedAt,
+                originDeviceId: originDeviceId,
+                clinicId: clinicId,
+                localSyncStatus: localSyncStatus,
+                localUpdatedAt: localUpdatedAt,
+                lastError: lastError,
+                deletedLocal: deletedLocal,
+                routeId: routeId,
+                appointmentId: appointmentId,
+                sequence: sequence,
+                lat: lat,
+                lng: lng,
+                distanceFromPrevKm: distanceFromPrevKm,
+                status: status,
+                visitedAt: visitedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                Value<int> version = const Value.absent(),
+                Value<DateTime?> lastModifiedAt = const Value.absent(),
+                Value<String?> originDeviceId = const Value.absent(),
+                Value<String?> clinicId = const Value.absent(),
+                Value<LocalSyncStatus> localSyncStatus = const Value.absent(),
+                Value<DateTime> localUpdatedAt = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
+                Value<bool> deletedLocal = const Value.absent(),
+                required String routeId,
+                Value<String?> appointmentId = const Value.absent(),
+                required int sequence,
+                required double lat,
+                required double lng,
+                Value<double?> distanceFromPrevKm = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<DateTime?> visitedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => RouteStopsCompanion.insert(
+                id: id,
+                version: version,
+                lastModifiedAt: lastModifiedAt,
+                originDeviceId: originDeviceId,
+                clinicId: clinicId,
+                localSyncStatus: localSyncStatus,
+                localUpdatedAt: localUpdatedAt,
+                lastError: lastError,
+                deletedLocal: deletedLocal,
+                routeId: routeId,
+                appointmentId: appointmentId,
+                sequence: sequence,
+                lat: lat,
+                lng: lng,
+                distanceFromPrevKm: distanceFromPrevKm,
+                status: status,
+                visitedAt: visitedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$RouteStopsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $RouteStopsTable,
+      RouteStopRow,
+      $$RouteStopsTableFilterComposer,
+      $$RouteStopsTableOrderingComposer,
+      $$RouteStopsTableAnnotationComposer,
+      $$RouteStopsTableCreateCompanionBuilder,
+      $$RouteStopsTableUpdateCompanionBuilder,
+      (
+        RouteStopRow,
+        BaseReferences<_$AppDatabase, $RouteStopsTable, RouteStopRow>,
+      ),
+      RouteStopRow,
+      PrefetchHooks Function()
+    >;
 typedef $$SyncMetaTableCreateCompanionBuilder =
     SyncMetaCompanion Function({
       required String key,
@@ -16639,6 +19376,10 @@ class $AppDatabaseManager {
       $$MedicalRecordDrugsTableTableManager(_db, _db.medicalRecordDrugs);
   $$MedicalRecordPhotosTableTableManager get medicalRecordPhotos =>
       $$MedicalRecordPhotosTableTableManager(_db, _db.medicalRecordPhotos);
+  $$RoutesTableTableManager get routes =>
+      $$RoutesTableTableManager(_db, _db.routes);
+  $$RouteStopsTableTableManager get routeStops =>
+      $$RouteStopsTableTableManager(_db, _db.routeStops);
   $$SyncMetaTableTableManager get syncMeta =>
       $$SyncMetaTableTableManager(_db, _db.syncMeta);
   $$SyncConflictsTableTableManager get syncConflicts =>

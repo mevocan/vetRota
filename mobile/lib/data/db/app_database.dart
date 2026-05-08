@@ -204,6 +204,35 @@ class MedicalRecordPhotos extends Table with SyncColumns {
   Set<Column> get primaryKey => {id};
 }
 
+// M5: optimize edilmis gunluk rota.
+@DataClassName('RouteRow')
+class Routes extends Table with SyncColumns {
+  IntColumn get vetId => integer()();
+  DateTimeColumn get date => dateTime()();
+  RealColumn get totalDistanceKm => real().nullable()();
+  IntColumn get totalDurationMin => integer().nullable()();
+  RealColumn get startLat => real().nullable()();
+  RealColumn get startLng => real().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+@DataClassName('RouteStopRow')
+class RouteStops extends Table with SyncColumns {
+  TextColumn get routeId => text()();
+  TextColumn get appointmentId => text().nullable()();
+  IntColumn get sequence => integer()();
+  RealColumn get lat => real()();
+  RealColumn get lng => real()();
+  RealColumn get distanceFromPrevKm => real().nullable()();
+  TextColumn get status => text().withDefault(const Constant('pending'))();
+  DateTimeColumn get visitedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 // Sync metadata: cursor + last sync timestamp.
 @DataClassName('SyncMetaRow')
 class SyncMeta extends Table {
@@ -239,15 +268,17 @@ class SyncConflicts extends Table {
   StockMovements,
   MedicalRecordDrugs,
   MedicalRecordPhotos,
+  Routes,
+  RouteStops,
   SyncMeta,
   SyncConflicts,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_open());
 
-  // schemaVersion 1 -> 2: M4 medical_record_photos eklendi.
+  // schemaVersion: 1 baslangic, 2 = M4 photos, 3 = M5 routes/route_stops.
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -255,6 +286,10 @@ class AppDatabase extends _$AppDatabase {
         onUpgrade: (m, from, to) async {
           if (from < 2) {
             await m.createTable(medicalRecordPhotos);
+          }
+          if (from < 3) {
+            await m.createTable(routes);
+            await m.createTable(routeStops);
           }
         },
       );
