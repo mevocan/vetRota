@@ -13,6 +13,7 @@ use App\Services\Sync\TableProcessors\DrugProcessor;
 use App\Services\Sync\TableProcessors\FarmerProcessor;
 use App\Services\Sync\TableProcessors\MedicalRecordDrugProcessor;
 use App\Services\Sync\TableProcessors\MedicalRecordProcessor;
+use App\Services\Sync\TableProcessors\PaymentProcessor;
 use App\Services\Sync\TableProcessors\StockMovementProcessor;
 use App\Services\Sync\TableProcessors\StockProcessor;
 use App\Services\Sync\TableProcessors\VillageProcessor;
@@ -33,6 +34,7 @@ class SyncPushService
         'drugs'                => DrugProcessor::class,
         'stocks'               => StockProcessor::class,
         'stock_movements'      => StockMovementProcessor::class,
+        'payments'             => PaymentProcessor::class,
     ];
 
     public function execute(User $user, string $deviceId, string $clientSyncId, array $batch): array

@@ -62,7 +62,7 @@ class SyncRepository {
   static const _uuid = Uuid();
 
   // ledger tablolari — delete operasyonu uretilmez.
-  static const _ledgerTables = {'stock_movements'};
+  static const _ledgerTables = {'stock_movements', 'payments'};
 
   // Pull/push tablo sirasi: FK bagimliliklari (parent once).
   // medical_record_photos pull-only (binary /sync/photos icin push edilir).
@@ -77,6 +77,7 @@ class SyncRepository {
     'medical_record_photos',
     'stocks',
     'stock_movements',
+    'payments',
   ];
 
   Future<SyncResult> sync() async {
@@ -276,6 +277,19 @@ class SyncRepository {
             clientLastModifiedAt: r.lastModifiedAt,
           )).whereType<Map<String, dynamic>>().toList();
       totalPending += stockMoves.length;
+    }
+
+    final payments = await _pendingPayments();
+    if (payments.isNotEmpty) {
+      batch['payments'] = payments.map((r) => _recordFor(
+            id: r.id,
+            version: r.version,
+            data: paymentToData(r),
+            deleted: r.deletedLocal,
+            tableName: 'payments',
+            clientLastModifiedAt: r.lastModifiedAt,
+          )).whereType<Map<String, dynamic>>().toList();
+      totalPending += payments.length;
     }
 
     if (totalPending == 0) {
@@ -511,6 +525,17 @@ class SyncRepository {
           (t) => t.id.equals(id),
         );
         break;
+      case 'payments':
+        await doUpdate(
+          _db.payments,
+          PaymentsCompanion(
+            version: newVersion != null ? Value(newVersion) : const Value.absent(),
+            localSyncStatus: const Value(LocalSyncStatus.synced),
+            lastError: const Value(null),
+          ),
+          (t) => t.id.equals(id),
+        );
+        break;
     }
   }
 
@@ -618,6 +643,16 @@ class SyncRepository {
           (t) => t.id.equals(id),
         );
         break;
+      case 'payments':
+        await doUpdate(
+          _db.payments,
+          PaymentsCompanion(
+            localSyncStatus: const Value(LocalSyncStatus.failed),
+            lastError: Value(reason),
+          ),
+          (t) => t.id.equals(id),
+        );
+        break;
     }
   }
 
@@ -656,6 +691,12 @@ class SyncRepository {
         ..where((t) => t.localSyncStatus
             .equalsValue(LocalSyncStatus.pending)))
       .get();
+  Future<List<PaymentRow>> _pendingPayments() =>
+      (_db.select(_db.payments)
+            ..where((p) => p.localSyncStatus
+                .equalsValue(LocalSyncStatus.pending)))
+          .get();
+
   Future<List<StockMovementRow>> _pendingStockMovements() =>
       (_db.select(_db.stockMovements)
             ..where((t) => t.localSyncStatus
@@ -771,6 +812,11 @@ class SyncRepository {
               stockMovementFromServer(j),
             );
         break;
+      case 'payments':
+        await _db.into(_db.payments).insertOnConflictUpdate(
+              paymentFromServer(j),
+            );
+        break;
     }
   }
 
@@ -821,10 +867,11 @@ final pendingCountProvider = StreamProvider<int>((ref) {
       + (SELECT COUNT(*) FROM medical_record_drugs WHERE local_sync_status = ?)
       + (SELECT COUNT(*) FROM stocks WHERE local_sync_status = ?)
       + (SELECT COUNT(*) FROM stock_movements WHERE local_sync_status = ?)
+      + (SELECT COUNT(*) FROM payments WHERE local_sync_status = ?)
       AS pending
     ''',
     variables: List.generate(
-      9,
+      10,
       (_) => Variable.withInt(LocalSyncStatus.pending.index),
     ),
     readsFrom: {
@@ -837,6 +884,7 @@ final pendingCountProvider = StreamProvider<int>((ref) {
       db.medicalRecordDrugs,
       db.stocks,
       db.stockMovements,
+      db.payments,
     },
   );
   return query.watchSingle().map((row) => row.read<int>('pending'));

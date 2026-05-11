@@ -36,6 +36,7 @@ class SyncPullService
         'routes',
         'route_stops',
         'vaccine_schedules',
+        'payments',
     ];
 
     /** clinic_id filtresi olmayan global tablolar. */
@@ -46,6 +47,7 @@ class SyncPullService
         'villages', 'farmers', 'animals', 'appointments',
         'medical_records', 'medical_record_drugs', 'medical_record_photos',
         'drugs', 'stocks', 'routes', 'route_stops', 'vaccine_schedules',
+        'payments',
     ];
 
     public function execute(

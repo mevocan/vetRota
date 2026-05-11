@@ -359,6 +359,36 @@ StocksCompanion stockFromServer(Map<String, dynamic> j) {
   );
 }
 
+// ========== PAYMENTS (LEDGER, append-only) ==========
+
+Map<String, dynamic> paymentToData(PaymentRow r) => {
+      'farmer_id': r.farmerId,
+      'vet_id': r.vetId,
+      'amount': r.amount,
+      'method': r.method,
+      'paid_at': _iso(r.paidAt),
+      'notes': r.notes,
+    };
+
+PaymentsCompanion paymentFromServer(Map<String, dynamic> j) {
+  return PaymentsCompanion(
+    id: Value(j['id'] as String),
+    farmerId: Value(j['farmer_id'] as String),
+    vetId: Value(_int(j['vet_id'])),
+    amount: Value(_num(j['amount']) ?? 0),
+    method: Value(j['method'] as String? ?? 'cash'),
+    paidAt: Value(_parseIso(j['paid_at'])!),
+    notes: Value(j['notes'] as String?),
+    version: Value(_int(j['version']) ?? 0),
+    lastModifiedAt: Value(_parseIso(j['last_modified_at'])),
+    originDeviceId: Value(j['origin_device_id'] as String?),
+    clinicId: Value(j['clinic_id'] as String?),
+    deletedLocal: Value(j['deleted_at'] != null),
+    localSyncStatus: const Value(LocalSyncStatus.synced),
+    localUpdatedAt: Value(DateTime.now()),
+  );
+}
+
 // ========== STOCK MOVEMENTS (LEDGER, append-only) ==========
 
 Map<String, dynamic> stockMovementToData(StockMovementRow r) => {

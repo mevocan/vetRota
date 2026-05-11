@@ -56,6 +56,10 @@ Route::middleware('auth:api')->group(function (): void {
     // Koy dropdown icin read-only.
     Route::get('villages', [VillageController::class, 'index']);
 
+    // M7.3: odeme ledger (sync hem push hem REST UI'da).
+    Route::get('payments', [\App\Http\Controllers\Api\PaymentController::class, 'index']);
+    Route::post('payments', [\App\Http\Controllers\Api\PaymentController::class, 'store']);
+
     // M5.2: gunluk rapor (server-only, sync disi).
     Route::get('reports/daily/{date}', [DailyReportController::class, 'show'])
         ->where('date', '\d{4}-\d{2}-\d{2}')

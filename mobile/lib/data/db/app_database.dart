@@ -236,6 +236,20 @@ class RouteStops extends Table with SyncColumns {
   Set<Column> get primaryKey => {id};
 }
 
+// M7.3: Odeme ledger. Silinmez (additive merge).
+@DataClassName('PaymentRow')
+class Payments extends Table with SyncColumns {
+  TextColumn get farmerId => text()();
+  IntColumn get vetId => integer().nullable()();
+  RealColumn get amount => real()();
+  TextColumn get method => text().withDefault(const Constant('cash'))();
+  DateTimeColumn get paidAt => dateTime()();
+  TextColumn get notes => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 // Sync metadata: cursor + last sync timestamp.
 @DataClassName('SyncMetaRow')
 class SyncMeta extends Table {
@@ -273,6 +287,7 @@ class SyncConflicts extends Table {
   MedicalRecordPhotos,
   Routes,
   RouteStops,
+  Payments,
   SyncMeta,
   SyncConflicts,
 ])
@@ -280,9 +295,9 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_open());
 
   // schemaVersion: 1 baslangic, 2 = M4 photos, 3 = M5 routes/route_stops,
-  // 4 = M7.1 animals pregnancy alanlari.
+  // 4 = M7.1 animals pregnancy alanlari, 5 = M7.3 payments.
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -299,6 +314,9 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(animals, animals.pregnancyStartedAt);
             await m.addColumn(animals, animals.expectedBirthDate);
             await m.addColumn(animals, animals.pregnancyNotes);
+          }
+          if (from < 5) {
+            await m.createTable(payments);
           }
         },
       );

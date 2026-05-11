@@ -115,7 +115,15 @@ Her faz biter bitmez bu dokümanda **bittiği işaretlenir + bir sonraki başlı
 
 **Bitti kriteri:** Boncuk muayene → fee 200 TL → Mehmet balance -200. Mobil "Ödeme al 100" → balance -100. Web'de ledger görünür.
 
-**Durum:** ⏳ Bekliyor
+**Durum:** 🚧 Backend + sync foundation tamam, UI bekliyor
+- ✅ M7.3.1 Migration `2026_05_11_000002_create_payments_table` (ledger + sync kolonları + last_modified_at trigger).
+- ✅ M7.3.2 Payment model + PaymentObserver (created/updated/deleted/restored hep `farmers.balance += delta`).
+- ✅ M7.3.3 MedicalRecordBalanceObserver: MR oluşunca `farmers.balance -= service_fee`. AppServiceProvider'da register edildi.
+- ✅ M7.3.4 PaymentController (index + store) + route'lar.
+- ✅ M7.3.5 PaymentProcessor sync push'a kayıtlı, SyncPullService tables listesine eklendi.
+- ✅ M7.3.6 Mobil Drift Payments tablosu (schema v5), mapper, PaymentsRepository (offline create + watchByFarmer).
+- ⏳ M7.3.7 Mobil "Ödeme al" UI — hayvan detayında çiftçi bakiyesi + buton + bottom sheet.
+- ⏳ M7.3.8 Web çiftçi detayında bakiye + ledger + ödeme kaydet.
 
 ---
 
