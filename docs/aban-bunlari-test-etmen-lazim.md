@@ -115,21 +115,18 @@ indirme — hepsi yazıldı, `flutter analyze` temiz.
 konumu** alınıyor (manuel pin / mevcut konum / klinik seçeneği yok).
 Sonradan eklenmesi gereken UX kararı.
 
-### 🟡 2.4 Mobile'da `vaccine_schedules` Drift tablosu yok
+### 🟢 2.4 Mobile'da `vaccine_schedules` Drift tablosu yok — bilinçli erteleme
 
-**Ne eksik:** M6.5'te backend'de `vaccine_schedules` tablosu açıldı,
-SyncPullService listesine eklendi. Ama **Flutter Drift tarafında
-karşılığı yazılmadı**. Yani veteriner saha modunda aşı planı göremez,
-sadece web panelden yönetiyor.
+**Durum (2026-05-11):** Aktif bug yok. Mobil `/sync/pull` çağrısında
+`tables` parametresine kendi curated listesini gönderiyor
+(`mobile/lib/data/sync/sync_repository.dart:69`, `_tables`); bu listede
+`vaccine_schedules` yok, dolayısıyla backend bu tabloyu mobile'a hiç
+döndürmüyor. 500 riski yok.
 
-**Karar gerekiyor:** Aşı planları mobilde de görünsün mü?
-- Görünürse: Drift'e `VaccineSchedules` tablosu, sync_mappers ekle, schema v3→v4
-- Görünmezse: SyncPullService'ten `vaccine_schedules` çıkar (gereksiz veri pull etmesin)
-
-Şu an mobil uygulama bu tabloyu pull eder ama lokal şemada yer olmadığı
-için sync yapamaz — **bug riski** (mobil sync 500 dönebilir).
-**Hızlı düzeltme:** Backend `SyncPullService::$tables` listesinden
-`vaccine_schedules`'ı şimdilik çıkarmak veya Drift tablosunu eklemek.
+**Karar:** Mobile'da aşı planı görüntüleme/yönetimi **M7+'a ertelendi**.
+MVP'de aşı planı web panelden (`/animals/[id]/vaccinations`) yönetilir,
+zamanlayıcı SMS'i çiftçiye gider. Veterinerin sahada plan oluşturması
+gerektiği gün gelirse Drift tablosu + mapper + ekran eklenir (~1-2 saat).
 
 ---
 
