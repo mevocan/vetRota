@@ -10,6 +10,13 @@ export default defineNuxtConfig({
     enabled: true
   },
 
+  // MVP tek tema: light. Sistem tercihini takip etmesin, sayfa
+  // wrapper'lari (bg-neutral-50) ile UCard arasinda kontrast bozulmasin.
+  colorMode: {
+    preference: 'light',
+    fallback: 'light'
+  },
+
   css: ['~/assets/css/main.css'],
 
   runtimeConfig: {
