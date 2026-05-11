@@ -17,7 +17,9 @@ class AnimalProcessor extends AbstractTableProcessor
         return [
             'clinic_id', 'farmer_id', 'village_id', 'ear_tag', 'name',
             'species', 'breed', 'birth_date', 'gender', 'weight_kg',
-            'color', 'is_pregnant', 'last_vaccination_at', 'status',
+            'color', 'is_pregnant', 'pregnancy_started_at',
+            'expected_birth_date', 'pregnancy_notes',
+            'last_vaccination_at', 'status',
             'status_changed_at', 'status_notes', 'notes',
         ];
     }

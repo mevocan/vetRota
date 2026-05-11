@@ -34,6 +34,9 @@ class Animal extends Model
         'weight_kg',
         'color',
         'is_pregnant',
+        'pregnancy_started_at',
+        'expected_birth_date',
+        'pregnancy_notes',
         'last_vaccination_at',
         'status',
         'status_changed_at',
@@ -47,6 +50,8 @@ class Animal extends Model
             'birth_date' => 'date',
             'weight_kg' => 'decimal:2',
             'is_pregnant' => 'boolean',
+            'pregnancy_started_at' => 'date',
+            'expected_birth_date' => 'date',
             'last_vaccination_at' => 'datetime',
             'status_changed_at' => 'datetime',
         ];

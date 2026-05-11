@@ -53,7 +53,13 @@ Her faz biter bitmez bu dokümanda **bittiği işaretlenir + bir sonraki başlı
 
 **Bitti kriteri:** Bir sığır gebe işaretlenir, 283 gün sonrası otomatik gelir, listede rozet görünür.
 
-**Durum:** ⏳ Bekliyor
+**Durum:** 🚧 Devam ediyor
+- ✅ M7.1.1 Migration (`2026_05_11_000001_add_pregnancy_fields_to_animals`) — pregnancy_started_at, expected_birth_date, pregnancy_notes. Docker'da apply edildi.
+- ✅ M7.1.2 Animal model fillable + casts + `App\Services\Animals\PregnancyService` (gestationDaysFor + calculateBirthDate + markPregnant/markNotPregnant). AnimalProcessor sync fillable güncellendi.
+- ⏳ M7.1.3 Mobil Drift v3→v4 + sync_mappers
+- ⏳ M7.1.4 Mobil form gebelik toggle
+- ⏳ M7.1.5 Mobil liste rozeti + yaklaşan doğumlar
+- ⏳ M7.1.6 Web hayvan detayı gebelik kartı
 
 ---
 
