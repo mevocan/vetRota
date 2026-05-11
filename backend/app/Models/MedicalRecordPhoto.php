@@ -28,6 +28,7 @@ class MedicalRecordPhoto extends Model
         'height',
         'taken_at',
         'caption',
+        'origin_device_id',
     ];
 
     protected function casts(): array
