@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title>Gunluk Rapor — {{ $date }}</title>
     <style>
-        body { font-family: DejaVu Sans, sans-serif; font-size: 12px; color: #1a1a1a; }
+        * { font-family: "DejaVu Sans", sans-serif; }
+        body { font-family: "DejaVu Sans", sans-serif; font-size: 12px; color: #1a1a1a; }
         h1 { color: #2E7D32; font-size: 20px; margin-bottom: 4px; }
         .meta { color: #555; margin-bottom: 16px; }
         .summary-grid { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
