@@ -44,5 +44,10 @@ class MedicalRecordProcessor extends AbstractTableProcessor
         if (empty($data['vet_id'])) {
             $data['vet_id'] = $this->user->id;
         }
+        // service_fee NOT NULL ama mobil formda opsiyonel
+        // (ucretsiz takip/kontrol mumkun). Default 0.
+        if (!isset($data['service_fee']) || $data['service_fee'] === null) {
+            $data['service_fee'] = 0;
+        }
     }
 }
