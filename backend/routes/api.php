@@ -37,6 +37,9 @@ Route::prefix('auth')->group(function (): void {
 Route::middleware('auth:api')->group(function (): void {
     // M2 vertical slice 1: Hayvan tam CRUD.
     Route::apiResource('animals', AnimalController::class);
+    // M7.2: hayvan icin QR etiket PDF.
+    Route::get('animals/{animal}/qr.pdf', \App\Http\Controllers\Api\V1\Animals\AnimalQrController::class)
+        ->name('animals.qr');
     // M2 vertical slice 2: Cifci tam CRUD.
     Route::apiResource('farmers', FarmerController::class);
     // M2 vertical slice 3: Muayene tam CRUD (URL'de medical-records).

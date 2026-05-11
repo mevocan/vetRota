@@ -35,6 +35,31 @@ class ReportsRepository {
     return file;
   }
 
+  // M7.2: hayvan QR PDF — backend'den ceker, lokal'e indirir, dosyayi
+  // dondurur. Internet zorunlu (DioException firlatir, UI yakalar).
+  Future<File> fetchAnimalQrPdf({
+    required String animalId,
+    required String filenameHint,
+  }) async {
+    final response = await _api.dio.get<List<int>>(
+      '/animals/$animalId/qr.pdf',
+      options: Options(responseType: ResponseType.bytes),
+    );
+    final bytes = response.data;
+    if (bytes == null || bytes.isEmpty) {
+      throw const FormatException('QR PDF bos dondu');
+    }
+    final dir = await getApplicationDocumentsDirectory();
+    final qrDir = Directory('${dir.path}/qr');
+    if (!await qrDir.exists()) {
+      await qrDir.create(recursive: true);
+    }
+    final safe = filenameHint.replaceAll(RegExp(r'[^A-Za-z0-9_.-]'), '_');
+    final file = File('${qrDir.path}/$safe.pdf');
+    await file.writeAsBytes(bytes, flush: true);
+    return file;
+  }
+
   String _yyyyMmDd(DateTime d) {
     final y = d.year.toString().padLeft(4, '0');
     final m = d.month.toString().padLeft(2, '0');

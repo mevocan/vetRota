@@ -83,7 +83,16 @@ Her faz biter bitmez bu dokümanda **bittiği işaretlenir + bir sonraki başlı
 
 **Bitti kriteri:** Boncuk'un QR PDF'i tarayıcıdan/mobilden indirilir, QR okutulunca placeholder URL açılır.
 
-**Durum:** ⏳ Bekliyor
+**Durum:** ✅ M7.2 kod tamam (cihaz/tarayıcı testi bekliyor)
+- ✅ M7.2.1 `endroid/qr-code` ^6.1 composer'a eklendi.
+- ✅ M7.2.2 `AnimalQrController` + `reports.animal_qr` blade (A6, DejaVu Sans, QR base64 inline). Route: `GET /api/v1/animals/{animal}/qr.pdf`.
+- ✅ M7.2.3 Web hayvan detayında "QR PDF" butonu (Bearer auth ile fetch, blob → indir).
+- ✅ M7.2.4 Mobil hayvan detayı AppBar'da QR ikonu + `ReportsRepository.fetchAnimalQrPdf` + `open_filex`.
+- ✅ M7.2.5 QR içeriği: `{SMS_PORTAL_BASE_URL}/animal/{ear_tag}` (placeholder).
+
+**Cihaz/tarayıcı testi:**
+- Web: `/animals/{id}` → QR PDF butonu → dosya iner, açınca QR + küpe + ad gözükmeli.
+- Mobil: hayvan detay → AppBar'daki QR ikonu → PDF iner ve `open_filex` ile açılır.
 
 ---
 

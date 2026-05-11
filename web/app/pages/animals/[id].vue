@@ -95,6 +95,28 @@ async function handleDelete() {
     toast.add({ title: 'Silme başarısız.', color: 'error' })
   }
 }
+
+async function handleDownloadQr() {
+  try {
+    const config = useRuntimeConfig()
+    const auth = useAuthStore()
+    const response = await fetch(
+      `${config.public.apiBase}/animals/${route.params.id}/qr.pdf`,
+      { headers: { Authorization: `Bearer ${auth.token}` } }
+    )
+    if (!response.ok) throw new Error('PDF indirilemedi')
+    const blob = await response.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `vetrota-${animal.value?.ear_tag ?? animal.value?.id}.pdf`
+    a.click()
+    URL.revokeObjectURL(url)
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : 'Bilinmeyen hata'
+    toast.add({ title: 'QR indirilemedi: ' + msg, color: 'error' })
+  }
+}
 </script>
 
 <template>
@@ -147,6 +169,9 @@ async function handleDelete() {
           </div>
         </div>
         <div class="flex gap-2">
+          <UButton variant="ghost" icon="i-lucide-qr-code" size="sm" @click="handleDownloadQr">
+            QR PDF
+          </UButton>
           <UButton :to="`/animals/${animal.id}/vaccinations`" variant="ghost" icon="i-lucide-syringe" size="sm">
             Aşı planları
           </UButton>

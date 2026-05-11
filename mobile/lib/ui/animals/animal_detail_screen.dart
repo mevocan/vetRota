@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:open_filex/open_filex.dart';
 
 import '../../config/env.dart';
 import '../../data/db/app_database.dart';
 import '../../data/medical_records/medical_records_repository.dart';
+import '../../data/reports/reports_repository.dart';
 import '../medical_records/medical_record_form_screen.dart';
 import '../photos/photo_strip_for_animal.dart';
 import 'pregnancy_card.dart';
@@ -26,7 +28,16 @@ class AnimalDetailScreen extends ConsumerWidget {
             : 'Isimsiz hayvan');
 
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(
+        title: Text(title),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.qr_code_2),
+            tooltip: 'QR etiket PDF',
+            onPressed: () => _downloadQr(context, ref),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: _green,
         foregroundColor: Colors.white,
@@ -82,6 +93,25 @@ class AnimalDetailScreen extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _downloadQr(BuildContext context, WidgetRef ref) async {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(
+      const SnackBar(content: Text('QR PDF indiriliyor...')),
+    );
+    try {
+      final file = await ref.read(reportsRepositoryProvider).fetchAnimalQrPdf(
+            animalId: animal.id,
+            filenameHint: animal.earTag ?? animal.id,
+          );
+      await OpenFilex.open(file.path);
+    } catch (e) {
+      messenger.showSnackBar(
+        SnackBar(
+            content: Text('QR indirilemedi: Internet baglantisi gerekli ($e)')),
+      );
+    }
   }
 }
 
