@@ -45,9 +45,10 @@ interface PortalResponse {
 const route = useRoute()
 const token = route.params.token as string
 const config = useRuntimeConfig()
+const apiBase = import.meta.server ? config.apiBaseServer : config.public.apiBase
 
 const { data, error, status } = await useFetch<PortalResponse>(
-  `${config.public.apiBase}/farmer-portal/${token}`,
+  `${apiBase}/farmer-portal/${token}`,
   { server: true }
 )
 
