@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -44,11 +45,42 @@ class _AnimalsListScreenState extends ConsumerState<AnimalsListScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Sync hatasi: $e')),
+        SnackBar(content: Text(_friendlySyncError(e))),
       );
     } finally {
       if (mounted) setState(() => _syncing = false);
     }
+  }
+
+  // Saha kullanicisi icin teknik DioException yerine sadelestirilmis
+  // mesaj. Pending kayitlar Drift'te kaliyor; internet gelince tekrar
+  // sync etmesi yeterli.
+  String _friendlySyncError(Object e) {
+    if (e is DioException) {
+      switch (e.type) {
+        case DioExceptionType.connectionError:
+        case DioExceptionType.connectionTimeout:
+        case DioExceptionType.sendTimeout:
+        case DioExceptionType.receiveTimeout:
+          return 'Internet yok. Kayitlariniz cihazda saklandi, '
+              'baglanti gelince Sync\'e tekrar basin.';
+        case DioExceptionType.badResponse:
+          final code = e.response?.statusCode;
+          if (code == 401) {
+            return 'Oturum suresi doldu. Lutfen tekrar giris yapin.';
+          }
+          if (code != null && code >= 500) {
+            return 'Sunucu hatasi ($code). Birazdan tekrar deneyin.';
+          }
+          return 'Sunucu reddetti ($code).';
+        case DioExceptionType.cancel:
+          return 'Sync iptal edildi.';
+        case DioExceptionType.badCertificate:
+        case DioExceptionType.unknown:
+          return 'Baglanti hatasi. Internet baglantinizi kontrol edin.';
+      }
+    }
+    return 'Sync hatasi: $e';
   }
 
   @override
