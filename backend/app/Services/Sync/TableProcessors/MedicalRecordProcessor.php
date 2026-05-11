@@ -36,4 +36,13 @@ class MedicalRecordProcessor extends AbstractTableProcessor
 
         return null;
     }
+
+    // Mobil form vet_id'yi henuz set etmiyor; push'u yapan authenticated
+    // kullanici muayene eden veterinerin kendisi oldugu icin onu doldur.
+    protected function fillDefaults(array &$data): void
+    {
+        if (empty($data['vet_id'])) {
+            $data['vet_id'] = $this->user->id;
+        }
+    }
 }

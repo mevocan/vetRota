@@ -32,6 +32,10 @@ abstract class AbstractTableProcessor implements TableProcessorInterface
     abstract protected function fillable(): array;
 
     /** Override edilebilir. null = ok, string = hata mesaji. */
+    // Subclass'lar gerekli default'lari (orn. vet_id = current user)
+    // insert oncesi enjekte edebilir. Update path'inde calismaz.
+    protected function fillDefaults(array &$data): void {}
+
     protected function validateData(array $data): ?string
     {
         return null;
@@ -120,6 +124,8 @@ abstract class AbstractTableProcessor implements TableProcessorInterface
             && empty($data['clinic_id'])) {
             $data['clinic_id'] = $this->user->clinic_id;
         }
+
+        $this->fillDefaults($data);
 
         // forceFill: client'in UUID v4 id'si ve version=1 fillable'da degil
         // ama offline-first sozlesmesi geregi server-side override edilmemeli.
