@@ -115,15 +115,22 @@ Her faz biter bitmez bu dokümanda **bittiği işaretlenir + bir sonraki başlı
 
 **Bitti kriteri:** Boncuk muayene → fee 200 TL → Mehmet balance -200. Mobil "Ödeme al 100" → balance -100. Web'de ledger görünür.
 
-**Durum:** 🚧 Backend + sync foundation tamam, UI bekliyor
+**Durum:** ✅ M7.3 kod tamamlandı (cihaz/tarayıcı testi bekliyor)
 - ✅ M7.3.1 Migration `2026_05_11_000002_create_payments_table` (ledger + sync kolonları + last_modified_at trigger).
 - ✅ M7.3.2 Payment model + PaymentObserver (created/updated/deleted/restored hep `farmers.balance += delta`).
 - ✅ M7.3.3 MedicalRecordBalanceObserver: MR oluşunca `farmers.balance -= service_fee`. AppServiceProvider'da register edildi.
 - ✅ M7.3.4 PaymentController (index + store) + route'lar.
 - ✅ M7.3.5 PaymentProcessor sync push'a kayıtlı, SyncPullService tables listesine eklendi.
 - ✅ M7.3.6 Mobil Drift Payments tablosu (schema v5), mapper, PaymentsRepository (offline create + watchByFarmer).
-- ⏳ M7.3.7 Mobil "Ödeme al" UI — hayvan detayında çiftçi bakiyesi + buton + bottom sheet.
-- ⏳ M7.3.8 Web çiftçi detayında bakiye + ledger + ödeme kaydet.
+- ✅ M7.3.7 Mobil: `FarmerBalanceCard` hayvan detayında çiftçi bakiyesi + "Ödeme al" bottom sheet (tutar + yöntem + not).
+- ✅ M7.3.8 Web: `/farmers/[id]`'de "Ödeme al" toggle formu + Ödeme geçmişi tablosu. Bakiye negatifse kırmızı.
+
+**Test akışı:**
+1. Boncuk için 100 TL ücretli muayene oluştur (mobilden veya web).
+2. Sync → Mehmet'in bakiyesi -100 TL gözükmeli (web çiftçi detayı).
+3. Web "Ödeme al" → 50 TL nakit → bakiye -50 TL.
+4. Mobil hayvan detayında FarmerBalanceCard "Borç: 50.00 TL" yazmalı.
+5. Mobilden "Ödeme al" 30 TL → sync sonrası bakiye -20 TL.
 
 ---
 
