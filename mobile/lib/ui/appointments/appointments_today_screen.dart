@@ -195,6 +195,7 @@ class _AppointmentsTodayScreenState
                     : _AppointmentMap(
                         items: list,
                         controller: _mapController,
+                        onTap: _openDetail,
                         routeStops: routeAsync.maybeWhen(
                           data: (r) => r,
                           orElse: () => null,
@@ -289,10 +290,12 @@ class _AppointmentMap extends StatelessWidget {
   const _AppointmentMap({
     required this.items,
     required this.controller,
+    required this.onTap,
     this.routeStops,
   });
   final List<AppointmentWithMeta> items;
   final MapController controller;
+  final void Function(AppointmentWithMeta) onTap;
   final RouteRow? routeStops;
 
   @override
@@ -357,9 +360,13 @@ class _AppointmentMap extends StatelessWidget {
                   point: LatLng(a.lat!, a.lng!),
                   width: 36,
                   height: 36,
-                  child: _NumberedPin(
-                    sequence: seqByApptId[a.row.id],
-                    completed: a.row.status == 'completed',
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => onTap(a),
+                    child: _NumberedPin(
+                      sequence: seqByApptId[a.row.id],
+                      completed: a.row.status == 'completed',
+                    ),
                   ),
                 ),
             ],
