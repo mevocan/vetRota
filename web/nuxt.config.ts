@@ -14,7 +14,9 @@ export default defineNuxtConfig({
   // wrapper'lari (bg-neutral-50) ile UCard arasinda kontrast bozulmasin.
   colorMode: {
     preference: 'light',
-    fallback: 'light'
+    fallback: 'light',
+    classSuffix: '',
+    storageKey: 'vetrota-color-mode-v2'
   },
 
   css: ['~/assets/css/main.css'],
