@@ -6,6 +6,7 @@ import '../../data/db/app_database.dart';
 import '../../data/medical_records/medical_records_repository.dart';
 import '../medical_records/medical_record_form_screen.dart';
 import '../photos/photo_strip_for_animal.dart';
+import 'pregnancy_card.dart';
 
 const Color _green = Color(Env.primaryColorHex);
 
@@ -43,6 +44,7 @@ class AnimalDetailScreen extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(vertical: 8),
         children: [
           _AnimalHeader(animal: animal),
+          PregnancyCard(animalId: animal.id),
           const Divider(height: 1),
           PhotoStripForAnimal(animalId: animal.id),
           const Divider(height: 1),

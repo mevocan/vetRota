@@ -10,6 +10,9 @@ interface AnimalDetail {
   weight_kg: number | null
   color: string | null
   is_pregnant: boolean
+  pregnancy_started_at: string | null
+  expected_birth_date: string | null
+  pregnancy_notes: string | null
   status: string
   notes: string | null
   created_at: string
@@ -56,6 +59,9 @@ const visitColor: Record<string, 'primary' | 'warning' | 'error' | 'neutral'> = 
 
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' })
+}
+function fmtDateOnly(iso: string) {
+  return new Date(iso).toLocaleDateString('tr-TR', { dateStyle: 'medium' })
 }
 
 const speciesLabel: Record<string, string> = {
@@ -193,6 +199,50 @@ async function handleDelete() {
         </div>
       </UCard>
     </div>
+
+    <UCard
+      v-if="animal.gender === 'female'"
+      :class="animal.is_pregnant ? 'border-pink-200 bg-pink-50/40' : ''"
+    >
+      <template #header>
+        <div class="flex items-center gap-2">
+          <UIcon
+            :name="animal.is_pregnant ? 'i-lucide-baby' : 'i-lucide-circle'"
+            :class="animal.is_pregnant ? 'text-pink-600 w-4 h-4' : 'text-neutral-400 w-4 h-4'"
+          />
+          <h3 class="font-semibold text-sm">
+            Gebelik
+          </h3>
+          <UBadge
+            v-if="animal.is_pregnant"
+            color="error"
+            variant="subtle"
+            size="xs"
+          >
+            Gebe
+          </UBadge>
+        </div>
+      </template>
+      <div v-if="animal.is_pregnant" class="space-y-1 text-sm">
+        <div>
+          <span class="text-neutral-500">Beklenen doğum:</span>
+          <span class="ml-2 font-medium text-pink-700">
+            {{ animal.expected_birth_date ? fmtDateOnly(animal.expected_birth_date) : '—' }}
+          </span>
+        </div>
+        <div>
+          <span class="text-neutral-500">Tespit tarihi:</span>
+          <span class="ml-2">{{ animal.pregnancy_started_at ? fmtDateOnly(animal.pregnancy_started_at) : '—' }}</span>
+        </div>
+        <div v-if="animal.pregnancy_notes" class="text-neutral-700 italic">
+          {{ animal.pregnancy_notes }}
+        </div>
+      </div>
+      <div v-else class="text-sm text-neutral-500">
+        Bu hayvan şu an gebe değil. Gebelik bilgisi mobil uygulamadan
+        eklenir (saha kullanımı).
+      </div>
+    </UCard>
 
     <UCard :ui="{ body: 'p-0' }">
       <template #header>

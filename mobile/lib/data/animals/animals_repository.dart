@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 
 import '../auth/auth_storage.dart';
 import '../db/app_database.dart';
+import 'pregnancy_helper.dart';
 
 // AnimalsRepository: tek kaynak Drift. Yazma islemleri her zaman
 // localSyncStatus = pending olarak kaydedilir; push queue (Adim 8)
@@ -72,6 +73,66 @@ class AnimalsRepository {
               ..where((a) => a.id.equals(id)))
             .getSingle());
   }
+
+  Stream<AnimalRow?> watchById(String id) {
+    return (_db.select(_db.animals)..where((a) => a.id.equals(id)))
+        .watchSingleOrNull();
+  }
+
+  // Yaklasan dogumlar: expected_birth_date bugun + [windowDays] icinde olan
+  // gebe hayvanlar (status='alive').
+  Stream<List<AnimalRow>> watchUpcomingBirths({int windowDays = 30}) {
+    final until = DateTime.now().add(Duration(days: windowDays));
+    return (_db.select(_db.animals)
+          ..where((a) =>
+              a.deletedLocal.equals(false) &
+              a.isPregnant.equals(true) &
+              a.expectedBirthDate.isNotNull() &
+              a.expectedBirthDate.isSmallerOrEqualValue(until))
+          ..orderBy([
+            (a) => OrderingTerm(expression: a.expectedBirthDate),
+          ]))
+        .watch();
+  }
+
+  // Gebelik durumunu degistir. pending olarak isaretler — sync push edecek.
+  // species verilmezse mevcut Drift kaydindan okur (expected_birth_date
+  // hesaplamak icin gerekli).
+  Future<void> setPregnancy({
+    required String animalId,
+    required bool isPregnant,
+    DateTime? startedAt,
+    String? notes,
+  }) async {
+    final deviceId = await _storage.ensureDeviceId();
+    final now = DateTime.now();
+
+    DateTime? expected;
+    String? notesValue;
+    DateTime? startedValue;
+
+    if (isPregnant) {
+      final row = await (_db.select(_db.animals)
+            ..where((a) => a.id.equals(animalId)))
+          .getSingleOrNull();
+      if (row == null) return;
+      startedValue = startedAt ?? DateTime.now();
+      expected = PregnancyHelper.calculateBirthDate(row.species, startedValue);
+      notesValue = notes;
+    }
+
+    await (_db.update(_db.animals)..where((a) => a.id.equals(animalId)))
+        .write(AnimalsCompanion(
+      isPregnant: Value(isPregnant),
+      pregnancyStartedAt: Value(startedValue),
+      expectedBirthDate: Value(expected),
+      pregnancyNotes: Value(notesValue),
+      lastModifiedAt: Value(now),
+      originDeviceId: Value(deviceId),
+      localSyncStatus: const Value(LocalSyncStatus.pending),
+      localUpdatedAt: Value(now),
+    ));
+  }
 }
 
 final animalsRepositoryProvider = Provider<AnimalsRepository>((ref) {
@@ -84,4 +145,14 @@ final animalsRepositoryProvider = Provider<AnimalsRepository>((ref) {
 // Liste ekrani icin stream — Drift kayit degisikliklerinde otomatik tetiklenir.
 final animalsListProvider = StreamProvider<List<AnimalRow>>((ref) {
   return ref.watch(animalsRepositoryProvider).watchAll();
+});
+
+// Yaklasan dogumlar (30 gun) — UI rozeti + alt liste icin.
+final upcomingBirthsProvider = StreamProvider<List<AnimalRow>>((ref) {
+  return ref.watch(animalsRepositoryProvider).watchUpcomingBirths();
+});
+
+// Tek hayvan stream — detay sayfasi gebelik degisikligini canli gormesi icin.
+final animalByIdProvider = StreamProvider.family<AnimalRow?, String>((ref, id) {
+  return ref.watch(animalsRepositoryProvider).watchById(id);
 });

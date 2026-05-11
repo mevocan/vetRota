@@ -53,13 +53,20 @@ Her faz biter bitmez bu dokümanda **bittiği işaretlenir + bir sonraki başlı
 
 **Bitti kriteri:** Bir sığır gebe işaretlenir, 283 gün sonrası otomatik gelir, listede rozet görünür.
 
-**Durum:** 🚧 Devam ediyor
+**Durum:** ✅ M7.1 kod tamamlandı (cihaz testi bekliyor)
 - ✅ M7.1.1 Migration (`2026_05_11_000001_add_pregnancy_fields_to_animals`) — pregnancy_started_at, expected_birth_date, pregnancy_notes. Docker'da apply edildi.
 - ✅ M7.1.2 Animal model fillable + casts + `App\Services\Animals\PregnancyService` (gestationDaysFor + calculateBirthDate + markPregnant/markNotPregnant). AnimalProcessor sync fillable güncellendi.
-- ⏳ M7.1.3 Mobil Drift v3→v4 + sync_mappers
-- ⏳ M7.1.4 Mobil form gebelik toggle
-- ⏳ M7.1.5 Mobil liste rozeti + yaklaşan doğumlar
-- ⏳ M7.1.6 Web hayvan detayı gebelik kartı
+- ✅ M7.1.3 Mobil Drift v3→v4 + sync_mappers (pregnancy_started_at, expected_birth_date, pregnancy_notes 3 alani; addColumn migration).
+- ✅ M7.1.4 Mobil form gebelik — `pregnancy_card.dart` `PregnancyCard` widget + bottom sheet (`_PregnancyEditSheet`). Tespit tarihi seçici + otomatik beklenen doğum tarihi (PregnancyHelper). AnimalsRepository.setPregnancy.
+- ✅ M7.1.5 Liste rozeti (pregnant_woman ikonu hayvan satırında) + AppBar'da "Yaklaşan dogumlar" badge'li butonu + `upcoming_births_screen.dart`.
+- ✅ M7.1.6 Web hayvan detayında `Gebelik` UCard (sadece female): beklenen dogum, tespit tarihi, not. Read-only — gebelik bilgisi mobilden eklenir.
+
+**Cihaz testi (Windows):**
+1. Git pull + flutter run.
+2. Bir disi sigir/koyun detayina gir → "Gebe isaretle" → tarih sec → otomatik beklenen dogum tarihi gozukmeli (sigir +283, koyun +150 gun).
+3. Sync → listede 🤰 ikonu cikmali.
+4. AppBar'da "Yaklasan dogumlar" badge'i (30 gun icinde olanlar varsa).
+5. Web'de hayvan detayinda Gebelik kartinda ayni bilgi.
 
 ---
 

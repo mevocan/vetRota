@@ -72,6 +72,9 @@ class Animals extends Table with SyncColumns {
   RealColumn get weightKg => real().nullable()();
   TextColumn get color => text().nullable()();
   BoolColumn get isPregnant => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get pregnancyStartedAt => dateTime().nullable()();
+  DateTimeColumn get expectedBirthDate => dateTime().nullable()();
+  TextColumn get pregnancyNotes => text().nullable()();
   DateTimeColumn get lastVaccinationAt => dateTime().nullable()();
   TextColumn get status => text().withDefault(const Constant('alive'))();
   DateTimeColumn get statusChangedAt => dateTime().nullable()();
@@ -276,9 +279,10 @@ class SyncConflicts extends Table {
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_open());
 
-  // schemaVersion: 1 baslangic, 2 = M4 photos, 3 = M5 routes/route_stops.
+  // schemaVersion: 1 baslangic, 2 = M4 photos, 3 = M5 routes/route_stops,
+  // 4 = M7.1 animals pregnancy alanlari.
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -290,6 +294,11 @@ class AppDatabase extends _$AppDatabase {
           if (from < 3) {
             await m.createTable(routes);
             await m.createTable(routeStops);
+          }
+          if (from < 4) {
+            await m.addColumn(animals, animals.pregnancyStartedAt);
+            await m.addColumn(animals, animals.expectedBirthDate);
+            await m.addColumn(animals, animals.pregnancyNotes);
           }
         },
       );

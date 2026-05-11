@@ -11,6 +11,8 @@ import '../appointments/appointments_today_screen.dart';
 import '../sync/conflicts_screen.dart';
 import 'animal_detail_screen.dart';
 import 'animal_form_screen.dart';
+import 'upcoming_births_screen.dart';
+import '../../data/animals/animals_repository.dart' show upcomingBirthsProvider;
 
 const Color _green = Color(Env.primaryColorHex);
 
@@ -88,6 +90,7 @@ class _AnimalsListScreenState extends ConsumerState<AnimalsListScreen> {
     final animalsAsync = ref.watch(animalsListProvider);
     final pendingAsync = ref.watch(pendingCountProvider);
     final conflictsAsync = ref.watch(syncConflictsProvider);
+    final birthsAsync = ref.watch(upcomingBirthsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -103,6 +106,27 @@ class _AnimalsListScreenState extends ConsumerState<AnimalsListScreen> {
                 ),
               );
             },
+          ),
+          // Yaklasan dogumlar — badge'de sayi
+          birthsAsync.maybeWhen(
+            data: (rows) => rows.isEmpty
+                ? const SizedBox.shrink()
+                : IconButton(
+                    icon: Badge(
+                      label: Text('${rows.length}'),
+                      backgroundColor: Colors.pink,
+                      child: const Icon(Icons.pregnant_woman),
+                    ),
+                    tooltip: 'Yaklasan dogumlar',
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const UpcomingBirthsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+            orElse: () => const SizedBox.shrink(),
           ),
           // Catisma rozeti
           conflictsAsync.maybeWhen(
@@ -246,7 +270,19 @@ class _AnimalTile extends StatelessWidget {
           backgroundColor: _green,
           child: Icon(Icons.pets, color: Colors.white),
         ),
-        title: Text(title),
+        title: Row(
+          children: [
+            Flexible(child: Text(title, overflow: TextOverflow.ellipsis)),
+            if (animal.isPregnant) ...[
+              const SizedBox(width: 6),
+              const Tooltip(
+                message: 'Gebe',
+                child: Icon(Icons.pregnant_woman,
+                    size: 16, color: Colors.pink),
+              ),
+            ],
+          ],
+        ),
         subtitle: Text(subtitleParts.join(' • ')),
         trailing: _SyncBadge(status: animal.localSyncStatus),
         onTap: () {
