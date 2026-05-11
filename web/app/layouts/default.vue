@@ -43,25 +43,27 @@ async function handleLogout() {
         </NuxtLink>
       </nav>
       <div class="p-3 border-t border-neutral-200">
-        <UDropdownMenu
-          :items="[[
-            { label: 'Çıkış yap', icon: 'i-lucide-log-out', onSelect: handleLogout }
-          ]]"
-        >
-          <button class="flex items-center gap-2.5 w-full text-left">
-            <div class="w-8 h-8 rounded-full bg-primary-50 text-primary-700 flex items-center justify-center font-bold text-xs flex-shrink-0">
-              {{ auth.user?.name?.charAt(0)?.toUpperCase() ?? 'V' }}
-            </div>
-            <div class="min-w-0">
-              <div class="text-sm font-medium truncate">
-                {{ auth.user?.name ?? '...' }}
+        <ClientOnly>
+          <UDropdownMenu
+            :items="[[
+              { label: 'Çıkış yap', icon: 'i-lucide-log-out', onSelect: handleLogout }
+            ]]"
+          >
+            <button class="flex items-center gap-2.5 w-full text-left">
+              <div class="w-8 h-8 rounded-full bg-primary-50 text-primary-700 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                {{ auth.user?.name?.charAt(0)?.toUpperCase() ?? 'V' }}
               </div>
-              <div class="text-xs text-neutral-500 truncate">
-                {{ auth.user?.email ?? '' }}
+              <div class="min-w-0">
+                <div class="text-sm font-medium truncate">
+                  {{ auth.user?.name ?? '...' }}
+                </div>
+                <div class="text-xs text-neutral-500 truncate">
+                  {{ auth.user?.email ?? '' }}
+                </div>
               </div>
-            </div>
-          </button>
-        </UDropdownMenu>
+            </button>
+          </UDropdownMenu>
+        </ClientOnly>
       </div>
     </aside>
 

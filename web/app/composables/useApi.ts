@@ -34,6 +34,10 @@ export function useApiFetch<T>(url: string | (() => string), options: UseFetchOp
 
   return useFetch<T>(url, {
     baseURL: config.public.apiBase,
+    // Auth-gerektiren panel sayfalari SSR'da JWT'ye erisemiyor
+    // (localStorage server'da yok); request 401 doner, sayfa bos kalir.
+    // Login arkasi SPA modu: sadece client-side fetch.
+    server: false,
     ...options,
     onRequest(ctx) {
       const headers = new Headers(ctx.options.headers)
