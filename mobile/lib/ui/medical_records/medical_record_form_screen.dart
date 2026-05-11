@@ -534,6 +534,9 @@ class _DrugLineRow extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.delete_outline),
             onPressed: onRemove,
+            visualDensity: VisualDensity.compact,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
           ),
         ],
       ),
