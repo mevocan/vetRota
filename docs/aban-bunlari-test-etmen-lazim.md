@@ -11,6 +11,10 @@
 > - 🟢 **Düşük risk** — sadece formalite testi
 >
 > Tarih: 2026-05-08 itibariyle. Yeni iş yapıldıkça güncellenmeli.
+> Güncelleme: 2026-05-11 — M5.9, M4.7, çiftçi portal, aşı planları sayfası
+> sahada/tarayıcıda denendi; süreç boyunca çıkan bug'lar düzeltildi. Tek
+> kalan kritik test: 2.1 sync edge-case (uçak modu, kullanıcı uygun
+> zamanda kendisi yapacak).
 
 ---
 
@@ -54,29 +58,57 @@ echo get_class(app(\App\Sms\Contracts\SmsSender::class)) . PHP_EOL;
 
 ## 2. Mobile (Flutter) — Cihazda Test Edilmedi
 
-### 🔴 2.1 M3.6/11 — Sync sahada (airplane mode) tam smoke
+### 🔴 2.1 M3.6/11 — Sync sahada (airplane mode) tam smoke — ERTELENDİ
 
-**Ne yapıldı:** Push/pull queue, conflict UI, retry hepsi yazıldı.
-M3.6/1-10 cihazda smoke yapıldı (bir kez), ama **kalan 4 senaryo
-edge-case'leri** sahada denenmedi:
+**Durum (2026-05-11):** Kullanıcı uygun zamanda yapacak. Bu seansta
+sync genel çalışırlığı M5.9/M4.7 testleri sırasında doğrulandı
+(5 randevu pull, muayene push + fotoğraf push + conflict yok),
+ama özel edge-case'ler hâlâ denenmedi.
+
+**Hazırlık tamamlandı:**
+- Sync hata mesajı saha kullanıcısı için Türkçeleştirildi
+  (`mobile/lib/ui/animals/animals_list_screen.dart` `_friendlySyncError`).
+- Bu seansta keşfedilen sync push bug'ları (vet_id null,
+  medical_record_drugs.unit null, service_fee null, foto echo) hep
+  düzeltildi — bu senaryolar artık öncekinden çok daha sağlam.
+
+**Kalan senaryolar:**
 
 1. Uçak modu açıkken 5 yeni hayvan + muayene oluştur, sonra netten gel
    → hepsi sync'e alındı mı, conflict yok mu?
 2. İki cihaz aynı hayvanı offline güncellesin, sonra birlikte sync olsun
    → LWW kuralı (client kazanır) gerçekten çalışıyor mu?
+   *(İki cihaz gerekir — MVP'de atlanabilir, M7'de doğrula.)*
 3. Push sırasında network kop → retry queue dolu kalıyor mu, yeniden
    internet gelince tüketiyor mu?
 4. Stok additive merge: iki cihaz aynı ilaca farklı hareketler yazsın,
    sonuç toplam doğru mu?
+   *(Tek cihaz alternatifi: offline iken aynı ilaca 2 muayene + stok
+   düşür → online → toplam doğru azalmış mı?)*
 
 **Test cihazı:** Android telefon veya emulator + Docker backend.
+Emulator: Settings → Network → Airplane mode toggle.
 
-### 🔴 2.2 M4.7 — Fotoğraflı muayene cihazda
+### 🟢 2.2 M4.7 — Fotoğraflı muayene cihazda — TAMAMLANDI (2026-05-11)
 
-**Ne yapıldı:** image_picker, lokal saklama, multipart upload, fotoğraf
-galerisi hepsi yazıldı, `flutter analyze` temiz. Ama **kameradan
-fotoğraf çekme + offline'da saklama + online olunca yükleme + galeride
-görme** zinciri bir gerçek cihazda yapılmadı.
+**Durum:** Online akış cihazda denendi. 2 fotoğraf çekildi, kaydedildi,
+sync sonrası backend'de `storage/app/photos/{clinic}/{animal}/*.jpg`
+oluştu, `medical_record_photos.upload_status=uploaded` ve
+`server_storage_path` doldu. Galeri thumbnail'leri görünüyor.
+
+**Bu seansta düzeltilen bug:** `MedicalRecordPhoto::$fillable`
+listesinde `origin_device_id` yoktu → mass assignment ile sessizce
+düşüyordu → DB'de NULL kalıyor → echo prevention çalışmıyor → mobil az
+önce upload ettiği fotoyu geri pull ediyor → UI'da duplikat. Fix:
+`origin_device_id` fillable'a eklendi.
+
+**Hâlâ denenmemiş (düşük risk):** Uçak modu zinciri — offline'da çek,
+online ol, upload. Bu pattern M3 sync push'un aynısı (medical_record
+gibi pending sırada bekler, sync sonrası gider). Senaryo 2.1 bunu da
+kapsar.
+
+**Eski not (referans):** image_picker, lokal saklama, multipart upload,
+fotoğraf galerisi hepsi yazıldı, `flutter analyze` temiz.
 
 **Test akışı:**
 1. Emulator/cihaz: uçak modu aç
@@ -88,14 +120,40 @@ görme** zinciri bir gerçek cihazda yapılmadı.
 7. `medical_record_photos.upload_status=uploaded`, `server_storage_path` dolu
 8. Galeri'de fotoğraf hâlâ görünüyor (artık `file://` veya backend URL fark etmez)
 
-### 🔴 2.3 M5.9 — Bugünün randevuları + harita + optimize + rapor
+### 🟢 2.3 M5.9 — Bugünün randevuları + harita + optimize + rapor — TAMAMLANDI (2026-05-11)
 
-**Ne yapıldı:** `AppointmentsTodayScreen` (liste/harita toggle),
-`route_optimizer.dart` (nearest-neighbor + Haversine + unit test),
-optimize butonu, randevu detay sheet, "Tamamla + muayene", PDF rapor
-indirme — hepsi yazıldı, `flutter analyze` temiz.
+**Durum:** Tüm 9 adım cihazda denendi. M5SmokeSeeder ile 5 randevu
+oluşturuldu, mobil sync ile çekildi, liste/harita toggle çalıştı,
+"Rotayı optimize et" pinleri numaraladı + yeşil polyline çizdi, pin tap
+ile bottom sheet açıldı, "Tamamla + muayene" formu MR formuna döndü ve
+animal pre-fill geldi, PDF rapor indi ve `open_filex` ile açıldı.
 
-**`M5SmokeSeeder` hazır** (5 köy lat/lng + 5 randevu bugüne).
+**Bu seansta düzeltilen bug'lar:**
+- Sync 'String is not subtype of num?' — `decimal` kolonlar JSON'da
+  string dönüyordu; `sync_mappers.dart` `_num()`/`_int()` tolerant
+  helper'lara geçirildi.
+- Harita pin'i tap'lanmıyordu — `flutter_map.Marker` kendi onTap'i
+  taşımıyor; `_NumberedPin` `GestureDetector` ile sarıldı.
+- Muayene formu ilaç satırı 1.8px overflow — IconButton
+  `visualDensity.compact` + 36x36 constraint.
+- PDF Türkçe karakter bozuk — `config/dompdf.php` `default_font`
+  serif → DejaVu Sans + blade font-family fix.
+- Sync push 500: `medical_records.vet_id` NOT NULL — backend
+  `MedicalRecordProcessor.fillDefaults` ile current user'a default.
+- Sync push 500: `medical_record_drugs.unit` NOT NULL —
+  `MedicalRecordDrugProcessor.fillDefaults` Drug katalogundan kopyalar.
+- Sync push 500: `medical_records.service_fee` NOT NULL — null gelirse
+  0 default.
+
+**Bilinen risk (sonraki sürüm):** "Optimize başlangıç noktası" şu an
+MVP'de ilk randevunun konumu (manuel pin / mevcut konum / klinik
+seçeneği yok).
+
+**Eski not (referans):** `AppointmentsTodayScreen` (liste/harita
+toggle), `route_optimizer.dart` (nearest-neighbor + Haversine + unit
+test), optimize butonu, randevu detay sheet, "Tamamla + muayene", PDF
+rapor indirme — `flutter analyze` temiz. `M5SmokeSeeder` (5 köy
+lat/lng + 5 randevu bugüne).
 
 **Test akışı:**
 1. Backend'de `php artisan db:seed --class=M5SmokeSeeder`
@@ -132,7 +190,22 @@ gerektiği gün gelirse Drift tablosu + mapper + ekran eklenir (~1-2 saat).
 
 ## 3. Web (Nuxt) — Tarayıcıda Test Edilmedi
 
-### 🔴 3.1 Çiftçi portal sayfası `/farmer/[token]`
+### 🟢 3.1 Çiftçi portal sayfası `/farmer/[token]` — TAMAMLANDI (2026-05-11)
+
+**Durum:** Geçerli token ile sayfa açıldı, klinik adı + çiftçi adı +
+hayvan kartları + son muayene + dipnot görünüyor.
+
+**Bu seansta düzeltilen bug'lar:**
+- Nuxt SSR container içinden backend'e ulaşamıyordu (localhost:8000 =
+  web container'ın kendisi). `runtimeConfig.apiBaseServer` eklendi
+  (`http://backend:8000/api/v1`) + sayfa `import.meta.server` kontrolü
+  ile doğru base'i kullanır. docker-compose'a env eklendi.
+- Tema bozuk (dark/light karışık) — `colorMode.preference: 'light'`,
+  `classSuffix: ''`, `storageKey: 'vetrota-color-mode-v2'` ile sistem
+  tercihi kapatıldı, eski localStorage cache'i kırıldı.
+
+**Hâlâ denenmemiş (düşük risk):** Geçersiz/expired token testi — 410
+ekranı. SSR error handling pattern'i çalışıyor (`statusCode ?? status`).
 
 **Ne yapıldı:** `web/app/pages/farmer/[token].vue`,
 `definePageMeta({ layout: false })`, public middleware, 410 ekranı,
@@ -165,7 +238,18 @@ Backend endpoint `curl` ile test edildi (200 + tam JSON, 410 enum-safe).
 çalışmazsa kart "Bir hata oluştu" gösterir, "süresi geçmiş" göstermez.
 İlk gerçek testte bu davranışı kontrol et.
 
-### 🔴 3.2 Aşı planları sayfası `/animals/[id]/vaccinations`
+### 🟢 3.2 Aşı planları sayfası `/animals/[id]/vaccinations` — TAMAMLANDI (2026-05-11)
+
+**Durum:** Sayfa açıldı, "Yeni plan" formu çalışıyor. Hayvan detayına
+da nav butonu eklendi (`Aşı planları` syringe ikonu).
+
+**Bu seansta düzeltilen bug'lar:**
+- Sayfa boş gelir + hydration mismatch — auth'lu panel SSR'da JWT
+  görmüyordu (`localStorage` server'da yok), `useApiFetch` 401 dönüyor,
+  user dropdown da `auth.user` boş/dolu farkıyla mismatch atıyordu.
+  Çözüm: `useApiFetch` default `server: false` + layout'taki user
+  dropdown `<ClientOnly>` ile sarıldı. Login arkası panel SPA modunda.
+- Hayvan detayında navigasyon linki yoktu — aksiyon barına eklendi.
 
 **Ne yapıldı:** Liste (UCard), yeni plan formu (USelect + UInput date),
 "Devre dışı bırak" aksiyonu. Backend CRUD endpoint hazır.
