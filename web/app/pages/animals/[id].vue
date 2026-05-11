@@ -141,6 +141,9 @@ async function handleDelete() {
           </div>
         </div>
         <div class="flex gap-2">
+          <UButton :to="`/animals/${animal.id}/vaccinations`" variant="ghost" icon="i-lucide-syringe" size="sm">
+            Aşı planları
+          </UButton>
           <UButton :to="`/animals/${animal.id}/edit`" variant="ghost" icon="i-lucide-pencil" size="sm">
             Düzenle
           </UButton>
