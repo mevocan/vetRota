@@ -39,4 +39,16 @@ class MedicalRecordDrugProcessor extends AbstractTableProcessor
 
         return null;
     }
+
+    // Mobil mapper unit'i gondermiyor (denormalize edilmis alan).
+    // Drug katalogundan kopyala.
+    protected function fillDefaults(array &$data): void
+    {
+        if (empty($data['unit']) && !empty($data['drug_id'])) {
+            $unit = Drug::where('id', $data['drug_id'])->value('unit');
+            if ($unit !== null) {
+                $data['unit'] = $unit;
+            }
+        }
+    }
 }
