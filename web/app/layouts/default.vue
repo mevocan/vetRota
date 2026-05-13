@@ -9,7 +9,10 @@ const navItems = [
   { label: 'Muayeneler', icon: 'i-lucide-stethoscope', to: '/examinations' },
   { label: 'İlaç & Stok', icon: 'i-lucide-pill', to: '/medications' },
   { label: 'Randevular', icon: 'i-lucide-calendar', to: '/appointments' },
-  { label: 'Hastalık haritası', icon: 'i-lucide-map', to: '/analytics/disease-map' }
+  { label: 'Hastalık haritası', icon: 'i-lucide-map', to: '/analytics/disease-map' },
+  { label: 'Veteriner performansı', icon: 'i-lucide-trophy', to: '/analytics/vets' },
+  { label: 'İlaç tüketimi', icon: 'i-lucide-bar-chart-3', to: '/analytics/drugs' },
+  { label: 'Klinik kazancı', icon: 'i-lucide-trending-up', to: '/analytics/revenue' }
 ]
 
 const pageTitle = computed(() => {
