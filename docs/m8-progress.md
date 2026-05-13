@@ -63,7 +63,7 @@ Her faz biter biter bu dosya güncellenir + atomik commit/push.
 - UTable: ilaç adı · toplam kullanım · kalan stok · tahmini bitiş günü.
 - Düşük stok için renkli UBadge (kırmızı=≤7 gün, sarı=≤14 gün).
 
-**Durum:** ⏳ Bekliyor
+**Durum:** ✅ M8.3 kod tamam — `/analytics/drugs` sayfası, stat kartlar + düşük stok rozetleri + pay bar.
 
 ---
 
@@ -74,7 +74,7 @@ Her faz biter biter bu dosya güncellenir + atomik commit/push.
 - Stat kartlar: toplam tahsil edilen, toplam fatura edilen, açık alacak.
 - Basit bar chart (CSS based, leaflet/chart.js olmadan iskelet).
 
-**Durum:** ⏳ Bekliyor
+**Durum:** ✅ M8.4 kod tamam — `/analytics/revenue` sayfası, 3 stat kart (fatura/tahsil/açık alacak) + günlük/haftalık/aylık zaman serisi CSS bar chart (mavi=fatura, yeşil=tahsil).
 
 ---
 
