@@ -24,6 +24,11 @@ Route::get('farmer-portal/{token}', [FarmerPortalController::class, 'show'])
     ->where('token', '[A-Za-z0-9]{16,64}')
     ->name('farmer-portal.show');
 
+// M7.4: Recete PDF public — SMS link ile acilir, auth gerekmez.
+Route::get('prescriptions/public/{token}/pdf', [\App\Http\Controllers\Api\V1\Prescriptions\PrescriptionController::class, 'publicPdf'])
+    ->where('token', '[A-Za-z0-9]{16,64}')
+    ->name('prescriptions.public.pdf');
+
 Route::prefix('auth')->group(function (): void {
     Route::post('login', [AuthController::class, 'login']);
 
@@ -59,6 +64,12 @@ Route::middleware('auth:api')->group(function (): void {
     // M7.3: odeme ledger (sync hem push hem REST UI'da).
     Route::get('payments', [\App\Http\Controllers\Api\PaymentController::class, 'index']);
     Route::post('payments', [\App\Http\Controllers\Api\PaymentController::class, 'store']);
+
+    // M7.4: Recete olustur + PDF.
+    Route::post('prescriptions', [\App\Http\Controllers\Api\V1\Prescriptions\PrescriptionController::class, 'store'])
+        ->name('prescriptions.store');
+    Route::get('prescriptions/{prescription}/pdf', [\App\Http\Controllers\Api\V1\Prescriptions\PrescriptionController::class, 'pdf'])
+        ->name('prescriptions.pdf');
 
     // M5.2: gunluk rapor (server-only, sync disi).
     Route::get('reports/daily/{date}', [DailyReportController::class, 'show'])

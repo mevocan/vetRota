@@ -158,21 +158,121 @@ class _AnimalHeader extends StatelessWidget {
   }
 }
 
-class _MedicalRecordTile extends StatelessWidget {
+class _MedicalRecordTile extends ConsumerWidget {
   const _MedicalRecordTile({required this.record});
   final MedicalRecordRow record;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final when = record.examinedAt.toLocal().toString().split('.').first;
     final summary = record.chiefComplaint?.isNotEmpty == true
         ? record.chiefComplaint!
         : (record.treatmentNotes ?? record.visitType);
+    final synced = record.localSyncStatus == LocalSyncStatus.synced;
     return ListTile(
       leading: const Icon(Icons.medical_services_outlined),
       title: Text(when),
       subtitle: Text(summary, maxLines: 2, overflow: TextOverflow.ellipsis),
-      trailing: _SyncDot(status: record.localSyncStatus),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.receipt_long_outlined),
+            tooltip: synced
+                ? 'Recete olustur ve SMS gonder'
+                : 'Recete icin once muayene sync olmali',
+            color: synced ? _green : Colors.black26,
+            onPressed: synced
+                ? () => _createPrescription(context, ref)
+                : null,
+          ),
+          _SyncDot(status: record.localSyncStatus),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _createPrescription(BuildContext context, WidgetRef ref) async {
+    final notes = await showDialog<String?>(
+      context: context,
+      builder: (ctx) => const _PrescriptionNotesDialog(),
+    );
+    if (notes == null) return; // iptal
+
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(
+      const SnackBar(content: Text('Recete olusturuluyor...')),
+    );
+    try {
+      final repo = ref.read(reportsRepositoryProvider);
+      final result = await repo.createPrescription(
+        medicalRecordId: record.id,
+        notes: notes.isEmpty ? null : notes,
+      );
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            'Recete ${result.prescriptionNumber ?? ''} olusturuldu'
+            '${result.smsSentAt != null ? " · SMS gonderildi" : ""}',
+          ),
+        ),
+      );
+      // PDF'i hemen indir + ac
+      final file = await repo.fetchPrescriptionPdf(
+        prescriptionId: result.id,
+        filenameHint: result.prescriptionNumber ?? result.id,
+      );
+      await OpenFilex.open(file.path);
+    } catch (e) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('Recete olusturulamadi (internet gerekli): $e'),
+        ),
+      );
+    }
+  }
+}
+
+class _PrescriptionNotesDialog extends StatefulWidget {
+  const _PrescriptionNotesDialog();
+
+  @override
+  State<_PrescriptionNotesDialog> createState() =>
+      _PrescriptionNotesDialogState();
+}
+
+class _PrescriptionNotesDialogState extends State<_PrescriptionNotesDialog> {
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Recete notu'),
+      content: TextField(
+        controller: _controller,
+        maxLines: 4,
+        decoration: const InputDecoration(
+          hintText: 'Ek talimat (opsiyonel)',
+          border: OutlineInputBorder(),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, null),
+          child: const Text('Iptal'),
+        ),
+        FilledButton(
+          style: FilledButton.styleFrom(backgroundColor: _green),
+          onPressed: () => Navigator.pop(context, _controller.text.trim()),
+          child: const Text('Olustur ve gonder'),
+        ),
+      ],
     );
   }
 }

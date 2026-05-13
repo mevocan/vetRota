@@ -60,12 +60,72 @@ class ReportsRepository {
     return file;
   }
 
+  // M7.4: Recete olustur (server tarafinda PDF + SMS uretilir).
+  // MR'nin sync edilmis olmasi gerekir. Internet zorunlu.
+  Future<PrescriptionCreateResult> createPrescription({
+    required String medicalRecordId,
+    String? notes,
+  }) async {
+    final response = await _api.dio.post<Map<String, dynamic>>(
+      '/prescriptions',
+      data: {
+        'medical_record_id': medicalRecordId,
+        if (notes != null && notes.isNotEmpty) 'notes': notes,
+      },
+    );
+    final data = (response.data?['data'] as Map?)?.cast<String, dynamic>();
+    if (data == null) {
+      throw const FormatException('Recete cevabi bos');
+    }
+    return PrescriptionCreateResult(
+      id: data['id'] as String,
+      prescriptionNumber: data['prescription_number'] as String?,
+      smsSentAt: data['sms_sent_at'] as String?,
+    );
+  }
+
+  // M7.4: Recete PDF'i lokal'e indir.
+  Future<File> fetchPrescriptionPdf({
+    required String prescriptionId,
+    required String filenameHint,
+  }) async {
+    final response = await _api.dio.get<List<int>>(
+      '/prescriptions/$prescriptionId/pdf',
+      options: Options(responseType: ResponseType.bytes),
+    );
+    final bytes = response.data;
+    if (bytes == null || bytes.isEmpty) {
+      throw const FormatException('Recete PDF bos dondu');
+    }
+    final dir = await getApplicationDocumentsDirectory();
+    final rxDir = Directory('${dir.path}/prescriptions');
+    if (!await rxDir.exists()) {
+      await rxDir.create(recursive: true);
+    }
+    final safe = filenameHint.replaceAll(RegExp(r'[^A-Za-z0-9_.-]'), '_');
+    final file = File('${rxDir.path}/$safe.pdf');
+    await file.writeAsBytes(bytes, flush: true);
+    return file;
+  }
+
   String _yyyyMmDd(DateTime d) {
     final y = d.year.toString().padLeft(4, '0');
     final m = d.month.toString().padLeft(2, '0');
     final dd = d.day.toString().padLeft(2, '0');
     return '$y-$m-$dd';
   }
+}
+
+class PrescriptionCreateResult {
+  const PrescriptionCreateResult({
+    required this.id,
+    required this.prescriptionNumber,
+    required this.smsSentAt,
+  });
+
+  final String id;
+  final String? prescriptionNumber;
+  final String? smsSentAt;
 }
 
 final reportsRepositoryProvider = Provider<ReportsRepository>((ref) {

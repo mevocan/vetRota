@@ -149,7 +149,23 @@ Her faz biter bitmez bu dokümanda **bittiği işaretlenir + bir sonraki başlı
 
 **Bitti kriteri:** Muayene + 2 ilaç → reçete oluştur → SMS log'a düşer → URL ile PDF açılır.
 
-**Durum:** ⏳ Bekliyor
+**Durum:** ✅ M7.4 kod tamamlandı (migration + cihaz/tarayıcı testi bekliyor)
+- ✅ M7.4.1 Migration `2026_05_13_000001_create_prescriptions_table` — id, clinic_id, medical_record_id, farmer_id, animal_id, vet_id, prescription_number (unique), notes, portal_token_id, sms_sent_at, soft delete.
+- ✅ M7.4.2 `App\Services\Prescriptions\PrescriptionService::createFromMedicalRecord($mr, $notes)` — RX-YYMMDD-XXXX numara üretir, ilaç listesi medical_record_drugs üzerinden okunur.
+- ✅ M7.4.3 `PrescriptionController` (store + pdf + publicPdf), Blade view `reports.prescription` (DejaVu Sans, A4, brand renk, vet imza placeholder). Routes:
+  - `POST /api/v1/prescriptions` (auth)
+  - `GET /api/v1/prescriptions/{prescription}/pdf` (auth)
+  - `GET /api/v1/prescriptions/public/{token}/pdf` (public, scope=prescription token doğrulanır)
+- ✅ M7.4.4 `PrescriptionObserver` — created sonrası TokenService ile prescription-scope portal token üretir, SmsService ile "Receteniz hazir: {portal_base_url}/prescription/{token}" SMS gönderir. AppServiceProvider'da register.
+- ✅ M7.4.5 Mobil: `ReportsRepository.createPrescription` + `fetchPrescriptionPdf`. Hayvan detayında her MR satırının trailing'inde `receipt_long` ikonu (sadece localSyncStatus=synced ise aktif) → not dialog'u → POST + PDF indir + open_filex. Çevrimiçi zorunlu.
+
+**Test akışı:**
+1. Migration: `docker compose up -d && docker exec vetrota-backend php artisan migrate`.
+2. Mobilden bir muayene oluştur (en az 1 ilaç, çiftçinin telefon numarası olsun).
+3. Sync → MR yeşil olunca hayvan detayında "Reçete" ikonu aktifleşmeli.
+4. İkona tıkla → not gir → "Olustur ve gonder" → PDF indir, açıl.
+5. Backend: `sms_messages` tablosunda trigger_type='prescription' satırı; LogSmsSender driver ise `storage/logs/laravel.log`'da SMS gövdesi.
+6. SMS'teki URL'i tarayıcıda aç → `/api/v1/prescriptions/public/{token}/pdf` PDF döndürmeli.
 
 ---
 
