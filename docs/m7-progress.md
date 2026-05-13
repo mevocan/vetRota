@@ -182,7 +182,19 @@ Her faz biter bitmez bu dokümanda **bittiği işaretlenir + bir sonraki başlı
 
 **Bitti kriteri:** Mehmet'in 5 hayvanı seçilir → toplu aşı → 5 MR + 5 stok hareketi oluşur.
 
-**Durum:** ⏳ Bekliyor
+**Durum:** ✅ M7.5 kod tamamlandı (cihaz testi bekliyor)
+- ✅ M7.5.1 Hayvanlar listesinde long-press ile multi-select mode. Seçim aktifken AppBar yeşil (selection bar) + Checkbox + tileColor highlight; FAB gizli, normal tap = toggle.
+- ✅ M7.5.2 AppBar'da "Toplu asi" aksiyonu (vaccines ikonu).
+- ✅ M7.5.3 `BulkVaccinationSheet` (modal bottom sheet): ilaç dropdown (asılar `(asi)` rozetli) + hayvan başına miktar + opsiyonel not. Her hayvan için ayrı `MedicalRecordsRepository.create(visitType='vaccination', drugs=[…])` çağrılır → MR + drug usage + stock movement Drift transaction'larında üretilir.
+- ✅ M7.5.4 Seçimde farklı çiftçi veya farklı tür varsa "Karisik secim" uyarı dialog'u; kullanıcı onaylarsa devam.
+- ✅ M7.5.5 LinearProgressIndicator + canlı sayaç ("X başarılı · Y hata / N"); bitince snackbar ve seçim temizlenir.
+
+**Cihaz testi:**
+1. Hayvanlar listesinde bir kayda uzun bas → seçim modu açılır.
+2. 4-5 hayvanı daha tek tıkla ekle.
+3. AppBar'daki `vaccines` ikonuna bas → ilaç (örn. bir aşı) seç, miktar gir → Uygula.
+4. Bitince snackbar "X hayvana asi uygulandi". Her hayvanın detayında bir muayene + stok düşümü görünmeli.
+5. Sync sonrası backend tarafında medical_records ve stock_movements tabloları satırları içermeli.
 
 ---
 
