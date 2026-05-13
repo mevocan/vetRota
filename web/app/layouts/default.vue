@@ -8,7 +8,8 @@ const navItems = [
   { label: 'Çiftçiler', icon: 'i-lucide-users', to: '/farmers' },
   { label: 'Muayeneler', icon: 'i-lucide-stethoscope', to: '/examinations' },
   { label: 'İlaç & Stok', icon: 'i-lucide-pill', to: '/medications' },
-  { label: 'Randevular', icon: 'i-lucide-calendar', to: '/appointments' }
+  { label: 'Randevular', icon: 'i-lucide-calendar', to: '/appointments' },
+  { label: 'Hastalık haritası', icon: 'i-lucide-map', to: '/analytics/disease-map' }
 ]
 
 const pageTitle = computed(() => {

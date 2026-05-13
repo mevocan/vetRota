@@ -71,6 +71,10 @@ Route::middleware('auth:api')->group(function (): void {
     Route::get('prescriptions/{prescription}/pdf', [\App\Http\Controllers\Api\V1\Prescriptions\PrescriptionController::class, 'pdf'])
         ->name('prescriptions.pdf');
 
+    // M7.6: Hastalik haritasi analytics (server-only).
+    Route::get('analytics/disease-map', \App\Http\Controllers\Api\V1\Analytics\DiseaseMapController::class)
+        ->name('analytics.disease-map');
+
     // M5.2: gunluk rapor (server-only, sync disi).
     Route::get('reports/daily/{date}', [DailyReportController::class, 'show'])
         ->where('date', '\d{4}-\d{2}-\d{2}')

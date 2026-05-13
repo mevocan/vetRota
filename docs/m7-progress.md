@@ -19,14 +19,14 @@
 
 Tek seansta hepsi yapılmaz. Sıra **küçük & izole** → **yüksek değerli** → **bulanık**:
 
-| Faz | Alt-özellik | Ölçek | Yer | Risk |
-|---|---|---|---|---|
-| M7.1 | Gebelik takibi | küçük | Backend + Mobil | düşük |
-| M7.2 | QR etiket PDF | küçük | Backend | düşük |
-| M7.3 | Borç/ödeme | orta | Backend + Web + Mobil | düşük |
-| M7.4 | Reçete PDF + SMS | orta | Backend + Mobil | düşük |
-| M7.5 | Sürü işlemi (toplu) | orta | Mobil | orta |
-| M7.6 | Hastalık haritası | büyük | Web | yüksek |
+| Faz | Alt-özellik | Ölçek | Yer | Risk | Durum |
+|---|---|---|---|---|---|
+| M7.1 | Gebelik takibi | küçük | Backend + Mobil | düşük | ✅ kod |
+| M7.2 | QR etiket PDF | küçük | Backend | düşük | ✅ kod |
+| M7.3 | Borç/ödeme | orta | Backend + Web + Mobil | düşük | ✅ kod |
+| M7.4 | Reçete PDF + SMS | orta | Backend + Mobil | düşük | ✅ kod |
+| M7.5 | Sürü işlemi (toplu) | orta | Mobil | orta | ✅ kod |
+| M7.6 | Hastalık haritası | büyük | Web | yüksek | ✅ kod (iskelet) |
 
 Her faz biter bitmez bu dokümanda **bittiği işaretlenir + bir sonraki başlığa geçilir**. Faz arası commit zorunlu (atomik check-point).
 
@@ -210,7 +210,19 @@ Her faz biter bitmez bu dokümanda **bittiği işaretlenir + bir sonraki başlı
 
 **Bitti kriteri:** Son 30 gün yoğunluk haritası tıklanabilir köy marker'ları ile açılır.
 
-**Durum:** ⏳ Bekliyor
+**Durum:** ✅ M7.6 kod tamamlandı (iskelet seviyesi — Leaflet sonraya bırakıldı)
+- ✅ M7.6.1 `App\Services\Analytics\DiseaseMapService`: medical_records × animals × villages join, tarih+species filtreli, chief_complaint+symptoms metinlerinden basit kelime frekansı (TR stopword listesi) ile her köy için top 3 anahtar kelime.
+- ✅ M7.6.2 Endpoint `GET /api/v1/analytics/disease-map?from=&to=&species=`. Default aralık son 30 gün. Çiktı: from/to/species/total_cases + villages[] (village_id, name, district, lat, lng, case_count, top_keywords).
+- ✅ M7.6.3 Nuxt sayfa `/analytics/disease-map`: filtre formu (tarih + tür), 3 stat kart, "Köy konumları" panelinde lat/lng'i olan köyler relative pozisyonla daire (boyut = vaka sayısı oranı) + hover tooltip, alttan UTable benzeri köy listesi (UBadge ile renk eşik). Sol menüye "Hastalık haritası" eklendi.
+- ✅ M7.6.4 Filtreler: from/to (default 30 gün) + species (cattle/sheep/goat/horse/chicken/tümü).
+
+**Not:** MVP için gerçek Leaflet harita yerine relative pozisyonlu daire görselleştirmesi kullanıldı. Leaflet entegrasyonu (paket onayı gerekli) sonraki iterasyona kaldı.
+
+**Tarayıcı testi:**
+1. Mobil + sync ile birkaç köyde muayene oluştur (chief_complaint/symptoms doldur).
+2. Web `/analytics/disease-map` → son 30 gün + Tümü ile yükle.
+3. Stat kartları + köy konumları paneli + köy listesi gözükmeli; daire boyutları vaka sayısı ile orantılı.
+4. Tür filtresi ile sığır seç → sadece sığır vakaları sayılmalı.
 
 ---
 
