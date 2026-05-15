@@ -13,6 +13,7 @@ import '../farmers/farmers_list_screen.dart';
 import '../medical_records/medical_records_list_screen.dart';
 import '../medications/medications_list_screen.dart';
 import '../sync/conflicts_screen.dart';
+import '../vaccinations/vaccine_schedules_list_screen.dart';
 
 const Color _green = Color(Env.primaryColorHex);
 
@@ -261,8 +262,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     icon: Icons.vaccines,
                     label: 'Asi planlari',
                     color: Colors.purple.shade400,
-                    disabled: true,
-                    onTap: () => _comingSoon(context, 'Asi planlari'),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const VaccineSchedulesListScreen(),
+                      ),
+                    ),
                   ),
                   _ModuleCard(
                     icon: Icons.receipt_long,

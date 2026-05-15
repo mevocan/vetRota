@@ -78,6 +78,7 @@ class SyncRepository {
     'stocks',
     'stock_movements',
     'payments',
+    'vaccine_schedules',
   ];
 
   Future<SyncResult> sync() async {
@@ -290,6 +291,19 @@ class SyncRepository {
             clientLastModifiedAt: r.lastModifiedAt,
           )).whereType<Map<String, dynamic>>().toList();
       totalPending += payments.length;
+    }
+
+    final vaccineSchedules = await _pendingVaccineSchedules();
+    if (vaccineSchedules.isNotEmpty) {
+      batch['vaccine_schedules'] = vaccineSchedules.map((r) => _recordFor(
+            id: r.id,
+            version: r.version,
+            data: vaccineScheduleToData(r),
+            deleted: r.deletedLocal,
+            tableName: 'vaccine_schedules',
+            clientLastModifiedAt: r.lastModifiedAt,
+          )).whereType<Map<String, dynamic>>().toList();
+      totalPending += vaccineSchedules.length;
     }
 
     if (totalPending == 0) {
@@ -536,6 +550,17 @@ class SyncRepository {
           (t) => t.id.equals(id),
         );
         break;
+      case 'vaccine_schedules':
+        await doUpdate(
+          _db.vaccineSchedules,
+          VaccineSchedulesCompanion(
+            version: newVersion != null ? Value(newVersion) : const Value.absent(),
+            localSyncStatus: const Value(LocalSyncStatus.synced),
+            lastError: const Value(null),
+          ),
+          (t) => t.id.equals(id),
+        );
+        break;
     }
   }
 
@@ -653,6 +678,16 @@ class SyncRepository {
           (t) => t.id.equals(id),
         );
         break;
+      case 'vaccine_schedules':
+        await doUpdate(
+          _db.vaccineSchedules,
+          VaccineSchedulesCompanion(
+            localSyncStatus: const Value(LocalSyncStatus.failed),
+            lastError: Value(reason),
+          ),
+          (t) => t.id.equals(id),
+        );
+        break;
     }
   }
 
@@ -699,6 +734,12 @@ class SyncRepository {
 
   Future<List<StockMovementRow>> _pendingStockMovements() =>
       (_db.select(_db.stockMovements)
+            ..where((t) => t.localSyncStatus
+                .equalsValue(LocalSyncStatus.pending)))
+          .get();
+
+  Future<List<VaccineScheduleRow>> _pendingVaccineSchedules() =>
+      (_db.select(_db.vaccineSchedules)
             ..where((t) => t.localSyncStatus
                 .equalsValue(LocalSyncStatus.pending)))
           .get();
@@ -817,6 +858,11 @@ class SyncRepository {
               paymentFromServer(j),
             );
         break;
+      case 'vaccine_schedules':
+        await _db.into(_db.vaccineSchedules).insertOnConflictUpdate(
+              vaccineScheduleFromServer(j),
+            );
+        break;
     }
   }
 
@@ -868,10 +914,11 @@ final pendingCountProvider = StreamProvider<int>((ref) {
       + (SELECT COUNT(*) FROM stocks WHERE local_sync_status = ?)
       + (SELECT COUNT(*) FROM stock_movements WHERE local_sync_status = ?)
       + (SELECT COUNT(*) FROM payments WHERE local_sync_status = ?)
+      + (SELECT COUNT(*) FROM vaccine_schedules WHERE local_sync_status = ?)
       AS pending
     ''',
     variables: List.generate(
-      10,
+      11,
       (_) => Variable.withInt(LocalSyncStatus.pending.index),
     ),
     readsFrom: {
@@ -885,6 +932,7 @@ final pendingCountProvider = StreamProvider<int>((ref) {
       db.stocks,
       db.stockMovements,
       db.payments,
+      db.vaccineSchedules,
     },
   );
   return query.watchSingle().map((row) => row.read<int>('pending'));

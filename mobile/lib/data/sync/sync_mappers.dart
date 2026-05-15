@@ -426,3 +426,39 @@ StockMovementsCompanion stockMovementFromServer(Map<String, dynamic> j) {
     localUpdatedAt: Value(DateTime.now()),
   );
 }
+
+// ========== VACCINE_SCHEDULES ==========
+
+Map<String, dynamic> vaccineScheduleToData(VaccineScheduleRow r) => {
+      'animal_id': r.animalId,
+      'drug_id': r.drugId,
+      'interval_days': r.intervalDays,
+      'first_due_date': _iso(r.firstDueDate),
+      'next_due_date': _iso(r.nextDueDate),
+      'last_administered_at': _iso(r.lastAdministeredAt),
+      'remind_days_before': r.remindDaysBefore,
+      'is_active': r.isActive,
+      'notes': r.notes,
+    };
+
+VaccineSchedulesCompanion vaccineScheduleFromServer(Map<String, dynamic> j) {
+  return VaccineSchedulesCompanion(
+    id: Value(j['id'] as String),
+    animalId: Value(j['animal_id'] as String),
+    drugId: Value(j['drug_id'] as String),
+    intervalDays: Value(_int(j['interval_days']) ?? 0),
+    firstDueDate: Value(_parseIso(j['first_due_date'])!),
+    nextDueDate: Value(_parseIso(j['next_due_date'])!),
+    lastAdministeredAt: Value(_parseIso(j['last_administered_at'])),
+    remindDaysBefore: Value(_int(j['remind_days_before']) ?? 7),
+    isActive: Value(j['is_active'] as bool? ?? true),
+    notes: Value(j['notes'] as String?),
+    version: Value(_int(j['version']) ?? 0),
+    lastModifiedAt: Value(_parseIso(j['last_modified_at'])),
+    originDeviceId: Value(j['origin_device_id'] as String?),
+    clinicId: Value(j['clinic_id'] as String?),
+    deletedLocal: Value(j['deleted_at'] != null),
+    localSyncStatus: const Value(LocalSyncStatus.synced),
+    localUpdatedAt: Value(DateTime.now()),
+  );
+}

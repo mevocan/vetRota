@@ -250,6 +250,24 @@ class Payments extends Table with SyncColumns {
   Set<Column> get primaryKey => {id};
 }
 
+// M9.6: Asi planlari — offline-first. Backend ile sync edilir.
+@DataClassName('VaccineScheduleRow')
+class VaccineSchedules extends Table with SyncColumns {
+  TextColumn get animalId => text()();
+  TextColumn get drugId => text()();
+  IntColumn get intervalDays => integer()();
+  DateTimeColumn get firstDueDate => dateTime()();
+  DateTimeColumn get nextDueDate => dateTime()();
+  DateTimeColumn get lastAdministeredAt => dateTime().nullable()();
+  IntColumn get remindDaysBefore =>
+      integer().withDefault(const Constant(7))();
+  BoolColumn get isActive => boolean().withDefault(const Constant(true))();
+  TextColumn get notes => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 // Sync metadata: cursor + last sync timestamp.
 @DataClassName('SyncMetaRow')
 class SyncMeta extends Table {
@@ -288,6 +306,7 @@ class SyncConflicts extends Table {
   Routes,
   RouteStops,
   Payments,
+  VaccineSchedules,
   SyncMeta,
   SyncConflicts,
 ])
@@ -295,9 +314,10 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_open());
 
   // schemaVersion: 1 baslangic, 2 = M4 photos, 3 = M5 routes/route_stops,
-  // 4 = M7.1 animals pregnancy alanlari, 5 = M7.3 payments.
+  // 4 = M7.1 animals pregnancy alanlari, 5 = M7.3 payments,
+  // 6 = M9.6 vaccine_schedules.
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -317,6 +337,9 @@ class AppDatabase extends _$AppDatabase {
           }
           if (from < 5) {
             await m.createTable(payments);
+          }
+          if (from < 6) {
+            await m.createTable(vaccineSchedules);
           }
         },
       );
