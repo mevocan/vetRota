@@ -4,12 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../config/env.dart';
 import '../../data/animals/animals_repository.dart';
+import '../../data/db/app_database.dart';
+import '../farmers/farmer_picker_sheet.dart';
 
 const Color _green = Color(Env.primaryColorHex);
 
-// Yeni hayvan formu — offline-first: kayit Drift'e yazilir, internet
-// gerekmez. farmerId su an manuel UUID girilir; Adim sonrasinda Farmer
-// secim ekrani gelecek.
+// Yeni hayvan formu — offline-first: kayit Drift'e yazilir.
+// Ciftci secimi FarmerPickerSheet ile yapilir; ciftci yoksa sheet
+// icinden yeni ciftci eklenebilir.
 class AnimalFormScreen extends ConsumerStatefulWidget {
   const AnimalFormScreen({super.key});
 
@@ -20,13 +22,13 @@ class AnimalFormScreen extends ConsumerStatefulWidget {
 class _AnimalFormScreenState extends ConsumerState<AnimalFormScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final _farmerIdController = TextEditingController();
   final _nameController = TextEditingController();
   final _earTagController = TextEditingController();
   final _breedController = TextEditingController();
   final _weightController = TextEditingController();
   final _notesController = TextEditingController();
 
+  FarmerRow? _selectedFarmer;
   String _species = 'cattle';
   String? _gender;
   bool _saving = false;
@@ -49,7 +51,6 @@ class _AnimalFormScreenState extends ConsumerState<AnimalFormScreen> {
 
   @override
   void dispose() {
-    _farmerIdController.dispose();
     _nameController.dispose();
     _earTagController.dispose();
     _breedController.dispose();
@@ -58,12 +59,26 @@ class _AnimalFormScreenState extends ConsumerState<AnimalFormScreen> {
     super.dispose();
   }
 
+  Future<void> _pickFarmer() async {
+    final picked = await FarmerPickerSheet.show(context);
+    if (picked != null) {
+      setState(() => _selectedFarmer = picked);
+    }
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_selectedFarmer == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Once ciftci secin')),
+      );
+      return;
+    }
     setState(() => _saving = true);
     try {
       await ref.read(animalsRepositoryProvider).create(
-            farmerId: _farmerIdController.text.trim(),
+            farmerId: _selectedFarmer!.id,
+            villageId: _selectedFarmer!.villageId,
             species: _species,
             name: _nameController.text.trim().isEmpty
                 ? null
@@ -101,6 +116,9 @@ class _AnimalFormScreenState extends ConsumerState<AnimalFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final farmerLabel = _selectedFarmer == null
+        ? 'Ciftci sec'
+        : '${_selectedFarmer!.firstName} ${_selectedFarmer!.lastName}';
     return Scaffold(
       appBar: AppBar(title: const Text('Yeni hayvan')),
       body: SafeArea(
@@ -109,16 +127,29 @@ class _AnimalFormScreenState extends ConsumerState<AnimalFormScreen> {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              TextFormField(
-                controller: _farmerIdController,
-                decoration: const InputDecoration(
-                  labelText: 'Ciftci ID (UUID)',
-                  helperText: 'Ciftci secim ekrani sonra eklenecek',
-                  border: OutlineInputBorder(),
+              InkWell(
+                onTap: _pickFarmer,
+                borderRadius: BorderRadius.circular(4),
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: 'Ciftci',
+                    border: const OutlineInputBorder(),
+                    suffixIcon: Icon(
+                      _selectedFarmer == null
+                          ? Icons.search
+                          : Icons.swap_horiz,
+                    ),
+                  ),
+                  child: Text(
+                    farmerLabel,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: _selectedFarmer == null
+                          ? Theme.of(context).hintColor
+                          : null,
+                    ),
+                  ),
                 ),
-                validator: (v) => (v == null || v.trim().length < 8)
-                    ? 'Gecerli bir ID girin'
-                    : null,
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
