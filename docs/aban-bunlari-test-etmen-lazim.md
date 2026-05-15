@@ -12,9 +12,10 @@
 >
 > Tarih: 2026-05-08 itibariyle. Yeni iş yapıldıkça güncellenmeli.
 > Güncelleme: 2026-05-11 — M5.9, M4.7, çiftçi portal, aşı planları sayfası
-> sahada/tarayıcıda denendi; süreç boyunca çıkan bug'lar düzeltildi. Tek
-> kalan kritik test: 2.1 sync edge-case (uçak modu, kullanıcı uygun
-> zamanda kendisi yapacak).
+> sahada/tarayıcıda denendi; süreç boyunca çıkan bug'lar düzeltildi.
+> Güncelleme: 2026-05-15 — M9 (mobil-web tam eşitlik) tamamlandı,
+> 10 yeni mobil modül + dashboard + Drift v6 migration. Test maddeleri
+> bölüm 9'a eklendi. Tek kalan eski kritik test hala 2.1 (sync uçak modu).
 
 ---
 
@@ -433,7 +434,138 @@ flutter run        # cihaz/emulator
 
 ---
 
-## 8. Bu Doküman Ne Zaman Silinir
+## 9. M9 — Mobil-Web Tam Eşitlik (2026-05-15)
+
+> Detay: `docs/m9-progress.md`. 10 alt-faz, hepsi kod düzeyinde tamam.
+> Sahada/cihazda denenmedi — Flutter analyze temiz, ama her modül için
+> en az bir end-to-end test gerek.
+
+### 🔴 9.1 Drift v6 migration (vaccine_schedules)
+
+**Risk:** En kritik test. Eski sürümden (v5) yükselten cihazda
+`onUpgrade` adımı `m.createTable(vaccineSchedules)` çalıştırır.
+Hatalıysa uygulama açılmaz veya aşı planı ekranı çöker.
+
+**Test:**
+1. Eski APK ile cihaza yükle (v5 schema), birkaç hayvan/muayene oluştur, sync et
+2. `c1ddc33` veya sonrası APK ile **uninstall etmeden** üzerine yükle
+3. Uygulamayı aç → mevcut veri kaybolmamalı
+4. **"Aşı planları"** kartına gir → liste açılmalı (boş veya sync sonrası gelen)
+5. **+ Yeni plan** → form çalışmalı, kaydetme `pending` olarak Drift'e düşmeli
+6. Sync → backend'e push olmalı, web `/animals/[id]/vaccinations`'da görünmeli
+
+**Codegen şart:** Build öncesi
+`flutter pub run build_runner build --delete-conflicting-outputs`
+
+### 🟡 9.2 Çiftçi picker (M9.1) + yeni hayvan akışı
+
+**Test:**
+1. Dashboard → Çiftçiler → boşsa **+ Yeni** ile çiftçi ekle (Ahmet Yılmaz, 5551234567)
+2. Dashboard → Hayvanlar → **+ Yeni hayvan**
+3. **"Çiftçi seç"** kutusuna tıkla → arama sheet'i açılmalı
+4. "Ahmet" yaz → tek sonuç görünmeli, tıkla
+5. Tür/isim/küpe doldur → Kaydet
+6. Yeni hayvan listede; sync sonrası backend'de görünmeli
+7. **Hata akışı:** Çiftçi seçmeden Kaydet → "Önce çiftçi seçin" SnackBar
+
+### 🟡 9.3 Dashboard (M9.2)
+
+**Test:**
+1. Login → 3'lü stat şeridi (Bekleyen sync · Çatışmalar · Yaklaşan doğum) görünmeli
+2. 11 modül kartı (2 kolon × 5-6 satır): hiçbiri "yakında" rozetli olmamalı
+3. Pull-to-refresh → sync tetiklenmeli, snackbar görünmeli
+4. AppBar sync ikonu: pending varsa badge sayısı
+5. Çatışma varsa badge ikonu görünmeli (yoksa hiç)
+6. Logo (logo2.png) AppBar'da görünür olmalı (beyaz arka planlı küçük kutu)
+
+### 🟡 9.4 İlaç/stok (M9.3) — stok hareketi ledger
+
+**Test:**
+1. Dashboard → İlaçlar → **+ Yeni** ile bir antibiyotik ekle (ad, tip=antibiotic, birim=ml, ambalaj=100)
+2. Detaya gir → "Henüz stok kaydı yok" görünmeli
+3. **+ Stok hareketi** → alış, 500 ml, tedarikçi=test → Kaydet
+4. Detayda stok kart **500 ml** görünmeli
+5. Yeni hareket: kullanım 50 ml → Kaydet → stok **450 ml**
+6. Ledger'da iki satır: ↓ +500 / ↑ −50
+7. **Kritik test:** Sync sonra backend'de `stocks.current_quantity` server kanonu ile **450 ml** olarak güncellenmeli (LWW). Mobile bu değeri overwrite kabul etmeli.
+
+### 🟡 9.5 Randevu modülü (M9.4) — 3 tab + form
+
+**Test:**
+1. Dashboard → Randevular → 3 tab (Bugün / Yaklaşan / Geçmiş)
+2. **+ Yeni** → çiftçi seç → hayvan seç (sadece o çiftçinin hayvanları gelmeli)
+3. Yarın 14:00 seç → durum=planlandı → sebep="kontrol" → Kaydet
+4. "Yaklaşan" tab'ında "Yarın" başlığı altında görünmeli
+5. Tıkla → detay → **Tamamlandı** butonuna bas → durum chip yeşil "Tamamlandı"
+6. "Yaklaşan" → üstü çizili görünmeli
+7. AppBar harita ikonu → eski "today" ekranına gitmeli (rota optimize çalışmalı)
+
+### 🟡 9.6 Muayene global liste + edit (M9.5)
+
+**Test:**
+1. Dashboard → Muayeneler → en yeniden eskiye liste
+2. Arama: hayvan adı / çiftçi / şikayet
+3. Detay → 5 bölüm: header / notlar / vitals / ilaçlar / follow-up
+4. **Düzenle** → metin/vital değiştir → Kaydet → liste güncellensin
+5. **İlaç listesinin değişmediğini** doğrula (MVP kararı)
+6. Sil → soft delete → liste güncellensin; backend'de soft delete
+
+### 🟡 9.7 Borç/ödeme ledger (M9.7)
+
+**Test:**
+1. Dashboard → Borç/ödeme → liste + üst kart "Toplam (gösterilenler)"
+2. **+ Yeni ödeme** → çiftçi seç → tutar 250 → nakit → Kaydet
+3. Liste başına ekleme, yeşil ↓ ikon, +250 TL
+4. **İptal testi:** Tutar -250 TL gir → "Tutar 0 olamaz" değil, **negatif izinli**
+5. Negatif satır kırmızı ↑ ikon ile gelmeli
+6. `FarmerBalanceCard` (hayvan detayında) bakiyeyi doğru yansıtmalı
+
+### 🟡 9.8 Reçete listesi (M9.8) — online
+
+**Test:**
+1. Dashboard → Reçeteler → liste yüklenmeli (internet gerekli — üst uyarı)
+2. İnternet kapatıp Tekrar dene → "Cloud_off" + "Tekrar dene" CTA
+3. Bir reçeteye PDF ikonu → indir → `open_filex` ile PDF görüntüleyici açılmalı
+4. Backend'de `prescription_number` doluysa görünmeli, yoksa kısa ID
+5. Arama: prescription_number / çiftçi adı / hayvan adı / küpe
+
+**Backend kontrol:** `curl -H "Accept: application/json" -H "Authorization: Bearer XYZ" http://localhost:8000/api/v1/prescriptions` → JSON 200 dönmeli.
+
+### 🟡 9.9 Hastalık haritası (M9.9) — online
+
+**Test:**
+1. Dashboard → Hastalık haritası → tarih aralığı (son 30 gün default)
+2. Üst kart: "Toplam X olgu · Y köy"
+3. Harita: OSM tile + dairesel pinler (kırmızı=çok / turuncu=orta / sarı=az)
+4. AppBar harita/liste toggle → liste görünümünde "olgu sayısı + ilk 3 anahtar"
+5. Tarih aralığını değiştir → veri yenilensin
+6. İnternet kapat → "Tekrar dene" CTA
+
+### 🟢 9.10 Ayarlar (M9.10)
+
+**Test:**
+1. Dashboard → Ayarlar
+2. E-posta + Klinik ID + Cihaz ID görünmeli
+3. Bekleyen sync sayısı (HomeScreen'deki ile aynı olmalı)
+4. Çıkış → pending varsa uyarı: "Bekleyen X sync kaydı var..."
+5. Onayla → token silinir, login ekranına döner
+6. Tekrar login → pending kayıtlar Drift'te (sync sonrası backend'e gider)
+
+### 🟢 9.11 Marka logosu (yan görev)
+
+**Mobile:**
+1. Login ekranı: VetRota wordmark logo (logo.png) ortada görünmeli
+2. Dashboard AppBar: pin+stetoskop ikon (logo2.png) + "VetRota"
+3. Uygulama simgesi (telefon ana ekranı): `dart run flutter_launcher_icons` sonrası pin+stetoskop
+
+**Web:**
+1. Tarayıcı sekme favicon: pin+stetoskop
+2. `/login` sayfası: logo banner + "Gezici veteriner saha paneli"
+3. Dashboard sidebar üstü: VetRota wordmark logosu, ana sayfaya tıklanabilir
+
+---
+
+## 10. Bu Doküman Ne Zaman Silinir
 
 Her başlığın yanındaki risk işareti 🟢'ye dönüştüğünde **veya** o iş
 başka bir milestone'a taşındığında bu satırı sil. Her oturum başında

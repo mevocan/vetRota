@@ -211,23 +211,42 @@ sonraya bırakıldı" de.
 
 ---
 
-## 7. Mevcut Durum
+## 7. Mevcut Durum (2026-05-15)
 
-**Aktif milestone:** M1 başlamadan önce (planlama fazı bitti)
+**Tamamlanan milestone'lar:**
 
-**Sıradaki iş:** `docs/plan.md` bölüm "M1 — Docker ayağa kalktı, login
-çalışıyor".
+| Milestone | Durum |
+|---|---|
+| M1 — Docker + login | ✅ |
+| M2 — Çekirdek veri modeli | ✅ |
+| M3 — Flutter offline muayene + sync | ✅ |
+| M4 — Fotoğraflı muayene | ✅ |
+| M5 — Randevu + rota + günlük rapor | ✅ |
+| M6 — SMS portalı + aşı hatırlatma | ✅ |
+| M7 — Hastalık haritası + sürü + QR + gebelik + reçete + borç | ✅ |
+| M8.1–M8.4 — Analitik panelleri (kod tamam) | ✅ kod |
+| **M9 — Mobil-web tam eşitlik** | ✅ **2026-05-15** |
 
-M1 tamamlandı kriteri:
-- `docker compose up` ile Laravel 13 + PostgreSQL 18 + Nuxt 4 çalışıyor
-- Laravel Boost kurulu, `.mcp.json` ve `boost.json` üretilmiş, Claude Code
-  Boost MCP server'ına bağlanabiliyor
-- Nuxt MCP HTTP server'ı `.mcp.json`'a eklenmiş
-- Nuxt UI v4 modülü kurulu, marka rengi `#2E7D32` semantic color
-  sistemine bağlanmış (login ekranında doğrulanır)
-- Veteriner web panelinden login olabiliyor (Nuxt UI UAuthForm component'i)
-- JWT dönüyor
-- Flutter'da da aynı JWT ile login çalışıyor
+**M9 detayı:** Mobil uygulama web panelinin tam fonksiyonel eşi oldu.
+10 alt-faz: çiftçi picker + ana dashboard + ilaç/stok CRUD + tam randevu
+modülü + muayene listesi/edit + aşı planları (Drift v6 + sync) +
+borç/ödeme ledger + reçete listesi + hastalık haritası + ayarlar.
+Drift schema v5 → v6 migration ile `vaccine_schedules` mobile sync'e
+girdi. Detay: `docs/m9-progress.md`.
+
+**Bekleyen iş:**
+
+1. **M8.5 — Hetzner deploy** ⏳ — kullanıcının Hetzner hesabı + domain
+   detayları bekleniyor. `docker-compose.prod.yml`, prod Dockerfile'lar,
+   pg_dump backup, nginx-proxy + SSL gerekli.
+2. **Saha testleri** — `docs/aban-bunlari-test-etmen-lazim.md` bölüm
+   9'da M9 modüllerinin her biri için end-to-end test akışları. En
+   kritik: 🔴 9.1 Drift v6 migration (v5'ten upgrade — eski APK'dan
+   yeni APK'ya veri kaybı olmamalı) ve eski 🔴 2.1 sync uçak modu.
+3. **Gerçek SMS sağlayıcı** (NetGSM/İletimerkezi) — `LogSmsSender` şu
+   an sadece log'a yazıyor. Deploy öncesi gerek.
+4. **Açık tasarım kararları** (test doc §5): `AnimalObserver` deceased
+   cascade, SMS opt-out (STOP), prod `SMS_PORTAL_BASE_URL`.
 
 Geri kalan milestone'lar için `docs/plan.md`'ye bak.
 
