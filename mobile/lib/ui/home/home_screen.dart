@@ -10,6 +10,7 @@ import '../animals/animals_list_screen.dart';
 import '../animals/upcoming_births_screen.dart';
 import '../appointments/appointments_today_screen.dart';
 import '../farmers/farmers_list_screen.dart';
+import '../medications/medications_list_screen.dart';
 import '../sync/conflicts_screen.dart';
 
 const Color _green = Color(Env.primaryColorHex);
@@ -249,8 +250,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     icon: Icons.medication,
                     label: 'Ilaclar',
                     color: Colors.teal.shade600,
-                    disabled: true,
-                    onTap: () => _comingSoon(context, 'Ilac/stok modulu'),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const MedicationsListScreen(),
+                      ),
+                    ),
                   ),
                   _ModuleCard(
                     icon: Icons.vaccines,
