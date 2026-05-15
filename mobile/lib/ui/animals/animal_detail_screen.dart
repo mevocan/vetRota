@@ -198,6 +198,7 @@ class _MedicalRecordTile extends ConsumerWidget {
       builder: (ctx) => const _PrescriptionNotesDialog(),
     );
     if (notes == null) return; // iptal
+    if (!context.mounted) return;
 
     final messenger = ScaffoldMessenger.of(context);
     messenger.showSnackBar(

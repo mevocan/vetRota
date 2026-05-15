@@ -13,7 +13,6 @@ import 'animal_detail_screen.dart';
 import 'animal_form_screen.dart';
 import 'bulk_vaccination_sheet.dart';
 import 'upcoming_births_screen.dart';
-import '../../data/animals/animals_repository.dart' show upcomingBirthsProvider;
 
 const Color _green = Color(Env.primaryColorHex);
 
@@ -76,6 +75,7 @@ class _AnimalsListScreenState extends ConsumerState<AnimalsListScreen> {
       );
       if (proceed != true) return;
     }
+    if (!mounted) return;
 
     final done = await showModalBottomSheet<int>(
       context: context,

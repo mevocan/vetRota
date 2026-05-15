@@ -48,8 +48,7 @@ class _BirthTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final due = animal.expectedBirthDate;
-    final daysLeft =
-        due == null ? null : due.difference(DateTime.now()).inDays;
+    final daysLeft = due?.difference(DateTime.now()).inDays;
     final title = animal.name?.isNotEmpty == true
         ? animal.name!
         : (animal.earTag?.isNotEmpty == true
