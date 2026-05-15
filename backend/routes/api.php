@@ -65,7 +65,9 @@ Route::middleware('auth:api')->group(function (): void {
     Route::get('payments', [\App\Http\Controllers\Api\PaymentController::class, 'index']);
     Route::post('payments', [\App\Http\Controllers\Api\PaymentController::class, 'store']);
 
-    // M7.4: Recete olustur + PDF.
+    // M7.4 + M9.8: Recete liste + olustur + PDF.
+    Route::get('prescriptions', [\App\Http\Controllers\Api\V1\Prescriptions\PrescriptionController::class, 'index'])
+        ->name('prescriptions.index');
     Route::post('prescriptions', [\App\Http\Controllers\Api\V1\Prescriptions\PrescriptionController::class, 'store'])
         ->name('prescriptions.store');
     Route::get('prescriptions/{prescription}/pdf', [\App\Http\Controllers\Api\V1\Prescriptions\PrescriptionController::class, 'pdf'])

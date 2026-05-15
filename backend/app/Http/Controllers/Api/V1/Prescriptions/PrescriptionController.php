@@ -25,6 +25,66 @@ class PrescriptionController extends Controller
         private readonly TokenService $tokenService,
     ) {}
 
+    // M9.8: Recete listesi (klinik bazli, en yeni once, sayfali).
+    public function index(Request $request): JsonResponse
+    {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        $perPage = (int) min(100, max(10, (int) $request->query('per_page', 50)));
+        $query = Prescription::query()
+            ->where('clinic_id', $user->clinic_id)
+            ->with([
+                'farmer:id,first_name,last_name,phone',
+                'animal:id,name,ear_tag,species',
+                'vet:id,name',
+            ])
+            ->orderByDesc('created_at');
+
+        if ($q = $request->query('q')) {
+            $query->where(function ($w) use ($q) {
+                $w->where('prescription_number', 'ilike', "%{$q}%")
+                  ->orWhereHas('farmer', fn($f) =>
+                      $f->where('first_name', 'ilike', "%{$q}%")
+                        ->orWhere('last_name', 'ilike', "%{$q}%"))
+                  ->orWhereHas('animal', fn($a) =>
+                      $a->where('name', 'ilike', "%{$q}%")
+                        ->orWhere('ear_tag', 'ilike', "%{$q}%"));
+            });
+        }
+
+        $page = $query->paginate($perPage);
+
+        return response()->json([
+            'data' => $page->getCollection()->map(fn(Prescription $p) => [
+                'id' => $p->id,
+                'prescription_number' => $p->prescription_number,
+                'medical_record_id' => $p->medical_record_id,
+                'farmer' => $p->farmer ? [
+                    'id' => $p->farmer->id,
+                    'first_name' => $p->farmer->first_name,
+                    'last_name' => $p->farmer->last_name,
+                    'phone' => $p->farmer->phone,
+                ] : null,
+                'animal' => $p->animal ? [
+                    'id' => $p->animal->id,
+                    'name' => $p->animal->name,
+                    'ear_tag' => $p->animal->ear_tag,
+                    'species' => $p->animal->species,
+                ] : null,
+                'vet_name' => $p->vet?->name,
+                'sms_sent_at' => $p->sms_sent_at?->toIso8601String(),
+                'created_at' => $p->created_at?->toIso8601String(),
+                'notes' => $p->notes,
+            ])->all(),
+            'meta' => [
+                'current_page' => $page->currentPage(),
+                'last_page' => $page->lastPage(),
+                'total' => $page->total(),
+            ],
+        ]);
+    }
+
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([

@@ -13,6 +13,7 @@ import '../farmers/farmers_list_screen.dart';
 import '../medical_records/medical_records_list_screen.dart';
 import '../medications/medications_list_screen.dart';
 import '../payments/payments_list_screen.dart';
+import '../prescriptions/prescriptions_list_screen.dart';
 import '../sync/conflicts_screen.dart';
 import '../vaccinations/vaccine_schedules_list_screen.dart';
 
@@ -286,6 +287,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (_) => const PaymentsListScreen(),
+                      ),
+                    ),
+                  ),
+                  _ModuleCard(
+                    icon: Icons.receipt,
+                    label: 'Receteler',
+                    color: Colors.amber.shade700,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const PrescriptionsListScreen(),
                       ),
                     ),
                   ),
