@@ -1,18 +1,12 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../config/env.dart';
 import '../../data/animals/animals_repository.dart';
-import '../../data/auth/auth_repository.dart';
 import '../../data/db/app_database.dart';
-import '../../data/sync/sync_repository.dart';
-import '../appointments/appointments_today_screen.dart';
-import '../sync/conflicts_screen.dart';
 import 'animal_detail_screen.dart';
 import 'animal_form_screen.dart';
 import 'bulk_vaccination_sheet.dart';
-import 'upcoming_births_screen.dart';
 
 const Color _green = Color(Env.primaryColorHex);
 
@@ -24,8 +18,6 @@ class AnimalsListScreen extends ConsumerStatefulWidget {
 }
 
 class _AnimalsListScreenState extends ConsumerState<AnimalsListScreen> {
-  bool _syncing = false;
-
   // M7.5.1: secim modu — long-press ile baslar, set bosalinca cikar.
   final Set<String> _selectedIds = {};
   bool get _selectionMode => _selectedIds.isNotEmpty;
@@ -92,71 +84,9 @@ class _AnimalsListScreenState extends ConsumerState<AnimalsListScreen> {
     }
   }
 
-  Future<void> _runSync() async {
-    if (_syncing) return;
-    setState(() => _syncing = true);
-    try {
-      final result = await ref.read(syncRepositoryProvider).sync();
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Sync: ${result.acceptedCount} kabul'
-            '${result.conflictCount > 0 ? ' · ${result.conflictCount} catisma' : ''}'
-            '${result.rejectedCount > 0 ? ' · ${result.rejectedCount} reddedildi' : ''}'
-            '${result.photosUploaded > 0 ? ' · ${result.photosUploaded} foto' : ''}'
-            '${result.photosFailed > 0 ? ' · ${result.photosFailed} foto-hata' : ''}'
-            ' · ${result.pulledCount} cekildi',
-          ),
-        ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_friendlySyncError(e))),
-      );
-    } finally {
-      if (mounted) setState(() => _syncing = false);
-    }
-  }
-
-  // Saha kullanicisi icin teknik DioException yerine sadelestirilmis
-  // mesaj. Pending kayitlar Drift'te kaliyor; internet gelince tekrar
-  // sync etmesi yeterli.
-  String _friendlySyncError(Object e) {
-    if (e is DioException) {
-      switch (e.type) {
-        case DioExceptionType.connectionError:
-        case DioExceptionType.connectionTimeout:
-        case DioExceptionType.sendTimeout:
-        case DioExceptionType.receiveTimeout:
-          return 'Internet yok. Kayitlariniz cihazda saklandi, '
-              'baglanti gelince Sync\'e tekrar basin.';
-        case DioExceptionType.badResponse:
-          final code = e.response?.statusCode;
-          if (code == 401) {
-            return 'Oturum suresi doldu. Lutfen tekrar giris yapin.';
-          }
-          if (code != null && code >= 500) {
-            return 'Sunucu hatasi ($code). Birazdan tekrar deneyin.';
-          }
-          return 'Sunucu reddetti ($code).';
-        case DioExceptionType.cancel:
-          return 'Sync iptal edildi.';
-        case DioExceptionType.badCertificate:
-        case DioExceptionType.unknown:
-          return 'Baglanti hatasi. Internet baglantinizi kontrol edin.';
-      }
-    }
-    return 'Sync hatasi: $e';
-  }
-
   @override
   Widget build(BuildContext context) {
     final animalsAsync = ref.watch(animalsListProvider);
-    final pendingAsync = ref.watch(pendingCountProvider);
-    final conflictsAsync = ref.watch(syncConflictsProvider);
-    final birthsAsync = ref.watch(upcomingBirthsProvider);
 
     return Scaffold(
       appBar: _selectionMode
@@ -181,96 +111,8 @@ class _AnimalsListScreenState extends ConsumerState<AnimalsListScreen> {
               ],
             )
           : AppBar(
-        title: const Text('Hayvanlar'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.event),
-            tooltip: 'Bugunun randevulari',
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const AppointmentsTodayScreen(),
-                ),
-              );
-            },
-          ),
-          // Yaklasan dogumlar — badge'de sayi
-          birthsAsync.maybeWhen(
-            data: (rows) => rows.isEmpty
-                ? const SizedBox.shrink()
-                : IconButton(
-                    icon: Badge(
-                      label: Text('${rows.length}'),
-                      backgroundColor: Colors.pink,
-                      child: const Icon(Icons.pregnant_woman),
-                    ),
-                    tooltip: 'Yaklasan dogumlar',
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const UpcomingBirthsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-            orElse: () => const SizedBox.shrink(),
-          ),
-          // Catisma rozeti
-          conflictsAsync.maybeWhen(
-            data: (rows) => rows.isEmpty
-                ? const SizedBox.shrink()
-                : IconButton(
-                    icon: Badge(
-                      label: Text('${rows.length}'),
-                      child: const Icon(Icons.warning_amber),
-                    ),
-                    tooltip: 'Catismalar',
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const ConflictsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-            orElse: () => const SizedBox.shrink(),
-          ),
-          // Sync butonu + bekleyen sayisi
-          pendingAsync.maybeWhen(
-            data: (count) => IconButton(
-              icon: Badge(
-                isLabelVisible: count > 0,
-                label: Text('$count'),
-                child: _syncing
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : const Icon(Icons.sync),
-              ),
-              tooltip: 'Senkronize et',
-              onPressed: _syncing ? null : _runSync,
+              title: const Text('Hayvanlar'),
             ),
-            orElse: () => IconButton(
-              icon: const Icon(Icons.sync),
-              tooltip: 'Senkronize et',
-              onPressed: _syncing ? null : _runSync,
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Cikis',
-            onPressed: () async {
-              await ref.read(authRepositoryProvider).logout();
-              ref.invalidate(sessionPresentProvider);
-            },
-          ),
-        ],
-      ),
       floatingActionButton: _selectionMode
           ? null
           : FloatingActionButton.extended(

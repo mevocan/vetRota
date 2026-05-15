@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'config/env.dart';
 import 'data/auth/auth_repository.dart';
-import 'ui/animals/animals_list_screen.dart';
+import 'ui/home/home_screen.dart';
 
 void main() {
   runApp(const ProviderScope(child: VetRotaApp()));
@@ -52,7 +52,7 @@ class _SessionGate extends ConsumerWidget {
         body: Center(child: Text('Oturum kontrol hatasi: $e')),
       ),
       data: (hasSession) =>
-          hasSession ? const AnimalsListScreen() : const LoginScreen(),
+          hasSession ? const HomeScreen() : const LoginScreen(),
     );
   }
 }
