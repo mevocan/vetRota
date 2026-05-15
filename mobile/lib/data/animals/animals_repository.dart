@@ -79,6 +79,19 @@ class AnimalsRepository {
         .watchSingleOrNull();
   }
 
+  // Bir ciftciye ait tum (silinmemis) hayvanlar — randevu/muayene
+  // formlarinda animal picker icin.
+  Stream<List<AnimalRow>> watchByFarmer(String farmerId) {
+    return (_db.select(_db.animals)
+          ..where((a) =>
+              a.farmerId.equals(farmerId) & a.deletedLocal.equals(false))
+          ..orderBy([
+            (a) => OrderingTerm(expression: a.name),
+            (a) => OrderingTerm(expression: a.earTag),
+          ]))
+        .watch();
+  }
+
   // Yaklasan dogumlar: expected_birth_date bugun + [windowDays] icinde olan
   // gebe hayvanlar (status='alive').
   Stream<List<AnimalRow>> watchUpcomingBirths({int windowDays = 30}) {
@@ -155,4 +168,10 @@ final upcomingBirthsProvider = StreamProvider<List<AnimalRow>>((ref) {
 // Tek hayvan stream — detay sayfasi gebelik degisikligini canli gormesi icin.
 final animalByIdProvider = StreamProvider.family<AnimalRow?, String>((ref, id) {
   return ref.watch(animalsRepositoryProvider).watchById(id);
+});
+
+// Bir ciftciye ait hayvanlar — randevu/muayene picker'lari.
+final animalsByFarmerProvider =
+    StreamProvider.family<List<AnimalRow>, String>((ref, farmerId) {
+  return ref.watch(animalsRepositoryProvider).watchByFarmer(farmerId);
 });

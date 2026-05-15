@@ -8,7 +8,7 @@ import '../../data/auth/auth_repository.dart';
 import '../../data/sync/sync_repository.dart';
 import '../animals/animals_list_screen.dart';
 import '../animals/upcoming_births_screen.dart';
-import '../appointments/appointments_today_screen.dart';
+import '../appointments/appointments_list_screen.dart';
 import '../farmers/farmers_list_screen.dart';
 import '../medications/medications_list_screen.dart';
 import '../sync/conflicts_screen.dart';
@@ -224,11 +224,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   _ModuleCard(
                     icon: Icons.event,
-                    label: 'Bugunku randevular',
+                    label: 'Randevular',
                     color: Colors.orange.shade700,
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (_) => const AppointmentsTodayScreen(),
+                        builder: (_) => const AppointmentsListScreen(),
                       ),
                     ),
                   ),
