@@ -15,6 +15,7 @@ import '../medications/medications_list_screen.dart';
 import '../payments/payments_list_screen.dart';
 import '../disease_map/disease_map_screen.dart';
 import '../prescriptions/prescriptions_list_screen.dart';
+import '../settings/settings_screen.dart';
 import '../sync/conflicts_screen.dart';
 import '../vaccinations/vaccine_schedules_list_screen.dart';
 
@@ -315,8 +316,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     icon: Icons.settings,
                     label: 'Ayarlar',
                     color: Colors.grey.shade600,
-                    disabled: true,
-                    onTap: () => _comingSoon(context, 'Ayarlar'),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const SettingsScreen(),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -328,11 +332,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  void _comingSoon(BuildContext context, String label) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$label cok yakinda (M9)')),
-    );
-  }
 }
 
 class _SummaryStrip extends StatelessWidget {
