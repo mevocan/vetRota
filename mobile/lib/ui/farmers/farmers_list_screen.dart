@@ -63,7 +63,7 @@ class _FarmersListScreenState extends ConsumerState<FarmersListScreen> {
                 }
                 return ListView.separated(
                   itemCount: rows.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  separatorBuilder: (_, _) => const Divider(height: 1),
                   itemBuilder: (_, i) {
                     final f = rows[i];
                     return ListTile(

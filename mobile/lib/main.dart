@@ -103,7 +103,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('VetRota')),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -115,10 +114,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 32),
+                    Image.asset(
+                      'assets/branding/logo.png',
+                      height: 80,
+                      fit: BoxFit.contain,
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
-                      'Veteriner panel girisi',
-                      style: TextStyle(fontSize: 18),
+                      'Gezici veteriner saha paneli',
+                      style: TextStyle(fontSize: 14, color: Colors.black54),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 24),
