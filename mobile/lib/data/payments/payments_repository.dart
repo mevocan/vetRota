@@ -5,8 +5,15 @@ import 'package:uuid/uuid.dart';
 import '../auth/auth_storage.dart';
 import '../db/app_database.dart';
 
-// M7.3: Ciftci odemesi. Offline yazma: pending kayit, sync push gonderir.
+// M7.3 + M9.7: Ciftci odemesi. Offline yazma: pending kayit, sync push.
 // Ledger — silinmez. Yanlislik ters hareket (negatif amount) ile duzeltilir.
+
+class PaymentWithMeta {
+  PaymentWithMeta({required this.row, this.farmerName});
+  final PaymentRow row;
+  final String? farmerName;
+}
+
 class PaymentsRepository {
   PaymentsRepository(this._db, this._storage);
 
@@ -23,6 +30,30 @@ class PaymentsRepository {
                 OrderingTerm(expression: p.paidAt, mode: OrderingMode.desc),
           ]))
         .watch();
+  }
+
+  Stream<List<PaymentWithMeta>> watchAllWithMeta() {
+    final q = _db.select(_db.payments).join([
+      leftOuterJoin(
+          _db.farmers, _db.farmers.id.equalsExp(_db.payments.farmerId)),
+    ])
+      ..where(_db.payments.deletedLocal.equals(false))
+      ..orderBy([
+        OrderingTerm(
+          expression: _db.payments.paidAt,
+          mode: OrderingMode.desc,
+        ),
+      ]);
+    return q.watch().map((rows) => rows.map((r) {
+          final p = r.readTable(_db.payments);
+          final f = r.readTableOrNull(_db.farmers);
+          return PaymentWithMeta(
+            row: p,
+            farmerName: f == null
+                ? null
+                : '${f.firstName} ${f.lastName}'.trim(),
+          );
+        }).toList());
   }
 
   Future<PaymentRow> create({
@@ -55,6 +86,21 @@ class PaymentsRepository {
     return (await (_db.select(_db.payments)..where((p) => p.id.equals(id)))
         .getSingle());
   }
+
+  // Ters hareket: yanlis girilen odemeyi iptal etmek icin negatif tutarli
+  // yeni satir ekler. Orijinal satir ledger'da kalir.
+  Future<void> reverse({
+    required PaymentRow original,
+    String? notes,
+  }) async {
+    await create(
+      farmerId: original.farmerId,
+      amount: -original.amount,
+      method: original.method,
+      paidAt: DateTime.now(),
+      notes: notes ?? 'Iptal: ${original.id.substring(0, 8)}',
+    );
+  }
 }
 
 final paymentsRepositoryProvider = Provider<PaymentsRepository>((ref) {
@@ -67,4 +113,8 @@ final paymentsRepositoryProvider = Provider<PaymentsRepository>((ref) {
 final paymentsByFarmerProvider =
     StreamProvider.family<List<PaymentRow>, String>((ref, farmerId) {
   return ref.watch(paymentsRepositoryProvider).watchByFarmer(farmerId);
+});
+
+final paymentsAllProvider = StreamProvider<List<PaymentWithMeta>>((ref) {
+  return ref.watch(paymentsRepositoryProvider).watchAllWithMeta();
 });
