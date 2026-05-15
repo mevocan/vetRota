@@ -32,6 +32,16 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2025-01-15',
 
+  app: {
+    head: {
+      title: 'VetRota',
+      link: [
+        { rel: 'icon', type: 'image/png', href: '/branding/favicon.png' }
+      ]
+    }
+  },
+
+
   eslint: {
     config: {
       stylistic: {

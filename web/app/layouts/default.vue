@@ -30,9 +30,10 @@ async function handleLogout() {
   <div class="flex h-screen bg-neutral-50">
     <!-- Sidebar -->
     <aside class="w-56 bg-white border-r border-neutral-200 flex flex-col flex-shrink-0">
-      <div class="px-4 py-3 border-b border-neutral-200 flex items-center gap-2">
-        <UIcon name="i-lucide-leaf" class="text-primary-600 w-6 h-6" />
-        <span class="font-bold text-lg">VetRota</span>
+      <div class="px-4 py-3 border-b border-neutral-200 flex items-center justify-center">
+        <NuxtLink to="/" class="block">
+          <img src="/branding/logo.png" alt="VetRota" class="h-9 w-auto">
+        </NuxtLink>
       </div>
       <nav class="flex-1 p-2 space-y-0.5 overflow-y-auto">
         <NuxtLink

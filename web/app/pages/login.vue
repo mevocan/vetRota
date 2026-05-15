@@ -40,12 +40,12 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   <UContainer class="flex min-h-screen items-center justify-center">
     <UCard class="w-full max-w-md">
       <template #header>
-        <h1 class="text-2xl font-semibold">
-          VetRota
-        </h1>
-        <p class="text-sm text-neutral-500">
-          Veteriner panel girişi
-        </p>
+        <div class="flex flex-col items-center gap-2 py-2">
+          <img src="/branding/logo.png" alt="VetRota" class="h-16 w-auto">
+          <p class="text-sm text-neutral-500">
+            Gezici veteriner saha paneli
+          </p>
+        </div>
       </template>
 
       <UForm
