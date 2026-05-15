@@ -10,6 +10,7 @@ import '../animals/animals_list_screen.dart';
 import '../animals/upcoming_births_screen.dart';
 import '../appointments/appointments_list_screen.dart';
 import '../farmers/farmers_list_screen.dart';
+import '../medical_records/medical_records_list_screen.dart';
 import '../medications/medications_list_screen.dart';
 import '../sync/conflicts_screen.dart';
 
@@ -267,8 +268,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     icon: Icons.receipt_long,
                     label: 'Muayeneler',
                     color: Colors.indigo.shade400,
-                    disabled: true,
-                    onTap: () => _comingSoon(context, 'Muayene listesi'),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const MedicalRecordsListScreen(),
+                      ),
+                    ),
                   ),
                   _ModuleCard(
                     icon: Icons.payments,
