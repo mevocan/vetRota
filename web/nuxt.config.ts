@@ -30,6 +30,12 @@ export default defineNuxtConfig({
     }
   },
 
+  vite: {
+    optimizeDeps: {
+      include: ['leaflet']
+    }
+  },
+
   compatibilityDate: '2025-01-15',
 
   app: {

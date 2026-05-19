@@ -1,8 +1,6 @@
 <script setup lang="ts">
-// M7.6: Hastalik haritasi (iskelet seviyesi).
-// Backend disease-map endpoint'inden koy bazli muayene sayilari cekilir;
-// liste + (lat/lng varsa) basit relative koordinat haritasi cizilir.
-// Leaflet entegrasyonu sonraki iterasyona birakildi (CLAUDE.md M7 MVP).
+// M7.6: Hastalik haritasi - Leaflet + Esri hybrid (uydu + etiket overlay).
+import type { Map as LeafletMap, CircleMarker, Layer } from 'leaflet'
 
 interface VillageRow {
   village_id: string
@@ -22,20 +20,26 @@ interface DiseaseMapResponse {
   villages: VillageRow[]
 }
 
-const today = new Date()
-const monthAgo = new Date(today)
-monthAgo.setDate(today.getDate() - 30)
-
 function toIso(d: Date): string {
   return d.toISOString().slice(0, 10)
 }
 
-const from = ref(toIso(monthAgo))
-const to = ref(toIso(today))
-const species = ref<string>('')
+// SSR/CSR ayni degeri uretmek icin useState (stabil), client'ta onMounted'da set.
+const from = useState('disease-map-from', () => '')
+const to = useState('disease-map-to', () => '')
+onMounted(() => {
+  if (!from.value || !to.value) {
+    const now = new Date()
+    const ago = new Date(now)
+    ago.setDate(now.getDate() - 30)
+    from.value = toIso(ago)
+    to.value = toIso(now)
+  }
+})
+const species = ref<string>('all')
 
 const speciesOptions = [
-  { label: 'Tümü', value: '' },
+  { label: 'Tümü', value: 'all' },
   { label: 'Sığır', value: 'cattle' },
   { label: 'Koyun', value: 'sheep' },
   { label: 'Keçi', value: 'goat' },
@@ -47,7 +51,7 @@ const query = computed(() => {
   const p = new URLSearchParams()
   if (from.value) p.set('from', from.value)
   if (to.value) p.set('to', to.value)
-  if (species.value) p.set('species', species.value)
+  if (species.value && species.value !== 'all') p.set('species', species.value)
   return p.toString()
 })
 
@@ -59,36 +63,107 @@ const { data, pending, refresh, error } = await useApiFetch<DiseaseMapResponse>(
 const villages = computed<VillageRow[]>(() => data.value?.villages ?? [])
 const maxCount = computed(() => villages.value.reduce((m, v) => Math.max(m, v.case_count), 0))
 
-// Lat/lng'i olan koylari basit bir kutuya goreli yerlestir.
 const mapped = computed(() => villages.value.filter(v => v.lat !== null && v.lng !== null))
 
-const bounds = computed(() => {
-  if (mapped.value.length === 0) return null
-  const lats = mapped.value.map(v => v.lat as number)
-  const lngs = mapped.value.map(v => v.lng as number)
-  return {
-    minLat: Math.min(...lats),
-    maxLat: Math.max(...lats),
-    minLng: Math.min(...lngs),
-    maxLng: Math.max(...lngs)
+function colorFor(count: number): string {
+  if (maxCount.value <= 0) return '#eab308'
+  const ratio = count / maxCount.value
+  if (ratio > 0.66) return '#dc2626' // kirmizi - outbreak
+  if (ratio > 0.33) return '#f97316' // turuncu
+  return '#eab308' // sari
+}
+
+function radiusFor(count: number): number {
+  if (maxCount.value <= 0) return 8
+  const ratio = count / maxCount.value
+  return 8 + ratio * 22 // 8-30 px
+}
+
+// Leaflet sadece client'ta; SSR'da skip.
+const mapEl = useTemplateRef<HTMLDivElement>('mapEl')
+let leafletMap: LeafletMap | null = null
+let markerLayer: Layer | null = null
+
+async function initMap() {
+  if (!import.meta.client || !mapEl.value || leafletMap) return
+  const L = await import('leaflet')
+  await import('leaflet/dist/leaflet.css')
+
+  leafletMap = L.map(mapEl.value, {
+    center: [40.15, 31.65],
+    zoom: 9,
+    minZoom: 5,
+    maxZoom: 18,
+  })
+
+  // Esri uydu (base) + yer adi/yol overlay (transparan) - hybrid.
+  L.tileLayer(
+    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    { attribution: 'Tiles © Esri', maxZoom: 19 },
+  ).addTo(leafletMap)
+  L.tileLayer(
+    'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+    { maxZoom: 19 },
+  ).addTo(leafletMap)
+
+  renderMarkers(L)
+}
+
+async function renderMarkers(L?: typeof import('leaflet')) {
+  if (!leafletMap) return
+  const lib = L ?? (await import('leaflet'))
+
+  if (markerLayer) {
+    leafletMap.removeLayer(markerLayer)
+    markerLayer = null
+  }
+  if (mapped.value.length === 0) return
+
+  const group = lib.layerGroup()
+  const latlngs: [number, number][] = []
+  for (const v of mapped.value) {
+    const color = colorFor(v.case_count)
+    const marker: CircleMarker = lib.circleMarker([v.lat!, v.lng!], {
+      radius: radiusFor(v.case_count),
+      color,
+      fillColor: color,
+      fillOpacity: 0.55,
+      weight: 2,
+    })
+    const kw = v.top_keywords.length ? ` · ${v.top_keywords.join(', ')}` : ''
+    marker.bindTooltip(`<b>${v.village_name}</b> · ${v.case_count} vaka${kw}`, {
+      direction: 'top',
+      offset: [0, -4],
+    })
+    marker.addTo(group)
+    latlngs.push([v.lat!, v.lng!])
+  }
+  group.addTo(leafletMap)
+  markerLayer = group
+
+  if (latlngs.length > 1) {
+    leafletMap.fitBounds(latlngs, { padding: [40, 40] })
+  } else if (latlngs.length === 1) {
+    leafletMap.setView(latlngs[0], 11)
+  }
+}
+
+// ClientOnly icindeki div async render edildigi icin mapEl mount aninda
+// hazir olmayabilir; ref dolunca init et.
+watch(mapEl, async (el) => {
+  if (el && !leafletMap) {
+    await initMap()
+  }
+}, { immediate: true })
+
+onUnmounted(() => {
+  if (leafletMap) {
+    leafletMap.remove()
+    leafletMap = null
+    markerLayer = null
   }
 })
-
-function positionFor(v: VillageRow): { left: string, top: string } {
-  const b = bounds.value
-  if (!b || v.lat === null || v.lng === null) return { left: '50%', top: '50%' }
-  const latRange = (b.maxLat - b.minLat) || 1
-  const lngRange = (b.maxLng - b.minLng) || 1
-  const xPct = ((v.lng - b.minLng) / lngRange) * 90 + 5
-  const yPct = (1 - (v.lat - b.minLat) / latRange) * 90 + 5
-  return { left: `${xPct}%`, top: `${yPct}%` }
-}
-
-function dotSize(count: number): number {
-  if (maxCount.value <= 0) return 14
-  const ratio = count / maxCount.value
-  return Math.round(14 + ratio * 36) // 14px - 50px
-}
+watch(mapped, () => { void renderMarkers() })
 </script>
 
 <template>
@@ -158,33 +233,24 @@ function dotSize(count: number): number {
       </UCard>
     </div>
 
-    <UCard v-if="mapped.length > 0">
+    <UCard>
       <template #header>
         <div class="flex items-center gap-2">
           <UIcon name="i-lucide-map" class="text-primary-600" />
           <span class="font-semibold">Köy konumları</span>
           <span class="text-xs text-neutral-500 ml-auto">
-            Daire büyüklüğü vaka sayısı ile orantılı
+            Kırmızı daire = outbreak şüphesi · daire büyüklüğü vaka sayısı
           </span>
         </div>
       </template>
-      <div class="relative w-full h-[420px] bg-neutral-50 border border-neutral-200 rounded-md overflow-hidden">
-        <div
-          v-for="v in mapped"
-          :key="v.village_id"
-          class="absolute -translate-x-1/2 -translate-y-1/2 group cursor-pointer"
-          :style="positionFor(v)"
-        >
-          <div
-            class="rounded-full bg-primary-500/60 ring-2 ring-primary-700 transition hover:bg-primary-500/90"
-            :style="{ width: `${dotSize(v.case_count)}px`, height: `${dotSize(v.case_count)}px` }"
-          />
-          <div class="absolute left-1/2 top-full mt-1 -translate-x-1/2 hidden group-hover:block bg-neutral-900 text-white text-xs px-2 py-1 rounded shadow whitespace-nowrap z-10">
-            {{ v.village_name }} · {{ v.case_count }} vaka
-            <span v-if="v.top_keywords.length"> · {{ v.top_keywords.join(', ') }}</span>
+      <ClientOnly>
+        <div ref="mapEl" class="w-full h-[480px] rounded-md border border-neutral-200" />
+        <template #fallback>
+          <div class="w-full h-[480px] rounded-md border border-neutral-200 bg-neutral-50 flex items-center justify-center text-sm text-neutral-500">
+            Harita yükleniyor…
           </div>
-        </div>
-      </div>
+        </template>
+      </ClientOnly>
     </UCard>
 
     <UCard>

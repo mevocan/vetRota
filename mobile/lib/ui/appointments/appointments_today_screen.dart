@@ -342,8 +342,16 @@ class _AppointmentMap extends StatelessWidget {
         ),
         children: [
           TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            urlTemplate:
+                'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
             userAgentPackageName: 'com.vetrota.mobile',
+            maxNativeZoom: 19,
+          ),
+          TileLayer(
+            urlTemplate:
+                'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+            userAgentPackageName: 'com.vetrota.mobile',
+            maxNativeZoom: 19,
           ),
           if (polylinePoints.length >= 2)
             PolylineLayer(polylines: [

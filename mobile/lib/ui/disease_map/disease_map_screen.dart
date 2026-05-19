@@ -195,10 +195,19 @@ class _DiseaseMap extends StatelessWidget {
         maxZoom: 16,
       ),
       children: [
+        // Esri uydu (hybrid) - Google Maps Satellite es degerinde, ucretsiz.
         TileLayer(
-          urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-          subdomains: const ['a', 'b', 'c'],
+          urlTemplate:
+              'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
           userAgentPackageName: 'tr.com.vetrota.mobile',
+          maxNativeZoom: 19,
+        ),
+        // Yol + yer adi overlay (transparan).
+        TileLayer(
+          urlTemplate:
+              'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+          userAgentPackageName: 'tr.com.vetrota.mobile',
+          maxNativeZoom: 19,
         ),
         CircleLayer(
           circles: [
@@ -212,6 +221,12 @@ class _DiseaseMap extends StatelessWidget {
                 borderStrokeWidth: 2,
                 useRadiusInMeter: false,
               ),
+          ],
+        ),
+        const RichAttributionWidget(
+          alignment: AttributionAlignment.bottomLeft,
+          attributions: [
+            TextSourceAttribution('Tiles © Esri'),
           ],
         ),
         MarkerLayer(
