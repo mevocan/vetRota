@@ -21,6 +21,10 @@ export function useApi() {
         auth.logout()
         navigateTo('/login')
       }
+      // M10.1: premium_required → upgrade ekranina.
+      if (response.status === 402) {
+        navigateTo('/upgrade')
+      }
     }
   })
 

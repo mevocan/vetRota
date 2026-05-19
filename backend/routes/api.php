@@ -55,40 +55,53 @@ Route::middleware('auth:api')->group(function (): void {
     Route::post('stock-movements', [StockMovementController::class, 'store']);
     // M2 vertical slice 5: Randevular.
     Route::apiResource('appointments', AppointmentController::class);
-    // M6.9: Asi planlari CRUD.
-    Route::apiResource('vaccine-schedules', VaccineScheduleController::class)
+    // M6.9: Asi planlari CRUD — premium (asi hatirlatma motoru).
+    Route::middleware('premium')->apiResource('vaccine-schedules', VaccineScheduleController::class)
         ->parameters(['vaccine-schedules' => 'vaccineSchedule']);
     // Koy dropdown icin read-only.
     Route::get('villages', [VillageController::class, 'index']);
 
-    // M7.3: odeme ledger (sync hem push hem REST UI'da).
-    Route::get('payments', [\App\Http\Controllers\Api\PaymentController::class, 'index']);
-    Route::post('payments', [\App\Http\Controllers\Api\PaymentController::class, 'store']);
+    // M10.1: Abonelik durumu + upgrade (her tier'a acik).
+    Route::get('subscription', [\App\Http\Controllers\Api\SubscriptionController::class, 'show'])
+        ->name('subscription.show');
+    Route::post('subscription/upgrade', [\App\Http\Controllers\Api\SubscriptionController::class, 'upgrade'])
+        ->name('subscription.upgrade');
+    Route::post('subscription/cancel', [\App\Http\Controllers\Api\SubscriptionController::class, 'cancel'])
+        ->name('subscription.cancel');
 
-    // M7.4 + M9.8: Recete liste + olustur + PDF.
-    Route::get('prescriptions', [\App\Http\Controllers\Api\V1\Prescriptions\PrescriptionController::class, 'index'])
-        ->name('prescriptions.index');
-    Route::post('prescriptions', [\App\Http\Controllers\Api\V1\Prescriptions\PrescriptionController::class, 'store'])
-        ->name('prescriptions.store');
-    Route::get('prescriptions/{prescription}/pdf', [\App\Http\Controllers\Api\V1\Prescriptions\PrescriptionController::class, 'pdf'])
-        ->name('prescriptions.pdf');
+    // M10.1: Premium-only modul grubu.
+    // proje.md §4.2: SMS portali, fotograf, rota, hastalik haritasi,
+    // analytics, gun sonu PDF, recete PDF, asi hatirlatma.
+    Route::middleware('premium')->group(function (): void {
+        // M7.3: odeme ledger (premium — borc/odeme takibi).
+        Route::get('payments', [\App\Http\Controllers\Api\PaymentController::class, 'index']);
+        Route::post('payments', [\App\Http\Controllers\Api\PaymentController::class, 'store']);
 
-    // M7.6: Hastalik haritasi analytics (server-only).
-    Route::get('analytics/disease-map', \App\Http\Controllers\Api\V1\Analytics\DiseaseMapController::class)
-        ->name('analytics.disease-map');
+        // M7.4 + M9.8: Recete liste + olustur + PDF.
+        Route::get('prescriptions', [\App\Http\Controllers\Api\V1\Prescriptions\PrescriptionController::class, 'index'])
+            ->name('prescriptions.index');
+        Route::post('prescriptions', [\App\Http\Controllers\Api\V1\Prescriptions\PrescriptionController::class, 'store'])
+            ->name('prescriptions.store');
+        Route::get('prescriptions/{prescription}/pdf', [\App\Http\Controllers\Api\V1\Prescriptions\PrescriptionController::class, 'pdf'])
+            ->name('prescriptions.pdf');
 
-    // M8.1: Klinik sahibi analitik paneli.
-    Route::get('analytics/vet-performance', [\App\Http\Controllers\Api\V1\Analytics\AnalyticsController::class, 'vetPerformance'])
-        ->name('analytics.vet-performance');
-    Route::get('analytics/drug-consumption', [\App\Http\Controllers\Api\V1\Analytics\AnalyticsController::class, 'drugConsumption'])
-        ->name('analytics.drug-consumption');
-    Route::get('analytics/revenue', [\App\Http\Controllers\Api\V1\Analytics\AnalyticsController::class, 'revenue'])
-        ->name('analytics.revenue');
+        // M7.6: Hastalik haritasi analytics — premium.
+        Route::get('analytics/disease-map', \App\Http\Controllers\Api\V1\Analytics\DiseaseMapController::class)
+            ->name('analytics.disease-map');
 
-    // M5.2: gunluk rapor (server-only, sync disi).
-    Route::get('reports/daily/{date}', [DailyReportController::class, 'show'])
-        ->where('date', '\d{4}-\d{2}-\d{2}')
-        ->name('reports.daily.show');
+        // M8.1: Klinik sahibi analitik paneli — premium.
+        Route::get('analytics/vet-performance', [\App\Http\Controllers\Api\V1\Analytics\AnalyticsController::class, 'vetPerformance'])
+            ->name('analytics.vet-performance');
+        Route::get('analytics/drug-consumption', [\App\Http\Controllers\Api\V1\Analytics\AnalyticsController::class, 'drugConsumption'])
+            ->name('analytics.drug-consumption');
+        Route::get('analytics/revenue', [\App\Http\Controllers\Api\V1\Analytics\AnalyticsController::class, 'revenue'])
+            ->name('analytics.revenue');
+
+        // M5.2: gun sonu PDF raporu — premium.
+        Route::get('reports/daily/{date}', [DailyReportController::class, 'show'])
+            ->where('date', '\d{4}-\d{2}-\d{2}')
+            ->name('reports.daily.show');
+    });
 
     // M3.3: Sync push. device.match middleware JWT'deki device_id ile
     // header X-Device-Id eslesmesini zorunlu kilar.
@@ -96,7 +109,9 @@ Route::middleware('auth:api')->group(function (): void {
         Route::post('push', SyncPushController::class)->name('sync.push');
         Route::get('pull', SyncPullController::class)->name('sync.pull');
         Route::get('status', SyncStatusController::class)->name('sync.status');
-        // M4.2: muayene fotograflari icin ayri multipart kanal.
-        Route::post('photos', SyncPhotoController::class)->name('sync.photos');
+        // M4.2 + M10.1: fotograf yukleme premium.
+        Route::post('photos', SyncPhotoController::class)
+            ->middleware('premium')
+            ->name('sync.photos');
     });
 });

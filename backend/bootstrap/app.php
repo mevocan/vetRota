@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // M3.2: sync endpoint'leri device_id eslesmesini zorunlu kilar.
         $middleware->alias([
             'device.match' => \App\Http\Middleware\EnsureDeviceMatchesJwt::class,
+            'premium' => \App\Http\Middleware\EnsurePremiumClinic::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

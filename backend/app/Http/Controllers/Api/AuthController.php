@@ -55,6 +55,9 @@ class AuthController extends Controller
         $user = Auth::guard('api')->user();
         $payload = Auth::guard('api')->payload();
 
+        // M10.1: tier UI rozetinde + gating'de kullanilir.
+        $clinic = $user->clinic;
+
         return response()->json([
             'id' => $user->id,
             'name' => $user->name,
@@ -62,6 +65,9 @@ class AuthController extends Controller
             'role' => $user->role,
             'clinic_id' => $payload->get('clinic_id'),
             'device_id' => $payload->get('device_id'),
+            'subscription_tier' => $clinic?->subscription_tier ?? 'free',
+            'subscription_expires_at' => $clinic?->subscription_expires_at,
+            'is_premium' => (bool) $clinic?->isPremium(),
         ]);
     }
 

@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../config/env.dart';
 import '../../data/auth/auth_repository.dart';
 import '../../data/auth/auth_storage.dart';
+import '../../data/subscription/subscription_repository.dart';
 import '../../data/sync/sync_repository.dart';
+import '../subscription/upgrade_screen.dart';
 
 const Color _green = Color(Env.primaryColorHex);
 
@@ -18,6 +20,7 @@ class SettingsScreen extends ConsumerWidget {
     final storage = ref.watch(authStorageProvider);
     final pendingAsync = ref.watch(pendingCountProvider);
     final conflictsAsync = ref.watch(syncConflictsProvider);
+    final subAsync = ref.watch(subscriptionStatusProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Ayarlar')),
@@ -91,6 +94,37 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
           const Divider(),
+          subAsync.when(
+            loading: () => const ListTile(
+              leading: Icon(Icons.workspace_premium),
+              title: Text('Paket'),
+              subtitle: Text('Yukleniyor...'),
+            ),
+            error: (e, _) => const ListTile(
+              leading: Icon(Icons.workspace_premium),
+              title: Text('Paket'),
+              subtitle: Text('Bilgi alinamadi'),
+            ),
+            data: (status) => ListTile(
+              leading: Icon(
+                status.isPremium ? Icons.auto_awesome : Icons.lock_outline,
+                color: status.isPremium ? Colors.amber.shade700 : Colors.grey,
+              ),
+              title: Text(status.isPremium ? 'Premium paket' : 'Free paket'),
+              subtitle: Text(
+                status.isPremium
+                    ? (status.expiresAt == null
+                        ? 'Aktif'
+                        : 'Bitis: ${_fmtDate(status.expiresAt!)}')
+                    : 'Premium\'a gecmek icin dokunun',
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const UpgradeScreen()),
+              ),
+            ),
+          ),
+          const Divider(),
           ListTile(
             leading: const Icon(Icons.info_outline),
             title: const Text('Hakkinda'),
@@ -142,6 +176,10 @@ class SettingsScreen extends ConsumerWidget {
       ref.invalidate(sessionPresentProvider);
     }
   }
+
+  static String _fmtDate(DateTime d) =>
+      '${d.day.toString().padLeft(2, '0')}.'
+      '${d.month.toString().padLeft(2, '0')}.${d.year}';
 
   static String _fmtFull(DateTime d) =>
       '${d.day.toString().padLeft(2, '0')}.'

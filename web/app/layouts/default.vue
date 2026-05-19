@@ -3,16 +3,16 @@ const auth = useAuthStore()
 const route = useRoute()
 
 const navItems = [
-  { label: 'Panel', icon: 'i-lucide-layout-dashboard', to: '/' },
-  { label: 'Hayvanlar', icon: 'i-lucide-paw-print', to: '/animals' },
-  { label: 'Çiftçiler', icon: 'i-lucide-users', to: '/farmers' },
-  { label: 'Muayeneler', icon: 'i-lucide-stethoscope', to: '/examinations' },
-  { label: 'İlaç & Stok', icon: 'i-lucide-pill', to: '/medications' },
-  { label: 'Randevular', icon: 'i-lucide-calendar', to: '/appointments' },
-  { label: 'Hastalık haritası', icon: 'i-lucide-map', to: '/analytics/disease-map' },
-  { label: 'Veteriner performansı', icon: 'i-lucide-trophy', to: '/analytics/vets' },
-  { label: 'İlaç tüketimi', icon: 'i-lucide-bar-chart-3', to: '/analytics/drugs' },
-  { label: 'Klinik kazancı', icon: 'i-lucide-trending-up', to: '/analytics/revenue' }
+  { label: 'Panel', icon: 'i-lucide-layout-dashboard', to: '/', premium: false },
+  { label: 'Hayvanlar', icon: 'i-lucide-paw-print', to: '/animals', premium: false },
+  { label: 'Çiftçiler', icon: 'i-lucide-users', to: '/farmers', premium: false },
+  { label: 'Muayeneler', icon: 'i-lucide-stethoscope', to: '/examinations', premium: false },
+  { label: 'İlaç & Stok', icon: 'i-lucide-pill', to: '/medications', premium: false },
+  { label: 'Randevular', icon: 'i-lucide-calendar', to: '/appointments', premium: false },
+  { label: 'Hastalık haritası', icon: 'i-lucide-map', to: '/analytics/disease-map', premium: true },
+  { label: 'Veteriner performansı', icon: 'i-lucide-trophy', to: '/analytics/vets', premium: true },
+  { label: 'İlaç tüketimi', icon: 'i-lucide-bar-chart-3', to: '/analytics/drugs', premium: true },
+  { label: 'Klinik kazancı', icon: 'i-lucide-trending-up', to: '/analytics/revenue', premium: true }
 ]
 
 const pageTitle = computed(() => {
@@ -39,12 +39,26 @@ async function handleLogout() {
         <NuxtLink
           v-for="item in navItems"
           :key="item.to"
-          :to="item.to"
+          :to="item.premium && !auth.isPremium ? '/upgrade' : item.to"
           class="flex items-center gap-2.5 px-2.5 py-2 text-sm rounded-md text-neutral-600 hover:bg-neutral-100 transition"
           active-class="!bg-primary-50 !text-primary-700 font-semibold"
         >
           <UIcon :name="item.icon" class="w-4 h-4 flex-shrink-0" />
-          {{ item.label }}
+          <span class="flex-1">{{ item.label }}</span>
+          <UIcon
+            v-if="item.premium && !auth.isPremium"
+            name="i-lucide-lock"
+            class="w-3.5 h-3.5 text-amber-500"
+          />
+        </NuxtLink>
+
+        <NuxtLink
+          v-if="!auth.isPremium"
+          to="/upgrade"
+          class="flex items-center gap-2.5 px-2.5 py-2 text-sm rounded-md text-amber-700 bg-amber-50 hover:bg-amber-100 transition font-medium mt-2"
+        >
+          <UIcon name="i-lucide-sparkles" class="w-4 h-4 flex-shrink-0" />
+          Premium'a geç
         </NuxtLink>
       </nav>
       <div class="p-3 border-t border-neutral-200">
@@ -78,6 +92,17 @@ async function handleLogout() {
         <h1 class="font-semibold text-base flex-1">
           {{ pageTitle }}
         </h1>
+        <UBadge
+          v-if="auth.isPremium"
+          color="primary"
+          variant="soft"
+          icon="i-lucide-sparkles"
+        >
+          Premium
+        </UBadge>
+        <UBadge v-else color="neutral" variant="soft">
+          Free
+        </UBadge>
       </header>
       <main class="flex-1 overflow-auto p-6">
         <slot />

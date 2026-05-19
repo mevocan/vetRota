@@ -8,9 +8,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAnimalRequest;
 use App\Http\Requests\UpdateAnimalRequest;
 use App\Models\Animal;
+use App\Models\Clinic;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class AnimalController extends Controller
 {
@@ -52,6 +54,21 @@ class AnimalController extends Controller
 
     public function store(StoreAnimalRequest $request): JsonResponse
     {
+        // M10.1: Free tier 100 hayvan limiti (proje.md §4.1 Ozellik 2).
+        $clinicId = JWTAuth::parseToken()->getPayload()->get('clinic_id');
+        $clinic = $clinicId ? Clinic::find($clinicId) : null;
+        if ($clinic && ! $clinic->isPremium()) {
+            $count = Animal::where('clinic_id', $clinicId)->count();
+            if ($count >= 100) {
+                return response()->json([
+                    'error' => 'free_animal_limit',
+                    'message' => 'Free pakette en fazla 100 hayvan kayıt edebilirsiniz. Premium\'a geçin.',
+                    'limit' => 100,
+                    'current' => $count,
+                ], 402);
+            }
+        }
+
         $animal = Animal::create($request->validated());
         $animal->load(['farmer:id,first_name,last_name', 'village:id,name']);
 

@@ -4,6 +4,11 @@ interface User {
   id: number
   name: string
   email: string
+  role?: string
+  clinic_id?: string
+  subscription_tier?: 'free' | 'premium'
+  subscription_expires_at?: string | null
+  is_premium?: boolean
 }
 
 interface LoginResponse {
@@ -21,7 +26,9 @@ export const useAuthStore = defineStore('auth', {
   }),
 
   getters: {
-    isAuthenticated: state => !!state.token
+    isAuthenticated: state => !!state.token,
+    isPremium: state => !!state.user?.is_premium,
+    tier: state => state.user?.subscription_tier ?? 'free'
   },
 
   actions: {

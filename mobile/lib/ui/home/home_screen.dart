@@ -16,8 +16,10 @@ import '../payments/payments_list_screen.dart';
 import '../disease_map/disease_map_screen.dart';
 import '../prescriptions/prescriptions_list_screen.dart';
 import '../settings/settings_screen.dart';
+import '../subscription/upgrade_screen.dart';
 import '../sync/conflicts_screen.dart';
 import '../vaccinations/vaccine_schedules_list_screen.dart';
+import '../../data/subscription/subscription_repository.dart';
 
 const Color _green = Color(Env.primaryColorHex);
 
@@ -101,6 +103,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final pendingAsync = ref.watch(pendingCountProvider);
     final conflictsAsync = ref.watch(syncConflictsProvider);
     final birthsAsync = ref.watch(upcomingBirthsProvider);
+    final subAsync = ref.watch(subscriptionStatusProvider);
+    final isPremium = subAsync.maybeWhen(
+      data: (s) => s.isPremium,
+      orElse: () => false,
+    );
+
+    void premiumOrUpgrade(Widget Function() builder) {
+      if (isPremium) {
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => builder()));
+      } else {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const UpgradeScreen()),
+        );
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -124,6 +141,43 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ],
         ),
         actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const UpgradeScreen()),
+              ),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: isPremium
+                      ? Colors.amber.shade100
+                      : Colors.white24,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      isPremium ? Icons.auto_awesome : Icons.lock_outline,
+                      size: 14,
+                      color: isPremium ? Colors.amber.shade900 : Colors.white,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      isPremium ? 'Premium' : 'Free',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: isPremium ? Colors.amber.shade900 : Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
           conflictsAsync.maybeWhen(
             data: (rows) => rows.isEmpty
                 ? const SizedBox.shrink()
@@ -266,10 +320,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     icon: Icons.vaccines,
                     label: 'Asi planlari',
                     color: Colors.purple.shade400,
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const VaccineSchedulesListScreen(),
-                      ),
+                    premiumLocked: !isPremium,
+                    onTap: () => premiumOrUpgrade(
+                      () => const VaccineSchedulesListScreen(),
                     ),
                   ),
                   _ModuleCard(
@@ -286,30 +339,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     icon: Icons.payments,
                     label: 'Borc / odeme',
                     color: Colors.brown.shade400,
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const PaymentsListScreen(),
-                      ),
+                    premiumLocked: !isPremium,
+                    onTap: () => premiumOrUpgrade(
+                      () => const PaymentsListScreen(),
                     ),
                   ),
                   _ModuleCard(
                     icon: Icons.receipt,
                     label: 'Receteler',
                     color: Colors.amber.shade700,
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const PrescriptionsListScreen(),
-                      ),
+                    premiumLocked: !isPremium,
+                    onTap: () => premiumOrUpgrade(
+                      () => const PrescriptionsListScreen(),
                     ),
                   ),
                   _ModuleCard(
                     icon: Icons.map,
                     label: 'Hastalik haritasi',
                     color: Colors.red.shade400,
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const DiseaseMapScreen(),
-                      ),
+                    premiumLocked: !isPremium,
+                    onTap: () => premiumOrUpgrade(
+                      () => const DiseaseMapScreen(),
                     ),
                   ),
                   _ModuleCard(
@@ -438,6 +488,7 @@ class _ModuleCard extends StatelessWidget {
     required this.onTap,
     this.badge,
     this.disabled = false,
+    this.premiumLocked = false,
   });
 
   final IconData icon;
@@ -446,6 +497,7 @@ class _ModuleCard extends StatelessWidget {
   final VoidCallback onTap;
   final int? badge;
   final bool disabled;
+  final bool premiumLocked;
 
   @override
   Widget build(BuildContext context) {
@@ -486,6 +538,23 @@ class _ModuleCard extends StatelessWidget {
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
                           ),
+                        ),
+                      ),
+                    ),
+                  if (premiumLocked)
+                    Positioned(
+                      right: -10,
+                      top: -6,
+                      child: Container(
+                        padding: const EdgeInsets.all(3),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.shade700,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.lock,
+                          size: 12,
+                          color: Colors.white,
                         ),
                       ),
                     ),

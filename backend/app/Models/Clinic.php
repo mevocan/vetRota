@@ -14,6 +14,9 @@ class Clinic extends Model
     use HasUuids;
     use SoftDeletes;
 
+    public const TIER_FREE = 'free';
+    public const TIER_PREMIUM = 'premium';
+
     protected $fillable = [
         'name',
         'phone',
@@ -21,13 +24,27 @@ class Clinic extends Model
         'city',
         'district',
         'settings',
+        'subscription_tier',
+        'subscription_expires_at',
     ];
 
     protected function casts(): array
     {
         return [
             'settings' => 'array',
+            'subscription_expires_at' => 'datetime',
         ];
+    }
+
+    // M10.1: Premium aktif mi? tier=premium VE expires_at ya null ya gelecekte.
+    public function isPremium(): bool
+    {
+        if ($this->subscription_tier !== self::TIER_PREMIUM) {
+            return false;
+        }
+
+        return $this->subscription_expires_at === null
+            || $this->subscription_expires_at->isFuture();
     }
 
     public function users(): HasMany
