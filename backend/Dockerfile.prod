@@ -32,6 +32,10 @@ RUN composer dump-autoload --optimize --no-dev \
 # Storage symlink (public/storage). Hata varsa yutulur (idempotent).
 RUN php artisan storage:link || true
 
+# php artisan serve tek worker'da buyuk yaniti yavas istemciye gonderirken
+# baglantiyi erken kapatabiliyor. Coklu worker bunu onler.
+ENV PHP_CLI_SERVER_WORKERS=10
+
 # Container PORT'u Railway'den alir. Migrate + serve.
 # Migrate fresh sadece SEED_ON_BOOT=1 ile (ilk deploy'da bir kez set edin,
 # sonra kaldirin). Aksi halde sadece pending migration calisir.

@@ -38,6 +38,11 @@ services:
       DB_DATABASE: ${DB_DATABASE:-vetrota}
       DB_USERNAME: ${DB_USERNAME:-vetrota}
       DB_PASSWORD: ${DB_PASSWORD:-vetrota}
+      # php artisan serve (PHP yerlesik sunucu) tek worker'da buyuk yaniti
+      # yavas istemciye gonderirken baglantiyi erken kapatabiliyor
+      # (mobil sync "Connection closed while receiving data"). Coklu worker
+      # bunu onler.
+      PHP_CLI_SERVER_WORKERS: 10
 
   web:
     image: node:22-alpine
