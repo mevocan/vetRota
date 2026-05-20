@@ -427,9 +427,11 @@ class DemoSeeder extends Seeder
         for ($a = 0; $a < 40; $a++) {
             $animal = $aliveAnimals[array_rand($aliveAnimals)];
             $farmer = collect($farmers)->firstWhere('id', $animal->farmer_id);
+            // NOT: "bugun" randevulari asagidaki ayri-koy bloku uretir
+            // (rota demosu temiz gorunsun diye). Buradaki rastgele randevular
+            // sadece gecmis + gelecek; bugune dusmesin ki pinler cakismasin.
             $when = match (true) {
-                $a < 12 => now()->subDays(mt_rand(1, 20))->setTime(mt_rand(9, 16), [0, 15, 30, 45][mt_rand(0, 3)]),
-                $a < 18 => now()->setTime(mt_rand(9, 16), [0, 30][mt_rand(0, 1)]),
+                $a < 14 => now()->subDays(mt_rand(1, 20))->setTime(mt_rand(9, 16), [0, 15, 30, 45][mt_rand(0, 3)]),
                 default => now()->addDays(mt_rand(1, 14))->setTime(mt_rand(9, 16), [0, 15, 30, 45][mt_rand(0, 3)]),
             };
             $type = $apptTypes[array_rand($apptTypes)];
