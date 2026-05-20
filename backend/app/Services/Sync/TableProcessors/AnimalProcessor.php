@@ -36,7 +36,8 @@ class AnimalProcessor extends AbstractTableProcessor
             return 'farmer baska klinige ait';
         }
 
-        $validSpecies = ['cattle', 'sheep', 'goat', 'poultry', 'other'];
+        // Mobil form ile ayni liste (animal_form_screen.dart _speciesOptions).
+        $validSpecies = ['cattle', 'sheep', 'goat', 'horse', 'dog', 'cat', 'poultry', 'other'];
         if (!in_array($data['species'], $validSpecies, true)) {
             return 'invalid species';
         }

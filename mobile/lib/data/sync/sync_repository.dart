@@ -693,55 +693,55 @@ class SyncRepository {
 
   Future<List<VillageRow>> _pendingVillages() => (_db.select(_db.villages)
         ..where((t) => t.localSyncStatus
-            .equalsValue(LocalSyncStatus.pending)))
+            .equalsValue(LocalSyncStatus.synced).not()))
       .get();
   Future<List<DrugRow>> _pendingDrugs() => (_db.select(_db.drugs)
         ..where((t) => t.localSyncStatus
-            .equalsValue(LocalSyncStatus.pending)))
+            .equalsValue(LocalSyncStatus.synced).not()))
       .get();
   Future<List<FarmerRow>> _pendingFarmers() => (_db.select(_db.farmers)
         ..where((t) => t.localSyncStatus
-            .equalsValue(LocalSyncStatus.pending)))
+            .equalsValue(LocalSyncStatus.synced).not()))
       .get();
   Future<List<AnimalRow>> _pendingAnimals() => (_db.select(_db.animals)
         ..where((t) => t.localSyncStatus
-            .equalsValue(LocalSyncStatus.pending)))
+            .equalsValue(LocalSyncStatus.synced).not()))
       .get();
   Future<List<AppointmentRow>> _pendingAppointments() =>
       (_db.select(_db.appointments)
             ..where((t) => t.localSyncStatus
-                .equalsValue(LocalSyncStatus.pending)))
+                .equalsValue(LocalSyncStatus.synced).not()))
           .get();
   Future<List<MedicalRecordRow>> _pendingMedicalRecords() =>
       (_db.select(_db.medicalRecords)
             ..where((t) => t.localSyncStatus
-                .equalsValue(LocalSyncStatus.pending)))
+                .equalsValue(LocalSyncStatus.synced).not()))
           .get();
   Future<List<MedicalRecordDrugRow>> _pendingMrDrugs() =>
       (_db.select(_db.medicalRecordDrugs)
             ..where((t) => t.localSyncStatus
-                .equalsValue(LocalSyncStatus.pending)))
+                .equalsValue(LocalSyncStatus.synced).not()))
           .get();
   Future<List<StockRow>> _pendingStocks() => (_db.select(_db.stocks)
         ..where((t) => t.localSyncStatus
-            .equalsValue(LocalSyncStatus.pending)))
+            .equalsValue(LocalSyncStatus.synced).not()))
       .get();
   Future<List<PaymentRow>> _pendingPayments() =>
       (_db.select(_db.payments)
             ..where((p) => p.localSyncStatus
-                .equalsValue(LocalSyncStatus.pending)))
+                .equalsValue(LocalSyncStatus.synced).not()))
           .get();
 
   Future<List<StockMovementRow>> _pendingStockMovements() =>
       (_db.select(_db.stockMovements)
             ..where((t) => t.localSyncStatus
-                .equalsValue(LocalSyncStatus.pending)))
+                .equalsValue(LocalSyncStatus.synced).not()))
           .get();
 
   Future<List<VaccineScheduleRow>> _pendingVaccineSchedules() =>
       (_db.select(_db.vaccineSchedules)
             ..where((t) => t.localSyncStatus
-                .equalsValue(LocalSyncStatus.pending)))
+                .equalsValue(LocalSyncStatus.synced).not()))
           .get();
 
   // ============================================================ PULL

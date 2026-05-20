@@ -41,5 +41,11 @@ class AppointmentProcessor extends AbstractTableProcessor
         if (empty($data['vet_id'])) {
             $data['vet_id'] = $this->user->id;
         }
+        // Eski mobil surumler status'u 'scheduled' gonderiyor; server
+        // vocabulary'si 'planned'. chk_appt_status ihlalini onlemek icin
+        // tolere et (yeni mobil zaten 'planned' gonderiyor).
+        if (($data['status'] ?? null) === 'scheduled') {
+            $data['status'] = 'planned';
+        }
     }
 }
