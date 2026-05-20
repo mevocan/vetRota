@@ -66,12 +66,18 @@ class _AppointmentsTodayScreenState
       lng: start.longitude,
       distFromPrevKm: 0,
     ));
+    // Ayni koyde (ayni lat/lng) birden fazla randevu olabilir; her randevu
+    // yalnizca bir kez eslessin diye eslesen id'leri tut. Yoksa duplikeler
+    // ayni randevuya eslenip digerleri numarasiz (bos) pin kalir.
+    final used = <String>{withGeo.first.row.id};
     for (final s in optimized.stops) {
       final match = withGeo.firstWhere(
         (a) =>
+            !used.contains(a.row.id) &&
             (a.lat! - s.original.latitude).abs() < 1e-6 &&
             (a.lng! - s.original.longitude).abs() < 1e-6,
       );
+      used.add(match.row.id);
       stops.add((
         appointmentId: match.row.id,
         lat: s.original.latitude,
