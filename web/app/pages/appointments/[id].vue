@@ -36,7 +36,9 @@ const typeLabel: Record<string, string> = {
 }
 
 function fmtDate(iso: string) {
-  return new Date(iso).toLocaleString('tr-TR', { dateStyle: 'long', timeStyle: 'short', weekday: 'long' })
+  // dateStyle:'full' zaten haftanın gününü içerir; weekday ile birlikte
+  // kullanılamaz (Invalid option). 'full' + 'short' yeterli.
+  return new Date(iso).toLocaleString('tr-TR', { dateStyle: 'full', timeStyle: 'short' })
 }
 
 async function changeStatus(newStatus: string) {

@@ -2,6 +2,13 @@
 const auth = useAuthStore()
 const route = useRoute()
 
+// Auth durumu localStorage'ta; SSR bilmiyor. Hydration mismatch'i onlemek
+// icin premium'a bagli render'i mount sonrasina ertele. SSR ve ilk client
+// render'da premium=false varsayilir (esit), sonra reaktif guncellenir.
+const mounted = ref(false)
+onMounted(() => { mounted.value = true })
+const isPremium = computed(() => mounted.value && auth.isPremium)
+
 const navItems = [
   { label: 'Panel', icon: 'i-lucide-layout-dashboard', to: '/', premium: false },
   { label: 'Hayvanlar', icon: 'i-lucide-paw-print', to: '/animals', premium: false },
@@ -39,21 +46,21 @@ async function handleLogout() {
         <NuxtLink
           v-for="item in navItems"
           :key="item.to"
-          :to="item.premium && !auth.isPremium ? '/upgrade' : item.to"
+          :to="item.premium && !isPremium ? '/upgrade' : item.to"
           class="flex items-center gap-2.5 px-2.5 py-2 text-sm rounded-md text-neutral-600 hover:bg-neutral-100 transition"
           active-class="!bg-primary-50 !text-primary-700 font-semibold"
         >
           <UIcon :name="item.icon" class="w-4 h-4 flex-shrink-0" />
           <span class="flex-1">{{ item.label }}</span>
           <UIcon
-            v-if="item.premium && !auth.isPremium"
+            v-if="item.premium && !isPremium"
             name="i-lucide-lock"
             class="w-3.5 h-3.5 text-amber-500"
           />
         </NuxtLink>
 
         <NuxtLink
-          v-if="!auth.isPremium"
+          v-if="!isPremium"
           to="/upgrade"
           class="flex items-center gap-2.5 px-2.5 py-2 text-sm rounded-md text-amber-700 bg-amber-50 hover:bg-amber-100 transition font-medium mt-2"
         >
@@ -93,7 +100,7 @@ async function handleLogout() {
           {{ pageTitle }}
         </h1>
         <UBadge
-          v-if="auth.isPremium"
+          v-if="isPremium"
           color="primary"
           variant="soft"
           icon="i-lucide-sparkles"
