@@ -48,11 +48,16 @@ class RoutesRepository {
     final now = DateTime.now();
 
     return _db.transaction(() async {
-      // Eski route'u soft-delete et + stop'lari da.
-      final old = await (_db.select(_db.routes)
-            ..where((r) => r.vetId.equals(vetId) & r.date.equals(today)))
-          .getSingleOrNull();
-      if (old != null) {
+      // Bu gun icin aktif (silinmemis) tum route'lari soft-delete et.
+      // Tekrarli optimize'da birden fazla birikebildigi icin getSingleOrNull
+      // "Too many elements" atiyordu; liste alip hepsini siliyoruz.
+      final olds = await (_db.select(_db.routes)
+            ..where((r) =>
+                r.vetId.equals(vetId) &
+                r.date.equals(today) &
+                r.deletedLocal.equals(false)))
+          .get();
+      for (final old in olds) {
         await (_db.update(_db.routes)..where((r) => r.id.equals(old.id)))
             .write(RoutesCompanion(
           deletedLocal: const Value(true),
