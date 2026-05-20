@@ -55,22 +55,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
       );
-    } catch (e, st) {
-      // GECICI TESHIS: gercek sync hatasini konsola bas (sonra kaldirilacak).
-      debugPrint('===== SYNC ERROR =====');
-      debugPrint('TYPE: ${e.runtimeType}');
-      debugPrint('ERROR: $e');
-      if (e is DioException) {
-        debugPrint('DIO TYPE: ${e.type}');
-        debugPrint('DIO MESSAGE: ${e.message}');
-        debugPrint('DIO BASEURL: ${e.requestOptions.baseUrl}');
-        debugPrint('DIO PATH: ${e.requestOptions.path}');
-        debugPrint('DIO STATUS: ${e.response?.statusCode}');
-        debugPrint('DIO RESPONSE: ${e.response?.data}');
-        debugPrint('DIO ERROR(inner): ${e.error}');
-      }
-      debugPrint('STACK: $st');
-      debugPrint('======================');
+    } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(_friendlySyncError(e))),
