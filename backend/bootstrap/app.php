@@ -18,6 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'device.match' => \App\Http\Middleware\EnsureDeviceMatchesJwt::class,
             'premium' => \App\Http\Middleware\EnsurePremiumClinic::class,
         ]);
+
+        // Tum API yanitlarina Content-Length ekle. php artisan serve'in
+        // close-delimited buyuk yanitlari mobil Dio'da parse hatasi
+        // veriyordu; bu middleware onu cozer.
+        $middleware->appendToGroup('api', \App\Http\Middleware\SetContentLength::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
