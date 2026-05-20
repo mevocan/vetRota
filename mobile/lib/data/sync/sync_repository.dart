@@ -757,7 +757,11 @@ class SyncRepository {
       final query = <String, dynamic>{
         'since': newSince,
         'tables': _tables.join(','),
-        'limit': 500,
+        // limit=100: her sayfa ~100KB. Buyuk tek yanit (limit=500 ~800KB)
+        // php artisan serve'den gelirken Dio'da JSON parse hatasi
+        // (FormatException) verebiliyordu. Kucuk sayfalar hem bunu asar
+        // hem kirsal yavas baglantida daha dayanikli.
+        'limit': 100,
       };
       if (nextCursor != null) query['cursor'] = nextCursor;
 
