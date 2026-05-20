@@ -1,0 +1,44 @@
+# Production Dockerfile (Railway/Hetzner icin).
+# Kod image'a COPY'lanir, composer install build-time, artisan optimize.
+# Railway $PORT env'sini kullanir.
+FROM php:8.4-cli-alpine
+
+RUN apk add --no-cache \
+        git \
+        unzip \
+        libpq-dev \
+        postgresql-dev \
+        oniguruma-dev \
+        icu-dev \
+        libzip-dev \
+    && docker-php-ext-install pdo pdo_pgsql pgsql mbstring intl zip bcmath \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+WORKDIR /app
+
+# Once sadece composer dosyalarini kopyala (cache friendly)
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --no-interaction
+
+# Tum kodu kopyala
+COPY . .
+
+# Autoload + Laravel optimize cache
+RUN composer dump-autoload --optimize --no-dev \
+    && php artisan config:clear \
+    && php artisan route:clear \
+    && php artisan view:clear
+
+# Storage symlink (public/storage). Hata varsa yutulur (idempotent).
+RUN php artisan storage:link || true
+
+# Container PORT'u Railway'den alir. Migrate + serve.
+# Migrate fresh sadece SEED_ON_BOOT=1 ile (ilk deploy'da bir kez set edin,
+# sonra kaldirin). Aksi halde sadece pending migration calisir.
+CMD sh -c "\
+  if [ \"$SEED_ON_BOOT\" = \"1\" ]; then \
+    php artisan migrate:fresh --seed --force; \
+  else \
+    php artisan migrate --force; \
+  fi && \
+  php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"

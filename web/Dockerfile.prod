@@ -1,0 +1,26 @@
+# Production Dockerfile (Railway icin) — Nuxt 4 SSR.
+# Multi-stage: build + runtime.
+FROM node:22-alpine AS build
+
+WORKDIR /app
+
+# Sadece package dosyalarini kopyala (cache friendly)
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund
+
+# Tum kodu kopyala ve build et
+COPY . .
+RUN npm run build
+
+# ---------- Runtime ----------
+FROM node:22-alpine
+WORKDIR /app
+
+# Sadece .output ve gerekli runtime dosyalarini kopyala
+COPY --from=build /app/.output ./.output
+
+ENV NODE_ENV=production
+ENV HOST=0.0.0.0
+# Railway $PORT'u sets eder; Nuxt onu PORT env'inden okur.
+
+CMD ["sh", "-c", "node .output/server/index.mjs"]

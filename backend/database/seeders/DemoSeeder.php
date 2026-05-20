@@ -453,6 +453,34 @@ class DemoSeeder extends Seeder
             ]);
         }
 
+        // -------- BUGÜNE sabitlenmiş rota demo randevuları --------
+        // Rota optimizasyonu demosu icin: bugun, farkli 6 koyde, confirmed
+        // randevu. Fresh seed gunu mobil "Bugunku Rota" ekraninda 6 dagilmis
+        // durak olur, "Rotayi optimize et" gorsel olarak etkili calisir.
+        $routeHours = [8, 9, 11, 13, 14, 16];
+        $vIdx = 0;
+        foreach ($villages as $village) {
+            if ($vIdx >= 6) break;
+            // Bu koyde bir ciftci + canli hayvan bul
+            $farmerInV = collect($farmers)->firstWhere('village_id', $village->id);
+            if ($farmerInV === null) continue;
+            $animalInV = collect($aliveAnimals)->firstWhere('farmer_id', $farmerInV->id);
+
+            Appointment::create([
+                'clinic_id' => $clinic->id,
+                'farmer_id' => $farmerInV->id,
+                'animal_id' => $animalInV?->id,
+                'vet_id' => $ahmet->id,
+                'village_id' => $village->id,
+                'scheduled_at' => now()->setTime($routeHours[$vIdx], 0),
+                'estimated_duration_minutes' => [30, 45, 60][mt_rand(0, 2)],
+                'appointment_type' => $apptTypes[array_rand($apptTypes)],
+                'reason' => $apptReasons['visit'],
+                'status' => 'confirmed',
+            ]);
+            $vIdx++;
+        }
+
         // -------- Reçeteler (son 20 muayene) --------
         $recentForRx = collect($insertedRecords)
             ->filter(fn ($r) => $r->examined_at->gt(now()->subDays(30)))
@@ -652,6 +680,86 @@ class DemoSeeder extends Seeder
                 'total_revenue' => (float) $dayRecords->sum('service_fee'),
                 'drugs_used' => [],
                 'generated_at' => $date->copy()->setTime(20, 0),
+            ]);
+        }
+
+        // ============================================================
+        //  FREE klinik (demo karsilastirma icin) - yeni kayit olmus
+        //  bir tek-veteriner senaryosu. Premium kilitli ekranlari
+        //  goruntulemek/uygrade akisini test etmek icin kullanilir.
+        // ============================================================
+        $freeClinic = Clinic::create([
+            'name' => 'VetRota Polatlı Demo Klinik',
+            'phone' => '03126400505',
+            'email' => 'demo@vetrota.com.tr',
+            'city' => 'Ankara',
+            'district' => 'Polatlı',
+            'subscription_tier' => 'free',
+            'subscription_expires_at' => null,
+        ]);
+
+        $freeVet = User::create([
+            'name' => 'Demo Veteriner',
+            'email' => 'demo@vetrota.com.tr',
+            'password' => Hash::make('sifre1234'),
+            'clinic_id' => $freeClinic->id,
+            'role' => 'vet',
+        ]);
+
+        $freeVillage = Village::create([
+            'name' => 'Sazılar',
+            'district' => 'Polatlı',
+            'city' => 'Ankara',
+            'lat' => 39.5840,
+            'lng' => 32.1471,
+        ]);
+
+        // Free icin minimal ornek: 2 ciftci + 6 hayvan + 3 muayene.
+        // Free limiti 100 hayvan; sembolik kalsin ki "buraya hayvan ekleyip
+        // ekranlari hemen anlik gorebileyim" hissi versin.
+        $freeFarmers = [];
+        foreach ([['Salim', 'Yılmaz', '5559990001'], ['Hatice', 'Demir', '5559990002']] as [$first, $last, $phone]) {
+            $freeFarmers[] = Farmer::create([
+                'clinic_id' => $freeClinic->id,
+                'village_id' => $freeVillage->id,
+                'first_name' => $first,
+                'last_name' => $last,
+                'phone' => $phone,
+                'address_detail' => 'Polatlı, Sazılar köyü',
+                'balance' => 0,
+                'sms_notifications_enabled' => true,
+                'preferred_sms_language' => 'tr',
+            ]);
+        }
+
+        $freeAnimals = [];
+        for ($i = 0; $i < 6; $i++) {
+            $freeAnimals[] = Animal::create([
+                'clinic_id' => $freeClinic->id,
+                'farmer_id' => $freeFarmers[$i % 2]->id,
+                'village_id' => $freeVillage->id,
+                'ear_tag' => sprintf('TR-06-F%04d', $i + 1),
+                'name' => null,
+                'species' => $i < 3 ? 'cattle' : 'sheep',
+                'breed' => $i < 3 ? 'Holstein' : 'Akkaraman',
+                'birth_date' => now()->subDays(mt_rand(200, 1500))->toDateString(),
+                'gender' => $i % 2 === 0 ? 'female' : 'male',
+                'weight_kg' => $i < 3 ? mt_rand(250, 500) : mt_rand(40, 70),
+                'status' => 'alive',
+            ]);
+        }
+
+        foreach (array_slice($freeAnimals, 0, 3) as $a) {
+            MedicalRecord::create([
+                'clinic_id' => $freeClinic->id,
+                'animal_id' => $a->id,
+                'vet_id' => $freeVet->id,
+                'village_id' => $freeVillage->id,
+                'visit_type' => 'examination',
+                'chief_complaint' => 'Genel kontrol.',
+                'treatment_notes' => 'Klinik bulgu normal.',
+                'service_fee' => 200.00,
+                'examined_at' => now()->subDays(mt_rand(1, 14)),
             ]);
         }
     }
