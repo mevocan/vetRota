@@ -176,7 +176,7 @@ AppointmentsCompanion appointmentFromServer(Map<String, dynamic> j) {
     vetId: Value(_int(j['vet_id'])),
     scheduledAt: Value(_parseIso(j['scheduled_at'])!),
     reason: Value(j['reason'] as String?),
-    status: Value(j['status'] as String? ?? 'scheduled'),
+    status: Value(j['status'] as String? ?? 'planned'),
     version: Value(_int(j['version']) ?? 0),
     lastModifiedAt: Value(_parseIso(j['last_modified_at'])),
     originDeviceId: Value(j['origin_device_id'] as String?),

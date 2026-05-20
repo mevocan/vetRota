@@ -28,11 +28,11 @@ class _AppointmentFormScreenState
   FarmerRow? _farmer;
   AnimalRow? _animal;
   late DateTime _scheduledAt;
-  String _status = 'scheduled';
+  String _status = 'planned';
   bool _saving = false;
 
   static const _statuses = [
-    ('scheduled', 'Planlandi'),
+    ('planned', 'Planlandi'),
     ('confirmed', 'Onaylandi'),
     ('in_progress', 'Suruyor'),
     ('completed', 'Tamamlandi'),
@@ -45,7 +45,7 @@ class _AppointmentFormScreenState
     super.initState();
     final e = widget.existing;
     _reason.text = e?.reason ?? '';
-    _status = e?.status ?? 'scheduled';
+    _status = e?.status ?? 'planned';
     _scheduledAt =
         e?.scheduledAt ?? DateTime.now().add(const Duration(hours: 1));
 
@@ -299,7 +299,7 @@ class _AppointmentFormScreenState
                   for (final (v, l) in _statuses)
                     DropdownMenuItem(value: v, child: Text(l)),
                 ],
-                onChanged: (v) => setState(() => _status = v ?? 'scheduled'),
+                onChanged: (v) => setState(() => _status = v ?? 'planned'),
               ),
               const SizedBox(height: 12),
               TextFormField(

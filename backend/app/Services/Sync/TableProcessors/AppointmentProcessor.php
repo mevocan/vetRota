@@ -33,4 +33,13 @@ class AppointmentProcessor extends AbstractTableProcessor
 
         return null;
     }
+
+    // Mobil randevu formu vet_id'yi set etmiyor; push'u yapan authenticated
+    // kullanici randevuyu yapan veteriner oldugu icin onu doldur.
+    protected function fillDefaults(array &$data): void
+    {
+        if (empty($data['vet_id'])) {
+            $data['vet_id'] = $this->user->id;
+        }
+    }
 }

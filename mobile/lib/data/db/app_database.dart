@@ -93,7 +93,7 @@ class Appointments extends Table with SyncColumns {
   IntColumn get vetId => integer().nullable()();
   DateTimeColumn get scheduledAt => dateTime()();
   TextColumn get reason => text().nullable()();
-  TextColumn get status => text().withDefault(const Constant('scheduled'))();
+  TextColumn get status => text().withDefault(const Constant('planned'))();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -315,9 +315,10 @@ class AppDatabase extends _$AppDatabase {
 
   // schemaVersion: 1 baslangic, 2 = M4 photos, 3 = M5 routes/route_stops,
   // 4 = M7.1 animals pregnancy alanlari, 5 = M7.3 payments,
-  // 6 = M9.6 vaccine_schedules.
+  // 6 = M9.6 vaccine_schedules,
+  // 7 = randevu status vocabulary 'scheduled' -> 'planned' (server ile hizalama).
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -340,6 +341,11 @@ class AppDatabase extends _$AppDatabase {
           }
           if (from < 6) {
             await m.createTable(vaccineSchedules);
+          }
+          if (from < 7) {
+            await customStatement(
+              "UPDATE appointments SET status = 'planned' WHERE status = 'scheduled'",
+            );
           }
         },
       );

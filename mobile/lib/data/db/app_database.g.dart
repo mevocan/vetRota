@@ -2108,6 +2108,40 @@ class $AnimalsTable extends Animals with TableInfo<$AnimalsTable, AnimalRow> {
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _pregnancyStartedAtMeta =
+      const VerificationMeta('pregnancyStartedAt');
+  @override
+  late final GeneratedColumn<DateTime> pregnancyStartedAt =
+      GeneratedColumn<DateTime>(
+        'pregnancy_started_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _expectedBirthDateMeta = const VerificationMeta(
+    'expectedBirthDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> expectedBirthDate =
+      GeneratedColumn<DateTime>(
+        'expected_birth_date',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _pregnancyNotesMeta = const VerificationMeta(
+    'pregnancyNotes',
+  );
+  @override
+  late final GeneratedColumn<String> pregnancyNotes = GeneratedColumn<String>(
+    'pregnancy_notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _lastVaccinationAtMeta = const VerificationMeta(
     'lastVaccinationAt',
   );
@@ -2184,6 +2218,9 @@ class $AnimalsTable extends Animals with TableInfo<$AnimalsTable, AnimalRow> {
     weightKg,
     color,
     isPregnant,
+    pregnancyStartedAt,
+    expectedBirthDate,
+    pregnancyNotes,
     lastVaccinationAt,
     status,
     statusChangedAt,
@@ -2331,6 +2368,33 @@ class $AnimalsTable extends Animals with TableInfo<$AnimalsTable, AnimalRow> {
         isPregnant.isAcceptableOrUnknown(data['is_pregnant']!, _isPregnantMeta),
       );
     }
+    if (data.containsKey('pregnancy_started_at')) {
+      context.handle(
+        _pregnancyStartedAtMeta,
+        pregnancyStartedAt.isAcceptableOrUnknown(
+          data['pregnancy_started_at']!,
+          _pregnancyStartedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('expected_birth_date')) {
+      context.handle(
+        _expectedBirthDateMeta,
+        expectedBirthDate.isAcceptableOrUnknown(
+          data['expected_birth_date']!,
+          _expectedBirthDateMeta,
+        ),
+      );
+    }
+    if (data.containsKey('pregnancy_notes')) {
+      context.handle(
+        _pregnancyNotesMeta,
+        pregnancyNotes.isAcceptableOrUnknown(
+          data['pregnancy_notes']!,
+          _pregnancyNotesMeta,
+        ),
+      );
+    }
     if (data.containsKey('last_vaccination_at')) {
       context.handle(
         _lastVaccinationAtMeta,
@@ -2461,6 +2525,18 @@ class $AnimalsTable extends Animals with TableInfo<$AnimalsTable, AnimalRow> {
         DriftSqlType.bool,
         data['${effectivePrefix}is_pregnant'],
       )!,
+      pregnancyStartedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}pregnancy_started_at'],
+      ),
+      expectedBirthDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}expected_birth_date'],
+      ),
+      pregnancyNotes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pregnancy_notes'],
+      ),
       lastVaccinationAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}last_vaccination_at'],
@@ -2516,6 +2592,9 @@ class AnimalRow extends DataClass implements Insertable<AnimalRow> {
   final double? weightKg;
   final String? color;
   final bool isPregnant;
+  final DateTime? pregnancyStartedAt;
+  final DateTime? expectedBirthDate;
+  final String? pregnancyNotes;
   final DateTime? lastVaccinationAt;
   final String status;
   final DateTime? statusChangedAt;
@@ -2542,6 +2621,9 @@ class AnimalRow extends DataClass implements Insertable<AnimalRow> {
     this.weightKg,
     this.color,
     required this.isPregnant,
+    this.pregnancyStartedAt,
+    this.expectedBirthDate,
+    this.pregnancyNotes,
     this.lastVaccinationAt,
     required this.status,
     this.statusChangedAt,
@@ -2599,6 +2681,15 @@ class AnimalRow extends DataClass implements Insertable<AnimalRow> {
       map['color'] = Variable<String>(color);
     }
     map['is_pregnant'] = Variable<bool>(isPregnant);
+    if (!nullToAbsent || pregnancyStartedAt != null) {
+      map['pregnancy_started_at'] = Variable<DateTime>(pregnancyStartedAt);
+    }
+    if (!nullToAbsent || expectedBirthDate != null) {
+      map['expected_birth_date'] = Variable<DateTime>(expectedBirthDate);
+    }
+    if (!nullToAbsent || pregnancyNotes != null) {
+      map['pregnancy_notes'] = Variable<String>(pregnancyNotes);
+    }
     if (!nullToAbsent || lastVaccinationAt != null) {
       map['last_vaccination_at'] = Variable<DateTime>(lastVaccinationAt);
     }
@@ -2659,6 +2750,15 @@ class AnimalRow extends DataClass implements Insertable<AnimalRow> {
           ? const Value.absent()
           : Value(color),
       isPregnant: Value(isPregnant),
+      pregnancyStartedAt: pregnancyStartedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(pregnancyStartedAt),
+      expectedBirthDate: expectedBirthDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(expectedBirthDate),
+      pregnancyNotes: pregnancyNotes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(pregnancyNotes),
       lastVaccinationAt: lastVaccinationAt == null && nullToAbsent
           ? const Value.absent()
           : Value(lastVaccinationAt),
@@ -2703,6 +2803,13 @@ class AnimalRow extends DataClass implements Insertable<AnimalRow> {
       weightKg: serializer.fromJson<double?>(json['weightKg']),
       color: serializer.fromJson<String?>(json['color']),
       isPregnant: serializer.fromJson<bool>(json['isPregnant']),
+      pregnancyStartedAt: serializer.fromJson<DateTime?>(
+        json['pregnancyStartedAt'],
+      ),
+      expectedBirthDate: serializer.fromJson<DateTime?>(
+        json['expectedBirthDate'],
+      ),
+      pregnancyNotes: serializer.fromJson<String?>(json['pregnancyNotes']),
       lastVaccinationAt: serializer.fromJson<DateTime?>(
         json['lastVaccinationAt'],
       ),
@@ -2738,6 +2845,9 @@ class AnimalRow extends DataClass implements Insertable<AnimalRow> {
       'weightKg': serializer.toJson<double?>(weightKg),
       'color': serializer.toJson<String?>(color),
       'isPregnant': serializer.toJson<bool>(isPregnant),
+      'pregnancyStartedAt': serializer.toJson<DateTime?>(pregnancyStartedAt),
+      'expectedBirthDate': serializer.toJson<DateTime?>(expectedBirthDate),
+      'pregnancyNotes': serializer.toJson<String?>(pregnancyNotes),
       'lastVaccinationAt': serializer.toJson<DateTime?>(lastVaccinationAt),
       'status': serializer.toJson<String>(status),
       'statusChangedAt': serializer.toJson<DateTime?>(statusChangedAt),
@@ -2767,6 +2877,9 @@ class AnimalRow extends DataClass implements Insertable<AnimalRow> {
     Value<double?> weightKg = const Value.absent(),
     Value<String?> color = const Value.absent(),
     bool? isPregnant,
+    Value<DateTime?> pregnancyStartedAt = const Value.absent(),
+    Value<DateTime?> expectedBirthDate = const Value.absent(),
+    Value<String?> pregnancyNotes = const Value.absent(),
     Value<DateTime?> lastVaccinationAt = const Value.absent(),
     String? status,
     Value<DateTime?> statusChangedAt = const Value.absent(),
@@ -2797,6 +2910,15 @@ class AnimalRow extends DataClass implements Insertable<AnimalRow> {
     weightKg: weightKg.present ? weightKg.value : this.weightKg,
     color: color.present ? color.value : this.color,
     isPregnant: isPregnant ?? this.isPregnant,
+    pregnancyStartedAt: pregnancyStartedAt.present
+        ? pregnancyStartedAt.value
+        : this.pregnancyStartedAt,
+    expectedBirthDate: expectedBirthDate.present
+        ? expectedBirthDate.value
+        : this.expectedBirthDate,
+    pregnancyNotes: pregnancyNotes.present
+        ? pregnancyNotes.value
+        : this.pregnancyNotes,
     lastVaccinationAt: lastVaccinationAt.present
         ? lastVaccinationAt.value
         : this.lastVaccinationAt,
@@ -2841,6 +2963,15 @@ class AnimalRow extends DataClass implements Insertable<AnimalRow> {
       isPregnant: data.isPregnant.present
           ? data.isPregnant.value
           : this.isPregnant,
+      pregnancyStartedAt: data.pregnancyStartedAt.present
+          ? data.pregnancyStartedAt.value
+          : this.pregnancyStartedAt,
+      expectedBirthDate: data.expectedBirthDate.present
+          ? data.expectedBirthDate.value
+          : this.expectedBirthDate,
+      pregnancyNotes: data.pregnancyNotes.present
+          ? data.pregnancyNotes.value
+          : this.pregnancyNotes,
       lastVaccinationAt: data.lastVaccinationAt.present
           ? data.lastVaccinationAt.value
           : this.lastVaccinationAt,
@@ -2878,6 +3009,9 @@ class AnimalRow extends DataClass implements Insertable<AnimalRow> {
           ..write('weightKg: $weightKg, ')
           ..write('color: $color, ')
           ..write('isPregnant: $isPregnant, ')
+          ..write('pregnancyStartedAt: $pregnancyStartedAt, ')
+          ..write('expectedBirthDate: $expectedBirthDate, ')
+          ..write('pregnancyNotes: $pregnancyNotes, ')
           ..write('lastVaccinationAt: $lastVaccinationAt, ')
           ..write('status: $status, ')
           ..write('statusChangedAt: $statusChangedAt, ')
@@ -2909,6 +3043,9 @@ class AnimalRow extends DataClass implements Insertable<AnimalRow> {
     weightKg,
     color,
     isPregnant,
+    pregnancyStartedAt,
+    expectedBirthDate,
+    pregnancyNotes,
     lastVaccinationAt,
     status,
     statusChangedAt,
@@ -2939,6 +3076,9 @@ class AnimalRow extends DataClass implements Insertable<AnimalRow> {
           other.weightKg == this.weightKg &&
           other.color == this.color &&
           other.isPregnant == this.isPregnant &&
+          other.pregnancyStartedAt == this.pregnancyStartedAt &&
+          other.expectedBirthDate == this.expectedBirthDate &&
+          other.pregnancyNotes == this.pregnancyNotes &&
           other.lastVaccinationAt == this.lastVaccinationAt &&
           other.status == this.status &&
           other.statusChangedAt == this.statusChangedAt &&
@@ -2967,6 +3107,9 @@ class AnimalsCompanion extends UpdateCompanion<AnimalRow> {
   final Value<double?> weightKg;
   final Value<String?> color;
   final Value<bool> isPregnant;
+  final Value<DateTime?> pregnancyStartedAt;
+  final Value<DateTime?> expectedBirthDate;
+  final Value<String?> pregnancyNotes;
   final Value<DateTime?> lastVaccinationAt;
   final Value<String> status;
   final Value<DateTime?> statusChangedAt;
@@ -2994,6 +3137,9 @@ class AnimalsCompanion extends UpdateCompanion<AnimalRow> {
     this.weightKg = const Value.absent(),
     this.color = const Value.absent(),
     this.isPregnant = const Value.absent(),
+    this.pregnancyStartedAt = const Value.absent(),
+    this.expectedBirthDate = const Value.absent(),
+    this.pregnancyNotes = const Value.absent(),
     this.lastVaccinationAt = const Value.absent(),
     this.status = const Value.absent(),
     this.statusChangedAt = const Value.absent(),
@@ -3022,6 +3168,9 @@ class AnimalsCompanion extends UpdateCompanion<AnimalRow> {
     this.weightKg = const Value.absent(),
     this.color = const Value.absent(),
     this.isPregnant = const Value.absent(),
+    this.pregnancyStartedAt = const Value.absent(),
+    this.expectedBirthDate = const Value.absent(),
+    this.pregnancyNotes = const Value.absent(),
     this.lastVaccinationAt = const Value.absent(),
     this.status = const Value.absent(),
     this.statusChangedAt = const Value.absent(),
@@ -3052,6 +3201,9 @@ class AnimalsCompanion extends UpdateCompanion<AnimalRow> {
     Expression<double>? weightKg,
     Expression<String>? color,
     Expression<bool>? isPregnant,
+    Expression<DateTime>? pregnancyStartedAt,
+    Expression<DateTime>? expectedBirthDate,
+    Expression<String>? pregnancyNotes,
     Expression<DateTime>? lastVaccinationAt,
     Expression<String>? status,
     Expression<DateTime>? statusChangedAt,
@@ -3080,6 +3232,10 @@ class AnimalsCompanion extends UpdateCompanion<AnimalRow> {
       if (weightKg != null) 'weight_kg': weightKg,
       if (color != null) 'color': color,
       if (isPregnant != null) 'is_pregnant': isPregnant,
+      if (pregnancyStartedAt != null)
+        'pregnancy_started_at': pregnancyStartedAt,
+      if (expectedBirthDate != null) 'expected_birth_date': expectedBirthDate,
+      if (pregnancyNotes != null) 'pregnancy_notes': pregnancyNotes,
       if (lastVaccinationAt != null) 'last_vaccination_at': lastVaccinationAt,
       if (status != null) 'status': status,
       if (statusChangedAt != null) 'status_changed_at': statusChangedAt,
@@ -3110,6 +3266,9 @@ class AnimalsCompanion extends UpdateCompanion<AnimalRow> {
     Value<double?>? weightKg,
     Value<String?>? color,
     Value<bool>? isPregnant,
+    Value<DateTime?>? pregnancyStartedAt,
+    Value<DateTime?>? expectedBirthDate,
+    Value<String?>? pregnancyNotes,
     Value<DateTime?>? lastVaccinationAt,
     Value<String>? status,
     Value<DateTime?>? statusChangedAt,
@@ -3138,6 +3297,9 @@ class AnimalsCompanion extends UpdateCompanion<AnimalRow> {
       weightKg: weightKg ?? this.weightKg,
       color: color ?? this.color,
       isPregnant: isPregnant ?? this.isPregnant,
+      pregnancyStartedAt: pregnancyStartedAt ?? this.pregnancyStartedAt,
+      expectedBirthDate: expectedBirthDate ?? this.expectedBirthDate,
+      pregnancyNotes: pregnancyNotes ?? this.pregnancyNotes,
       lastVaccinationAt: lastVaccinationAt ?? this.lastVaccinationAt,
       status: status ?? this.status,
       statusChangedAt: statusChangedAt ?? this.statusChangedAt,
@@ -3212,6 +3374,17 @@ class AnimalsCompanion extends UpdateCompanion<AnimalRow> {
     if (isPregnant.present) {
       map['is_pregnant'] = Variable<bool>(isPregnant.value);
     }
+    if (pregnancyStartedAt.present) {
+      map['pregnancy_started_at'] = Variable<DateTime>(
+        pregnancyStartedAt.value,
+      );
+    }
+    if (expectedBirthDate.present) {
+      map['expected_birth_date'] = Variable<DateTime>(expectedBirthDate.value);
+    }
+    if (pregnancyNotes.present) {
+      map['pregnancy_notes'] = Variable<String>(pregnancyNotes.value);
+    }
     if (lastVaccinationAt.present) {
       map['last_vaccination_at'] = Variable<DateTime>(lastVaccinationAt.value);
     }
@@ -3256,6 +3429,9 @@ class AnimalsCompanion extends UpdateCompanion<AnimalRow> {
           ..write('weightKg: $weightKg, ')
           ..write('color: $color, ')
           ..write('isPregnant: $isPregnant, ')
+          ..write('pregnancyStartedAt: $pregnancyStartedAt, ')
+          ..write('expectedBirthDate: $expectedBirthDate, ')
+          ..write('pregnancyNotes: $pregnancyNotes, ')
           ..write('lastVaccinationAt: $lastVaccinationAt, ')
           ..write('status: $status, ')
           ..write('statusChangedAt: $statusChangedAt, ')
@@ -3450,7 +3626,7 @@ class $AppointmentsTable extends Appointments
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
-    defaultValue: const Constant('scheduled'),
+    defaultValue: const Constant('planned'),
   );
   @override
   List<GeneratedColumn> get $columns => [
@@ -12682,6 +12858,1944 @@ class RouteStopsCompanion extends UpdateCompanion<RouteStopRow> {
   }
 }
 
+class $PaymentsTable extends Payments
+    with TableInfo<$PaymentsTable, PaymentRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PaymentsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _lastModifiedAtMeta = const VerificationMeta(
+    'lastModifiedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastModifiedAt =
+      GeneratedColumn<DateTime>(
+        'last_modified_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _originDeviceIdMeta = const VerificationMeta(
+    'originDeviceId',
+  );
+  @override
+  late final GeneratedColumn<String> originDeviceId = GeneratedColumn<String>(
+    'origin_device_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _clinicIdMeta = const VerificationMeta(
+    'clinicId',
+  );
+  @override
+  late final GeneratedColumn<String> clinicId = GeneratedColumn<String>(
+    'clinic_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<LocalSyncStatus, int>
+  localSyncStatus = GeneratedColumn<int>(
+    'local_sync_status',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: Constant(LocalSyncStatus.synced.index),
+  ).withConverter<LocalSyncStatus>($PaymentsTable.$converterlocalSyncStatus);
+  static const VerificationMeta _localUpdatedAtMeta = const VerificationMeta(
+    'localUpdatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> localUpdatedAt =
+      GeneratedColumn<DateTime>(
+        'local_updated_at',
+        aliasedName,
+        false,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+        defaultValue: currentDateAndTime,
+      );
+  static const VerificationMeta _lastErrorMeta = const VerificationMeta(
+    'lastError',
+  );
+  @override
+  late final GeneratedColumn<String> lastError = GeneratedColumn<String>(
+    'last_error',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _deletedLocalMeta = const VerificationMeta(
+    'deletedLocal',
+  );
+  @override
+  late final GeneratedColumn<bool> deletedLocal = GeneratedColumn<bool>(
+    'deleted_local',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("deleted_local" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _farmerIdMeta = const VerificationMeta(
+    'farmerId',
+  );
+  @override
+  late final GeneratedColumn<String> farmerId = GeneratedColumn<String>(
+    'farmer_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _vetIdMeta = const VerificationMeta('vetId');
+  @override
+  late final GeneratedColumn<int> vetId = GeneratedColumn<int>(
+    'vet_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _amountMeta = const VerificationMeta('amount');
+  @override
+  late final GeneratedColumn<double> amount = GeneratedColumn<double>(
+    'amount',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _methodMeta = const VerificationMeta('method');
+  @override
+  late final GeneratedColumn<String> method = GeneratedColumn<String>(
+    'method',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('cash'),
+  );
+  static const VerificationMeta _paidAtMeta = const VerificationMeta('paidAt');
+  @override
+  late final GeneratedColumn<DateTime> paidAt = GeneratedColumn<DateTime>(
+    'paid_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    version,
+    lastModifiedAt,
+    originDeviceId,
+    clinicId,
+    localSyncStatus,
+    localUpdatedAt,
+    lastError,
+    deletedLocal,
+    farmerId,
+    vetId,
+    amount,
+    method,
+    paidAt,
+    notes,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'payments';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<PaymentRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    }
+    if (data.containsKey('last_modified_at')) {
+      context.handle(
+        _lastModifiedAtMeta,
+        lastModifiedAt.isAcceptableOrUnknown(
+          data['last_modified_at']!,
+          _lastModifiedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('origin_device_id')) {
+      context.handle(
+        _originDeviceIdMeta,
+        originDeviceId.isAcceptableOrUnknown(
+          data['origin_device_id']!,
+          _originDeviceIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('clinic_id')) {
+      context.handle(
+        _clinicIdMeta,
+        clinicId.isAcceptableOrUnknown(data['clinic_id']!, _clinicIdMeta),
+      );
+    }
+    if (data.containsKey('local_updated_at')) {
+      context.handle(
+        _localUpdatedAtMeta,
+        localUpdatedAt.isAcceptableOrUnknown(
+          data['local_updated_at']!,
+          _localUpdatedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_error')) {
+      context.handle(
+        _lastErrorMeta,
+        lastError.isAcceptableOrUnknown(data['last_error']!, _lastErrorMeta),
+      );
+    }
+    if (data.containsKey('deleted_local')) {
+      context.handle(
+        _deletedLocalMeta,
+        deletedLocal.isAcceptableOrUnknown(
+          data['deleted_local']!,
+          _deletedLocalMeta,
+        ),
+      );
+    }
+    if (data.containsKey('farmer_id')) {
+      context.handle(
+        _farmerIdMeta,
+        farmerId.isAcceptableOrUnknown(data['farmer_id']!, _farmerIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_farmerIdMeta);
+    }
+    if (data.containsKey('vet_id')) {
+      context.handle(
+        _vetIdMeta,
+        vetId.isAcceptableOrUnknown(data['vet_id']!, _vetIdMeta),
+      );
+    }
+    if (data.containsKey('amount')) {
+      context.handle(
+        _amountMeta,
+        amount.isAcceptableOrUnknown(data['amount']!, _amountMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_amountMeta);
+    }
+    if (data.containsKey('method')) {
+      context.handle(
+        _methodMeta,
+        method.isAcceptableOrUnknown(data['method']!, _methodMeta),
+      );
+    }
+    if (data.containsKey('paid_at')) {
+      context.handle(
+        _paidAtMeta,
+        paidAt.isAcceptableOrUnknown(data['paid_at']!, _paidAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_paidAtMeta);
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  PaymentRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PaymentRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      lastModifiedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_modified_at'],
+      ),
+      originDeviceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}origin_device_id'],
+      ),
+      clinicId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}clinic_id'],
+      ),
+      localSyncStatus: $PaymentsTable.$converterlocalSyncStatus.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}local_sync_status'],
+        )!,
+      ),
+      localUpdatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}local_updated_at'],
+      )!,
+      lastError: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_error'],
+      ),
+      deletedLocal: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}deleted_local'],
+      )!,
+      farmerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}farmer_id'],
+      )!,
+      vetId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}vet_id'],
+      ),
+      amount: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}amount'],
+      )!,
+      method: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}method'],
+      )!,
+      paidAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}paid_at'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+    );
+  }
+
+  @override
+  $PaymentsTable createAlias(String alias) {
+    return $PaymentsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<LocalSyncStatus, int, int>
+  $converterlocalSyncStatus = const EnumIndexConverter<LocalSyncStatus>(
+    LocalSyncStatus.values,
+  );
+}
+
+class PaymentRow extends DataClass implements Insertable<PaymentRow> {
+  final String id;
+  final int version;
+  final DateTime? lastModifiedAt;
+  final String? originDeviceId;
+  final String? clinicId;
+  final LocalSyncStatus localSyncStatus;
+  final DateTime localUpdatedAt;
+  final String? lastError;
+  final bool deletedLocal;
+  final String farmerId;
+  final int? vetId;
+  final double amount;
+  final String method;
+  final DateTime paidAt;
+  final String? notes;
+  const PaymentRow({
+    required this.id,
+    required this.version,
+    this.lastModifiedAt,
+    this.originDeviceId,
+    this.clinicId,
+    required this.localSyncStatus,
+    required this.localUpdatedAt,
+    this.lastError,
+    required this.deletedLocal,
+    required this.farmerId,
+    this.vetId,
+    required this.amount,
+    required this.method,
+    required this.paidAt,
+    this.notes,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || lastModifiedAt != null) {
+      map['last_modified_at'] = Variable<DateTime>(lastModifiedAt);
+    }
+    if (!nullToAbsent || originDeviceId != null) {
+      map['origin_device_id'] = Variable<String>(originDeviceId);
+    }
+    if (!nullToAbsent || clinicId != null) {
+      map['clinic_id'] = Variable<String>(clinicId);
+    }
+    {
+      map['local_sync_status'] = Variable<int>(
+        $PaymentsTable.$converterlocalSyncStatus.toSql(localSyncStatus),
+      );
+    }
+    map['local_updated_at'] = Variable<DateTime>(localUpdatedAt);
+    if (!nullToAbsent || lastError != null) {
+      map['last_error'] = Variable<String>(lastError);
+    }
+    map['deleted_local'] = Variable<bool>(deletedLocal);
+    map['farmer_id'] = Variable<String>(farmerId);
+    if (!nullToAbsent || vetId != null) {
+      map['vet_id'] = Variable<int>(vetId);
+    }
+    map['amount'] = Variable<double>(amount);
+    map['method'] = Variable<String>(method);
+    map['paid_at'] = Variable<DateTime>(paidAt);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    return map;
+  }
+
+  PaymentsCompanion toCompanion(bool nullToAbsent) {
+    return PaymentsCompanion(
+      id: Value(id),
+      version: Value(version),
+      lastModifiedAt: lastModifiedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastModifiedAt),
+      originDeviceId: originDeviceId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(originDeviceId),
+      clinicId: clinicId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(clinicId),
+      localSyncStatus: Value(localSyncStatus),
+      localUpdatedAt: Value(localUpdatedAt),
+      lastError: lastError == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastError),
+      deletedLocal: Value(deletedLocal),
+      farmerId: Value(farmerId),
+      vetId: vetId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(vetId),
+      amount: Value(amount),
+      method: Value(method),
+      paidAt: Value(paidAt),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+    );
+  }
+
+  factory PaymentRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PaymentRow(
+      id: serializer.fromJson<String>(json['id']),
+      version: serializer.fromJson<int>(json['version']),
+      lastModifiedAt: serializer.fromJson<DateTime?>(json['lastModifiedAt']),
+      originDeviceId: serializer.fromJson<String?>(json['originDeviceId']),
+      clinicId: serializer.fromJson<String?>(json['clinicId']),
+      localSyncStatus: $PaymentsTable.$converterlocalSyncStatus.fromJson(
+        serializer.fromJson<int>(json['localSyncStatus']),
+      ),
+      localUpdatedAt: serializer.fromJson<DateTime>(json['localUpdatedAt']),
+      lastError: serializer.fromJson<String?>(json['lastError']),
+      deletedLocal: serializer.fromJson<bool>(json['deletedLocal']),
+      farmerId: serializer.fromJson<String>(json['farmerId']),
+      vetId: serializer.fromJson<int?>(json['vetId']),
+      amount: serializer.fromJson<double>(json['amount']),
+      method: serializer.fromJson<String>(json['method']),
+      paidAt: serializer.fromJson<DateTime>(json['paidAt']),
+      notes: serializer.fromJson<String?>(json['notes']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'version': serializer.toJson<int>(version),
+      'lastModifiedAt': serializer.toJson<DateTime?>(lastModifiedAt),
+      'originDeviceId': serializer.toJson<String?>(originDeviceId),
+      'clinicId': serializer.toJson<String?>(clinicId),
+      'localSyncStatus': serializer.toJson<int>(
+        $PaymentsTable.$converterlocalSyncStatus.toJson(localSyncStatus),
+      ),
+      'localUpdatedAt': serializer.toJson<DateTime>(localUpdatedAt),
+      'lastError': serializer.toJson<String?>(lastError),
+      'deletedLocal': serializer.toJson<bool>(deletedLocal),
+      'farmerId': serializer.toJson<String>(farmerId),
+      'vetId': serializer.toJson<int?>(vetId),
+      'amount': serializer.toJson<double>(amount),
+      'method': serializer.toJson<String>(method),
+      'paidAt': serializer.toJson<DateTime>(paidAt),
+      'notes': serializer.toJson<String?>(notes),
+    };
+  }
+
+  PaymentRow copyWith({
+    String? id,
+    int? version,
+    Value<DateTime?> lastModifiedAt = const Value.absent(),
+    Value<String?> originDeviceId = const Value.absent(),
+    Value<String?> clinicId = const Value.absent(),
+    LocalSyncStatus? localSyncStatus,
+    DateTime? localUpdatedAt,
+    Value<String?> lastError = const Value.absent(),
+    bool? deletedLocal,
+    String? farmerId,
+    Value<int?> vetId = const Value.absent(),
+    double? amount,
+    String? method,
+    DateTime? paidAt,
+    Value<String?> notes = const Value.absent(),
+  }) => PaymentRow(
+    id: id ?? this.id,
+    version: version ?? this.version,
+    lastModifiedAt: lastModifiedAt.present
+        ? lastModifiedAt.value
+        : this.lastModifiedAt,
+    originDeviceId: originDeviceId.present
+        ? originDeviceId.value
+        : this.originDeviceId,
+    clinicId: clinicId.present ? clinicId.value : this.clinicId,
+    localSyncStatus: localSyncStatus ?? this.localSyncStatus,
+    localUpdatedAt: localUpdatedAt ?? this.localUpdatedAt,
+    lastError: lastError.present ? lastError.value : this.lastError,
+    deletedLocal: deletedLocal ?? this.deletedLocal,
+    farmerId: farmerId ?? this.farmerId,
+    vetId: vetId.present ? vetId.value : this.vetId,
+    amount: amount ?? this.amount,
+    method: method ?? this.method,
+    paidAt: paidAt ?? this.paidAt,
+    notes: notes.present ? notes.value : this.notes,
+  );
+  PaymentRow copyWithCompanion(PaymentsCompanion data) {
+    return PaymentRow(
+      id: data.id.present ? data.id.value : this.id,
+      version: data.version.present ? data.version.value : this.version,
+      lastModifiedAt: data.lastModifiedAt.present
+          ? data.lastModifiedAt.value
+          : this.lastModifiedAt,
+      originDeviceId: data.originDeviceId.present
+          ? data.originDeviceId.value
+          : this.originDeviceId,
+      clinicId: data.clinicId.present ? data.clinicId.value : this.clinicId,
+      localSyncStatus: data.localSyncStatus.present
+          ? data.localSyncStatus.value
+          : this.localSyncStatus,
+      localUpdatedAt: data.localUpdatedAt.present
+          ? data.localUpdatedAt.value
+          : this.localUpdatedAt,
+      lastError: data.lastError.present ? data.lastError.value : this.lastError,
+      deletedLocal: data.deletedLocal.present
+          ? data.deletedLocal.value
+          : this.deletedLocal,
+      farmerId: data.farmerId.present ? data.farmerId.value : this.farmerId,
+      vetId: data.vetId.present ? data.vetId.value : this.vetId,
+      amount: data.amount.present ? data.amount.value : this.amount,
+      method: data.method.present ? data.method.value : this.method,
+      paidAt: data.paidAt.present ? data.paidAt.value : this.paidAt,
+      notes: data.notes.present ? data.notes.value : this.notes,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PaymentRow(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('lastModifiedAt: $lastModifiedAt, ')
+          ..write('originDeviceId: $originDeviceId, ')
+          ..write('clinicId: $clinicId, ')
+          ..write('localSyncStatus: $localSyncStatus, ')
+          ..write('localUpdatedAt: $localUpdatedAt, ')
+          ..write('lastError: $lastError, ')
+          ..write('deletedLocal: $deletedLocal, ')
+          ..write('farmerId: $farmerId, ')
+          ..write('vetId: $vetId, ')
+          ..write('amount: $amount, ')
+          ..write('method: $method, ')
+          ..write('paidAt: $paidAt, ')
+          ..write('notes: $notes')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    version,
+    lastModifiedAt,
+    originDeviceId,
+    clinicId,
+    localSyncStatus,
+    localUpdatedAt,
+    lastError,
+    deletedLocal,
+    farmerId,
+    vetId,
+    amount,
+    method,
+    paidAt,
+    notes,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PaymentRow &&
+          other.id == this.id &&
+          other.version == this.version &&
+          other.lastModifiedAt == this.lastModifiedAt &&
+          other.originDeviceId == this.originDeviceId &&
+          other.clinicId == this.clinicId &&
+          other.localSyncStatus == this.localSyncStatus &&
+          other.localUpdatedAt == this.localUpdatedAt &&
+          other.lastError == this.lastError &&
+          other.deletedLocal == this.deletedLocal &&
+          other.farmerId == this.farmerId &&
+          other.vetId == this.vetId &&
+          other.amount == this.amount &&
+          other.method == this.method &&
+          other.paidAt == this.paidAt &&
+          other.notes == this.notes);
+}
+
+class PaymentsCompanion extends UpdateCompanion<PaymentRow> {
+  final Value<String> id;
+  final Value<int> version;
+  final Value<DateTime?> lastModifiedAt;
+  final Value<String?> originDeviceId;
+  final Value<String?> clinicId;
+  final Value<LocalSyncStatus> localSyncStatus;
+  final Value<DateTime> localUpdatedAt;
+  final Value<String?> lastError;
+  final Value<bool> deletedLocal;
+  final Value<String> farmerId;
+  final Value<int?> vetId;
+  final Value<double> amount;
+  final Value<String> method;
+  final Value<DateTime> paidAt;
+  final Value<String?> notes;
+  final Value<int> rowid;
+  const PaymentsCompanion({
+    this.id = const Value.absent(),
+    this.version = const Value.absent(),
+    this.lastModifiedAt = const Value.absent(),
+    this.originDeviceId = const Value.absent(),
+    this.clinicId = const Value.absent(),
+    this.localSyncStatus = const Value.absent(),
+    this.localUpdatedAt = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.deletedLocal = const Value.absent(),
+    this.farmerId = const Value.absent(),
+    this.vetId = const Value.absent(),
+    this.amount = const Value.absent(),
+    this.method = const Value.absent(),
+    this.paidAt = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  PaymentsCompanion.insert({
+    required String id,
+    this.version = const Value.absent(),
+    this.lastModifiedAt = const Value.absent(),
+    this.originDeviceId = const Value.absent(),
+    this.clinicId = const Value.absent(),
+    this.localSyncStatus = const Value.absent(),
+    this.localUpdatedAt = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.deletedLocal = const Value.absent(),
+    required String farmerId,
+    this.vetId = const Value.absent(),
+    required double amount,
+    this.method = const Value.absent(),
+    required DateTime paidAt,
+    this.notes = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       farmerId = Value(farmerId),
+       amount = Value(amount),
+       paidAt = Value(paidAt);
+  static Insertable<PaymentRow> custom({
+    Expression<String>? id,
+    Expression<int>? version,
+    Expression<DateTime>? lastModifiedAt,
+    Expression<String>? originDeviceId,
+    Expression<String>? clinicId,
+    Expression<int>? localSyncStatus,
+    Expression<DateTime>? localUpdatedAt,
+    Expression<String>? lastError,
+    Expression<bool>? deletedLocal,
+    Expression<String>? farmerId,
+    Expression<int>? vetId,
+    Expression<double>? amount,
+    Expression<String>? method,
+    Expression<DateTime>? paidAt,
+    Expression<String>? notes,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (version != null) 'version': version,
+      if (lastModifiedAt != null) 'last_modified_at': lastModifiedAt,
+      if (originDeviceId != null) 'origin_device_id': originDeviceId,
+      if (clinicId != null) 'clinic_id': clinicId,
+      if (localSyncStatus != null) 'local_sync_status': localSyncStatus,
+      if (localUpdatedAt != null) 'local_updated_at': localUpdatedAt,
+      if (lastError != null) 'last_error': lastError,
+      if (deletedLocal != null) 'deleted_local': deletedLocal,
+      if (farmerId != null) 'farmer_id': farmerId,
+      if (vetId != null) 'vet_id': vetId,
+      if (amount != null) 'amount': amount,
+      if (method != null) 'method': method,
+      if (paidAt != null) 'paid_at': paidAt,
+      if (notes != null) 'notes': notes,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  PaymentsCompanion copyWith({
+    Value<String>? id,
+    Value<int>? version,
+    Value<DateTime?>? lastModifiedAt,
+    Value<String?>? originDeviceId,
+    Value<String?>? clinicId,
+    Value<LocalSyncStatus>? localSyncStatus,
+    Value<DateTime>? localUpdatedAt,
+    Value<String?>? lastError,
+    Value<bool>? deletedLocal,
+    Value<String>? farmerId,
+    Value<int?>? vetId,
+    Value<double>? amount,
+    Value<String>? method,
+    Value<DateTime>? paidAt,
+    Value<String?>? notes,
+    Value<int>? rowid,
+  }) {
+    return PaymentsCompanion(
+      id: id ?? this.id,
+      version: version ?? this.version,
+      lastModifiedAt: lastModifiedAt ?? this.lastModifiedAt,
+      originDeviceId: originDeviceId ?? this.originDeviceId,
+      clinicId: clinicId ?? this.clinicId,
+      localSyncStatus: localSyncStatus ?? this.localSyncStatus,
+      localUpdatedAt: localUpdatedAt ?? this.localUpdatedAt,
+      lastError: lastError ?? this.lastError,
+      deletedLocal: deletedLocal ?? this.deletedLocal,
+      farmerId: farmerId ?? this.farmerId,
+      vetId: vetId ?? this.vetId,
+      amount: amount ?? this.amount,
+      method: method ?? this.method,
+      paidAt: paidAt ?? this.paidAt,
+      notes: notes ?? this.notes,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (lastModifiedAt.present) {
+      map['last_modified_at'] = Variable<DateTime>(lastModifiedAt.value);
+    }
+    if (originDeviceId.present) {
+      map['origin_device_id'] = Variable<String>(originDeviceId.value);
+    }
+    if (clinicId.present) {
+      map['clinic_id'] = Variable<String>(clinicId.value);
+    }
+    if (localSyncStatus.present) {
+      map['local_sync_status'] = Variable<int>(
+        $PaymentsTable.$converterlocalSyncStatus.toSql(localSyncStatus.value),
+      );
+    }
+    if (localUpdatedAt.present) {
+      map['local_updated_at'] = Variable<DateTime>(localUpdatedAt.value);
+    }
+    if (lastError.present) {
+      map['last_error'] = Variable<String>(lastError.value);
+    }
+    if (deletedLocal.present) {
+      map['deleted_local'] = Variable<bool>(deletedLocal.value);
+    }
+    if (farmerId.present) {
+      map['farmer_id'] = Variable<String>(farmerId.value);
+    }
+    if (vetId.present) {
+      map['vet_id'] = Variable<int>(vetId.value);
+    }
+    if (amount.present) {
+      map['amount'] = Variable<double>(amount.value);
+    }
+    if (method.present) {
+      map['method'] = Variable<String>(method.value);
+    }
+    if (paidAt.present) {
+      map['paid_at'] = Variable<DateTime>(paidAt.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PaymentsCompanion(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('lastModifiedAt: $lastModifiedAt, ')
+          ..write('originDeviceId: $originDeviceId, ')
+          ..write('clinicId: $clinicId, ')
+          ..write('localSyncStatus: $localSyncStatus, ')
+          ..write('localUpdatedAt: $localUpdatedAt, ')
+          ..write('lastError: $lastError, ')
+          ..write('deletedLocal: $deletedLocal, ')
+          ..write('farmerId: $farmerId, ')
+          ..write('vetId: $vetId, ')
+          ..write('amount: $amount, ')
+          ..write('method: $method, ')
+          ..write('paidAt: $paidAt, ')
+          ..write('notes: $notes, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $VaccineSchedulesTable extends VaccineSchedules
+    with TableInfo<$VaccineSchedulesTable, VaccineScheduleRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $VaccineSchedulesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _lastModifiedAtMeta = const VerificationMeta(
+    'lastModifiedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastModifiedAt =
+      GeneratedColumn<DateTime>(
+        'last_modified_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _originDeviceIdMeta = const VerificationMeta(
+    'originDeviceId',
+  );
+  @override
+  late final GeneratedColumn<String> originDeviceId = GeneratedColumn<String>(
+    'origin_device_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _clinicIdMeta = const VerificationMeta(
+    'clinicId',
+  );
+  @override
+  late final GeneratedColumn<String> clinicId = GeneratedColumn<String>(
+    'clinic_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<LocalSyncStatus, int>
+  localSyncStatus =
+      GeneratedColumn<int>(
+        'local_sync_status',
+        aliasedName,
+        false,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+        defaultValue: Constant(LocalSyncStatus.synced.index),
+      ).withConverter<LocalSyncStatus>(
+        $VaccineSchedulesTable.$converterlocalSyncStatus,
+      );
+  static const VerificationMeta _localUpdatedAtMeta = const VerificationMeta(
+    'localUpdatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> localUpdatedAt =
+      GeneratedColumn<DateTime>(
+        'local_updated_at',
+        aliasedName,
+        false,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+        defaultValue: currentDateAndTime,
+      );
+  static const VerificationMeta _lastErrorMeta = const VerificationMeta(
+    'lastError',
+  );
+  @override
+  late final GeneratedColumn<String> lastError = GeneratedColumn<String>(
+    'last_error',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _deletedLocalMeta = const VerificationMeta(
+    'deletedLocal',
+  );
+  @override
+  late final GeneratedColumn<bool> deletedLocal = GeneratedColumn<bool>(
+    'deleted_local',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("deleted_local" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _animalIdMeta = const VerificationMeta(
+    'animalId',
+  );
+  @override
+  late final GeneratedColumn<String> animalId = GeneratedColumn<String>(
+    'animal_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _drugIdMeta = const VerificationMeta('drugId');
+  @override
+  late final GeneratedColumn<String> drugId = GeneratedColumn<String>(
+    'drug_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _intervalDaysMeta = const VerificationMeta(
+    'intervalDays',
+  );
+  @override
+  late final GeneratedColumn<int> intervalDays = GeneratedColumn<int>(
+    'interval_days',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _firstDueDateMeta = const VerificationMeta(
+    'firstDueDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> firstDueDate = GeneratedColumn<DateTime>(
+    'first_due_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nextDueDateMeta = const VerificationMeta(
+    'nextDueDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> nextDueDate = GeneratedColumn<DateTime>(
+    'next_due_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _lastAdministeredAtMeta =
+      const VerificationMeta('lastAdministeredAt');
+  @override
+  late final GeneratedColumn<DateTime> lastAdministeredAt =
+      GeneratedColumn<DateTime>(
+        'last_administered_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _remindDaysBeforeMeta = const VerificationMeta(
+    'remindDaysBefore',
+  );
+  @override
+  late final GeneratedColumn<int> remindDaysBefore = GeneratedColumn<int>(
+    'remind_days_before',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(7),
+  );
+  static const VerificationMeta _isActiveMeta = const VerificationMeta(
+    'isActive',
+  );
+  @override
+  late final GeneratedColumn<bool> isActive = GeneratedColumn<bool>(
+    'is_active',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_active" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    version,
+    lastModifiedAt,
+    originDeviceId,
+    clinicId,
+    localSyncStatus,
+    localUpdatedAt,
+    lastError,
+    deletedLocal,
+    animalId,
+    drugId,
+    intervalDays,
+    firstDueDate,
+    nextDueDate,
+    lastAdministeredAt,
+    remindDaysBefore,
+    isActive,
+    notes,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'vaccine_schedules';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<VaccineScheduleRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    }
+    if (data.containsKey('last_modified_at')) {
+      context.handle(
+        _lastModifiedAtMeta,
+        lastModifiedAt.isAcceptableOrUnknown(
+          data['last_modified_at']!,
+          _lastModifiedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('origin_device_id')) {
+      context.handle(
+        _originDeviceIdMeta,
+        originDeviceId.isAcceptableOrUnknown(
+          data['origin_device_id']!,
+          _originDeviceIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('clinic_id')) {
+      context.handle(
+        _clinicIdMeta,
+        clinicId.isAcceptableOrUnknown(data['clinic_id']!, _clinicIdMeta),
+      );
+    }
+    if (data.containsKey('local_updated_at')) {
+      context.handle(
+        _localUpdatedAtMeta,
+        localUpdatedAt.isAcceptableOrUnknown(
+          data['local_updated_at']!,
+          _localUpdatedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_error')) {
+      context.handle(
+        _lastErrorMeta,
+        lastError.isAcceptableOrUnknown(data['last_error']!, _lastErrorMeta),
+      );
+    }
+    if (data.containsKey('deleted_local')) {
+      context.handle(
+        _deletedLocalMeta,
+        deletedLocal.isAcceptableOrUnknown(
+          data['deleted_local']!,
+          _deletedLocalMeta,
+        ),
+      );
+    }
+    if (data.containsKey('animal_id')) {
+      context.handle(
+        _animalIdMeta,
+        animalId.isAcceptableOrUnknown(data['animal_id']!, _animalIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_animalIdMeta);
+    }
+    if (data.containsKey('drug_id')) {
+      context.handle(
+        _drugIdMeta,
+        drugId.isAcceptableOrUnknown(data['drug_id']!, _drugIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_drugIdMeta);
+    }
+    if (data.containsKey('interval_days')) {
+      context.handle(
+        _intervalDaysMeta,
+        intervalDays.isAcceptableOrUnknown(
+          data['interval_days']!,
+          _intervalDaysMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_intervalDaysMeta);
+    }
+    if (data.containsKey('first_due_date')) {
+      context.handle(
+        _firstDueDateMeta,
+        firstDueDate.isAcceptableOrUnknown(
+          data['first_due_date']!,
+          _firstDueDateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_firstDueDateMeta);
+    }
+    if (data.containsKey('next_due_date')) {
+      context.handle(
+        _nextDueDateMeta,
+        nextDueDate.isAcceptableOrUnknown(
+          data['next_due_date']!,
+          _nextDueDateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_nextDueDateMeta);
+    }
+    if (data.containsKey('last_administered_at')) {
+      context.handle(
+        _lastAdministeredAtMeta,
+        lastAdministeredAt.isAcceptableOrUnknown(
+          data['last_administered_at']!,
+          _lastAdministeredAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('remind_days_before')) {
+      context.handle(
+        _remindDaysBeforeMeta,
+        remindDaysBefore.isAcceptableOrUnknown(
+          data['remind_days_before']!,
+          _remindDaysBeforeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('is_active')) {
+      context.handle(
+        _isActiveMeta,
+        isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta),
+      );
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  VaccineScheduleRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return VaccineScheduleRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      lastModifiedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_modified_at'],
+      ),
+      originDeviceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}origin_device_id'],
+      ),
+      clinicId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}clinic_id'],
+      ),
+      localSyncStatus: $VaccineSchedulesTable.$converterlocalSyncStatus.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}local_sync_status'],
+        )!,
+      ),
+      localUpdatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}local_updated_at'],
+      )!,
+      lastError: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_error'],
+      ),
+      deletedLocal: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}deleted_local'],
+      )!,
+      animalId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}animal_id'],
+      )!,
+      drugId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}drug_id'],
+      )!,
+      intervalDays: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}interval_days'],
+      )!,
+      firstDueDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}first_due_date'],
+      )!,
+      nextDueDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}next_due_date'],
+      )!,
+      lastAdministeredAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_administered_at'],
+      ),
+      remindDaysBefore: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}remind_days_before'],
+      )!,
+      isActive: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_active'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+    );
+  }
+
+  @override
+  $VaccineSchedulesTable createAlias(String alias) {
+    return $VaccineSchedulesTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<LocalSyncStatus, int, int>
+  $converterlocalSyncStatus = const EnumIndexConverter<LocalSyncStatus>(
+    LocalSyncStatus.values,
+  );
+}
+
+class VaccineScheduleRow extends DataClass
+    implements Insertable<VaccineScheduleRow> {
+  final String id;
+  final int version;
+  final DateTime? lastModifiedAt;
+  final String? originDeviceId;
+  final String? clinicId;
+  final LocalSyncStatus localSyncStatus;
+  final DateTime localUpdatedAt;
+  final String? lastError;
+  final bool deletedLocal;
+  final String animalId;
+  final String drugId;
+  final int intervalDays;
+  final DateTime firstDueDate;
+  final DateTime nextDueDate;
+  final DateTime? lastAdministeredAt;
+  final int remindDaysBefore;
+  final bool isActive;
+  final String? notes;
+  const VaccineScheduleRow({
+    required this.id,
+    required this.version,
+    this.lastModifiedAt,
+    this.originDeviceId,
+    this.clinicId,
+    required this.localSyncStatus,
+    required this.localUpdatedAt,
+    this.lastError,
+    required this.deletedLocal,
+    required this.animalId,
+    required this.drugId,
+    required this.intervalDays,
+    required this.firstDueDate,
+    required this.nextDueDate,
+    this.lastAdministeredAt,
+    required this.remindDaysBefore,
+    required this.isActive,
+    this.notes,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['version'] = Variable<int>(version);
+    if (!nullToAbsent || lastModifiedAt != null) {
+      map['last_modified_at'] = Variable<DateTime>(lastModifiedAt);
+    }
+    if (!nullToAbsent || originDeviceId != null) {
+      map['origin_device_id'] = Variable<String>(originDeviceId);
+    }
+    if (!nullToAbsent || clinicId != null) {
+      map['clinic_id'] = Variable<String>(clinicId);
+    }
+    {
+      map['local_sync_status'] = Variable<int>(
+        $VaccineSchedulesTable.$converterlocalSyncStatus.toSql(localSyncStatus),
+      );
+    }
+    map['local_updated_at'] = Variable<DateTime>(localUpdatedAt);
+    if (!nullToAbsent || lastError != null) {
+      map['last_error'] = Variable<String>(lastError);
+    }
+    map['deleted_local'] = Variable<bool>(deletedLocal);
+    map['animal_id'] = Variable<String>(animalId);
+    map['drug_id'] = Variable<String>(drugId);
+    map['interval_days'] = Variable<int>(intervalDays);
+    map['first_due_date'] = Variable<DateTime>(firstDueDate);
+    map['next_due_date'] = Variable<DateTime>(nextDueDate);
+    if (!nullToAbsent || lastAdministeredAt != null) {
+      map['last_administered_at'] = Variable<DateTime>(lastAdministeredAt);
+    }
+    map['remind_days_before'] = Variable<int>(remindDaysBefore);
+    map['is_active'] = Variable<bool>(isActive);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    return map;
+  }
+
+  VaccineSchedulesCompanion toCompanion(bool nullToAbsent) {
+    return VaccineSchedulesCompanion(
+      id: Value(id),
+      version: Value(version),
+      lastModifiedAt: lastModifiedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastModifiedAt),
+      originDeviceId: originDeviceId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(originDeviceId),
+      clinicId: clinicId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(clinicId),
+      localSyncStatus: Value(localSyncStatus),
+      localUpdatedAt: Value(localUpdatedAt),
+      lastError: lastError == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastError),
+      deletedLocal: Value(deletedLocal),
+      animalId: Value(animalId),
+      drugId: Value(drugId),
+      intervalDays: Value(intervalDays),
+      firstDueDate: Value(firstDueDate),
+      nextDueDate: Value(nextDueDate),
+      lastAdministeredAt: lastAdministeredAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastAdministeredAt),
+      remindDaysBefore: Value(remindDaysBefore),
+      isActive: Value(isActive),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+    );
+  }
+
+  factory VaccineScheduleRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return VaccineScheduleRow(
+      id: serializer.fromJson<String>(json['id']),
+      version: serializer.fromJson<int>(json['version']),
+      lastModifiedAt: serializer.fromJson<DateTime?>(json['lastModifiedAt']),
+      originDeviceId: serializer.fromJson<String?>(json['originDeviceId']),
+      clinicId: serializer.fromJson<String?>(json['clinicId']),
+      localSyncStatus: $VaccineSchedulesTable.$converterlocalSyncStatus
+          .fromJson(serializer.fromJson<int>(json['localSyncStatus'])),
+      localUpdatedAt: serializer.fromJson<DateTime>(json['localUpdatedAt']),
+      lastError: serializer.fromJson<String?>(json['lastError']),
+      deletedLocal: serializer.fromJson<bool>(json['deletedLocal']),
+      animalId: serializer.fromJson<String>(json['animalId']),
+      drugId: serializer.fromJson<String>(json['drugId']),
+      intervalDays: serializer.fromJson<int>(json['intervalDays']),
+      firstDueDate: serializer.fromJson<DateTime>(json['firstDueDate']),
+      nextDueDate: serializer.fromJson<DateTime>(json['nextDueDate']),
+      lastAdministeredAt: serializer.fromJson<DateTime?>(
+        json['lastAdministeredAt'],
+      ),
+      remindDaysBefore: serializer.fromJson<int>(json['remindDaysBefore']),
+      isActive: serializer.fromJson<bool>(json['isActive']),
+      notes: serializer.fromJson<String?>(json['notes']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'version': serializer.toJson<int>(version),
+      'lastModifiedAt': serializer.toJson<DateTime?>(lastModifiedAt),
+      'originDeviceId': serializer.toJson<String?>(originDeviceId),
+      'clinicId': serializer.toJson<String?>(clinicId),
+      'localSyncStatus': serializer.toJson<int>(
+        $VaccineSchedulesTable.$converterlocalSyncStatus.toJson(
+          localSyncStatus,
+        ),
+      ),
+      'localUpdatedAt': serializer.toJson<DateTime>(localUpdatedAt),
+      'lastError': serializer.toJson<String?>(lastError),
+      'deletedLocal': serializer.toJson<bool>(deletedLocal),
+      'animalId': serializer.toJson<String>(animalId),
+      'drugId': serializer.toJson<String>(drugId),
+      'intervalDays': serializer.toJson<int>(intervalDays),
+      'firstDueDate': serializer.toJson<DateTime>(firstDueDate),
+      'nextDueDate': serializer.toJson<DateTime>(nextDueDate),
+      'lastAdministeredAt': serializer.toJson<DateTime?>(lastAdministeredAt),
+      'remindDaysBefore': serializer.toJson<int>(remindDaysBefore),
+      'isActive': serializer.toJson<bool>(isActive),
+      'notes': serializer.toJson<String?>(notes),
+    };
+  }
+
+  VaccineScheduleRow copyWith({
+    String? id,
+    int? version,
+    Value<DateTime?> lastModifiedAt = const Value.absent(),
+    Value<String?> originDeviceId = const Value.absent(),
+    Value<String?> clinicId = const Value.absent(),
+    LocalSyncStatus? localSyncStatus,
+    DateTime? localUpdatedAt,
+    Value<String?> lastError = const Value.absent(),
+    bool? deletedLocal,
+    String? animalId,
+    String? drugId,
+    int? intervalDays,
+    DateTime? firstDueDate,
+    DateTime? nextDueDate,
+    Value<DateTime?> lastAdministeredAt = const Value.absent(),
+    int? remindDaysBefore,
+    bool? isActive,
+    Value<String?> notes = const Value.absent(),
+  }) => VaccineScheduleRow(
+    id: id ?? this.id,
+    version: version ?? this.version,
+    lastModifiedAt: lastModifiedAt.present
+        ? lastModifiedAt.value
+        : this.lastModifiedAt,
+    originDeviceId: originDeviceId.present
+        ? originDeviceId.value
+        : this.originDeviceId,
+    clinicId: clinicId.present ? clinicId.value : this.clinicId,
+    localSyncStatus: localSyncStatus ?? this.localSyncStatus,
+    localUpdatedAt: localUpdatedAt ?? this.localUpdatedAt,
+    lastError: lastError.present ? lastError.value : this.lastError,
+    deletedLocal: deletedLocal ?? this.deletedLocal,
+    animalId: animalId ?? this.animalId,
+    drugId: drugId ?? this.drugId,
+    intervalDays: intervalDays ?? this.intervalDays,
+    firstDueDate: firstDueDate ?? this.firstDueDate,
+    nextDueDate: nextDueDate ?? this.nextDueDate,
+    lastAdministeredAt: lastAdministeredAt.present
+        ? lastAdministeredAt.value
+        : this.lastAdministeredAt,
+    remindDaysBefore: remindDaysBefore ?? this.remindDaysBefore,
+    isActive: isActive ?? this.isActive,
+    notes: notes.present ? notes.value : this.notes,
+  );
+  VaccineScheduleRow copyWithCompanion(VaccineSchedulesCompanion data) {
+    return VaccineScheduleRow(
+      id: data.id.present ? data.id.value : this.id,
+      version: data.version.present ? data.version.value : this.version,
+      lastModifiedAt: data.lastModifiedAt.present
+          ? data.lastModifiedAt.value
+          : this.lastModifiedAt,
+      originDeviceId: data.originDeviceId.present
+          ? data.originDeviceId.value
+          : this.originDeviceId,
+      clinicId: data.clinicId.present ? data.clinicId.value : this.clinicId,
+      localSyncStatus: data.localSyncStatus.present
+          ? data.localSyncStatus.value
+          : this.localSyncStatus,
+      localUpdatedAt: data.localUpdatedAt.present
+          ? data.localUpdatedAt.value
+          : this.localUpdatedAt,
+      lastError: data.lastError.present ? data.lastError.value : this.lastError,
+      deletedLocal: data.deletedLocal.present
+          ? data.deletedLocal.value
+          : this.deletedLocal,
+      animalId: data.animalId.present ? data.animalId.value : this.animalId,
+      drugId: data.drugId.present ? data.drugId.value : this.drugId,
+      intervalDays: data.intervalDays.present
+          ? data.intervalDays.value
+          : this.intervalDays,
+      firstDueDate: data.firstDueDate.present
+          ? data.firstDueDate.value
+          : this.firstDueDate,
+      nextDueDate: data.nextDueDate.present
+          ? data.nextDueDate.value
+          : this.nextDueDate,
+      lastAdministeredAt: data.lastAdministeredAt.present
+          ? data.lastAdministeredAt.value
+          : this.lastAdministeredAt,
+      remindDaysBefore: data.remindDaysBefore.present
+          ? data.remindDaysBefore.value
+          : this.remindDaysBefore,
+      isActive: data.isActive.present ? data.isActive.value : this.isActive,
+      notes: data.notes.present ? data.notes.value : this.notes,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VaccineScheduleRow(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('lastModifiedAt: $lastModifiedAt, ')
+          ..write('originDeviceId: $originDeviceId, ')
+          ..write('clinicId: $clinicId, ')
+          ..write('localSyncStatus: $localSyncStatus, ')
+          ..write('localUpdatedAt: $localUpdatedAt, ')
+          ..write('lastError: $lastError, ')
+          ..write('deletedLocal: $deletedLocal, ')
+          ..write('animalId: $animalId, ')
+          ..write('drugId: $drugId, ')
+          ..write('intervalDays: $intervalDays, ')
+          ..write('firstDueDate: $firstDueDate, ')
+          ..write('nextDueDate: $nextDueDate, ')
+          ..write('lastAdministeredAt: $lastAdministeredAt, ')
+          ..write('remindDaysBefore: $remindDaysBefore, ')
+          ..write('isActive: $isActive, ')
+          ..write('notes: $notes')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    version,
+    lastModifiedAt,
+    originDeviceId,
+    clinicId,
+    localSyncStatus,
+    localUpdatedAt,
+    lastError,
+    deletedLocal,
+    animalId,
+    drugId,
+    intervalDays,
+    firstDueDate,
+    nextDueDate,
+    lastAdministeredAt,
+    remindDaysBefore,
+    isActive,
+    notes,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is VaccineScheduleRow &&
+          other.id == this.id &&
+          other.version == this.version &&
+          other.lastModifiedAt == this.lastModifiedAt &&
+          other.originDeviceId == this.originDeviceId &&
+          other.clinicId == this.clinicId &&
+          other.localSyncStatus == this.localSyncStatus &&
+          other.localUpdatedAt == this.localUpdatedAt &&
+          other.lastError == this.lastError &&
+          other.deletedLocal == this.deletedLocal &&
+          other.animalId == this.animalId &&
+          other.drugId == this.drugId &&
+          other.intervalDays == this.intervalDays &&
+          other.firstDueDate == this.firstDueDate &&
+          other.nextDueDate == this.nextDueDate &&
+          other.lastAdministeredAt == this.lastAdministeredAt &&
+          other.remindDaysBefore == this.remindDaysBefore &&
+          other.isActive == this.isActive &&
+          other.notes == this.notes);
+}
+
+class VaccineSchedulesCompanion extends UpdateCompanion<VaccineScheduleRow> {
+  final Value<String> id;
+  final Value<int> version;
+  final Value<DateTime?> lastModifiedAt;
+  final Value<String?> originDeviceId;
+  final Value<String?> clinicId;
+  final Value<LocalSyncStatus> localSyncStatus;
+  final Value<DateTime> localUpdatedAt;
+  final Value<String?> lastError;
+  final Value<bool> deletedLocal;
+  final Value<String> animalId;
+  final Value<String> drugId;
+  final Value<int> intervalDays;
+  final Value<DateTime> firstDueDate;
+  final Value<DateTime> nextDueDate;
+  final Value<DateTime?> lastAdministeredAt;
+  final Value<int> remindDaysBefore;
+  final Value<bool> isActive;
+  final Value<String?> notes;
+  final Value<int> rowid;
+  const VaccineSchedulesCompanion({
+    this.id = const Value.absent(),
+    this.version = const Value.absent(),
+    this.lastModifiedAt = const Value.absent(),
+    this.originDeviceId = const Value.absent(),
+    this.clinicId = const Value.absent(),
+    this.localSyncStatus = const Value.absent(),
+    this.localUpdatedAt = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.deletedLocal = const Value.absent(),
+    this.animalId = const Value.absent(),
+    this.drugId = const Value.absent(),
+    this.intervalDays = const Value.absent(),
+    this.firstDueDate = const Value.absent(),
+    this.nextDueDate = const Value.absent(),
+    this.lastAdministeredAt = const Value.absent(),
+    this.remindDaysBefore = const Value.absent(),
+    this.isActive = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  VaccineSchedulesCompanion.insert({
+    required String id,
+    this.version = const Value.absent(),
+    this.lastModifiedAt = const Value.absent(),
+    this.originDeviceId = const Value.absent(),
+    this.clinicId = const Value.absent(),
+    this.localSyncStatus = const Value.absent(),
+    this.localUpdatedAt = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.deletedLocal = const Value.absent(),
+    required String animalId,
+    required String drugId,
+    required int intervalDays,
+    required DateTime firstDueDate,
+    required DateTime nextDueDate,
+    this.lastAdministeredAt = const Value.absent(),
+    this.remindDaysBefore = const Value.absent(),
+    this.isActive = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       animalId = Value(animalId),
+       drugId = Value(drugId),
+       intervalDays = Value(intervalDays),
+       firstDueDate = Value(firstDueDate),
+       nextDueDate = Value(nextDueDate);
+  static Insertable<VaccineScheduleRow> custom({
+    Expression<String>? id,
+    Expression<int>? version,
+    Expression<DateTime>? lastModifiedAt,
+    Expression<String>? originDeviceId,
+    Expression<String>? clinicId,
+    Expression<int>? localSyncStatus,
+    Expression<DateTime>? localUpdatedAt,
+    Expression<String>? lastError,
+    Expression<bool>? deletedLocal,
+    Expression<String>? animalId,
+    Expression<String>? drugId,
+    Expression<int>? intervalDays,
+    Expression<DateTime>? firstDueDate,
+    Expression<DateTime>? nextDueDate,
+    Expression<DateTime>? lastAdministeredAt,
+    Expression<int>? remindDaysBefore,
+    Expression<bool>? isActive,
+    Expression<String>? notes,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (version != null) 'version': version,
+      if (lastModifiedAt != null) 'last_modified_at': lastModifiedAt,
+      if (originDeviceId != null) 'origin_device_id': originDeviceId,
+      if (clinicId != null) 'clinic_id': clinicId,
+      if (localSyncStatus != null) 'local_sync_status': localSyncStatus,
+      if (localUpdatedAt != null) 'local_updated_at': localUpdatedAt,
+      if (lastError != null) 'last_error': lastError,
+      if (deletedLocal != null) 'deleted_local': deletedLocal,
+      if (animalId != null) 'animal_id': animalId,
+      if (drugId != null) 'drug_id': drugId,
+      if (intervalDays != null) 'interval_days': intervalDays,
+      if (firstDueDate != null) 'first_due_date': firstDueDate,
+      if (nextDueDate != null) 'next_due_date': nextDueDate,
+      if (lastAdministeredAt != null)
+        'last_administered_at': lastAdministeredAt,
+      if (remindDaysBefore != null) 'remind_days_before': remindDaysBefore,
+      if (isActive != null) 'is_active': isActive,
+      if (notes != null) 'notes': notes,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  VaccineSchedulesCompanion copyWith({
+    Value<String>? id,
+    Value<int>? version,
+    Value<DateTime?>? lastModifiedAt,
+    Value<String?>? originDeviceId,
+    Value<String?>? clinicId,
+    Value<LocalSyncStatus>? localSyncStatus,
+    Value<DateTime>? localUpdatedAt,
+    Value<String?>? lastError,
+    Value<bool>? deletedLocal,
+    Value<String>? animalId,
+    Value<String>? drugId,
+    Value<int>? intervalDays,
+    Value<DateTime>? firstDueDate,
+    Value<DateTime>? nextDueDate,
+    Value<DateTime?>? lastAdministeredAt,
+    Value<int>? remindDaysBefore,
+    Value<bool>? isActive,
+    Value<String?>? notes,
+    Value<int>? rowid,
+  }) {
+    return VaccineSchedulesCompanion(
+      id: id ?? this.id,
+      version: version ?? this.version,
+      lastModifiedAt: lastModifiedAt ?? this.lastModifiedAt,
+      originDeviceId: originDeviceId ?? this.originDeviceId,
+      clinicId: clinicId ?? this.clinicId,
+      localSyncStatus: localSyncStatus ?? this.localSyncStatus,
+      localUpdatedAt: localUpdatedAt ?? this.localUpdatedAt,
+      lastError: lastError ?? this.lastError,
+      deletedLocal: deletedLocal ?? this.deletedLocal,
+      animalId: animalId ?? this.animalId,
+      drugId: drugId ?? this.drugId,
+      intervalDays: intervalDays ?? this.intervalDays,
+      firstDueDate: firstDueDate ?? this.firstDueDate,
+      nextDueDate: nextDueDate ?? this.nextDueDate,
+      lastAdministeredAt: lastAdministeredAt ?? this.lastAdministeredAt,
+      remindDaysBefore: remindDaysBefore ?? this.remindDaysBefore,
+      isActive: isActive ?? this.isActive,
+      notes: notes ?? this.notes,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (lastModifiedAt.present) {
+      map['last_modified_at'] = Variable<DateTime>(lastModifiedAt.value);
+    }
+    if (originDeviceId.present) {
+      map['origin_device_id'] = Variable<String>(originDeviceId.value);
+    }
+    if (clinicId.present) {
+      map['clinic_id'] = Variable<String>(clinicId.value);
+    }
+    if (localSyncStatus.present) {
+      map['local_sync_status'] = Variable<int>(
+        $VaccineSchedulesTable.$converterlocalSyncStatus.toSql(
+          localSyncStatus.value,
+        ),
+      );
+    }
+    if (localUpdatedAt.present) {
+      map['local_updated_at'] = Variable<DateTime>(localUpdatedAt.value);
+    }
+    if (lastError.present) {
+      map['last_error'] = Variable<String>(lastError.value);
+    }
+    if (deletedLocal.present) {
+      map['deleted_local'] = Variable<bool>(deletedLocal.value);
+    }
+    if (animalId.present) {
+      map['animal_id'] = Variable<String>(animalId.value);
+    }
+    if (drugId.present) {
+      map['drug_id'] = Variable<String>(drugId.value);
+    }
+    if (intervalDays.present) {
+      map['interval_days'] = Variable<int>(intervalDays.value);
+    }
+    if (firstDueDate.present) {
+      map['first_due_date'] = Variable<DateTime>(firstDueDate.value);
+    }
+    if (nextDueDate.present) {
+      map['next_due_date'] = Variable<DateTime>(nextDueDate.value);
+    }
+    if (lastAdministeredAt.present) {
+      map['last_administered_at'] = Variable<DateTime>(
+        lastAdministeredAt.value,
+      );
+    }
+    if (remindDaysBefore.present) {
+      map['remind_days_before'] = Variable<int>(remindDaysBefore.value);
+    }
+    if (isActive.present) {
+      map['is_active'] = Variable<bool>(isActive.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VaccineSchedulesCompanion(')
+          ..write('id: $id, ')
+          ..write('version: $version, ')
+          ..write('lastModifiedAt: $lastModifiedAt, ')
+          ..write('originDeviceId: $originDeviceId, ')
+          ..write('clinicId: $clinicId, ')
+          ..write('localSyncStatus: $localSyncStatus, ')
+          ..write('localUpdatedAt: $localUpdatedAt, ')
+          ..write('lastError: $lastError, ')
+          ..write('deletedLocal: $deletedLocal, ')
+          ..write('animalId: $animalId, ')
+          ..write('drugId: $drugId, ')
+          ..write('intervalDays: $intervalDays, ')
+          ..write('firstDueDate: $firstDueDate, ')
+          ..write('nextDueDate: $nextDueDate, ')
+          ..write('lastAdministeredAt: $lastAdministeredAt, ')
+          ..write('remindDaysBefore: $remindDaysBefore, ')
+          ..write('isActive: $isActive, ')
+          ..write('notes: $notes, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $SyncMetaTable extends SyncMeta
     with TableInfo<$SyncMetaTable, SyncMetaRow> {
   @override
@@ -13347,6 +15461,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $MedicalRecordPhotosTable(this);
   late final $RoutesTable routes = $RoutesTable(this);
   late final $RouteStopsTable routeStops = $RouteStopsTable(this);
+  late final $PaymentsTable payments = $PaymentsTable(this);
+  late final $VaccineSchedulesTable vaccineSchedules = $VaccineSchedulesTable(
+    this,
+  );
   late final $SyncMetaTable syncMeta = $SyncMetaTable(this);
   late final $SyncConflictsTable syncConflicts = $SyncConflictsTable(this);
   @override
@@ -13366,6 +15484,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     medicalRecordPhotos,
     routes,
     routeStops,
+    payments,
+    vaccineSchedules,
     syncMeta,
     syncConflicts,
   ];
@@ -14232,6 +16352,9 @@ typedef $$AnimalsTableCreateCompanionBuilder =
       Value<double?> weightKg,
       Value<String?> color,
       Value<bool> isPregnant,
+      Value<DateTime?> pregnancyStartedAt,
+      Value<DateTime?> expectedBirthDate,
+      Value<String?> pregnancyNotes,
       Value<DateTime?> lastVaccinationAt,
       Value<String> status,
       Value<DateTime?> statusChangedAt,
@@ -14261,6 +16384,9 @@ typedef $$AnimalsTableUpdateCompanionBuilder =
       Value<double?> weightKg,
       Value<String?> color,
       Value<bool> isPregnant,
+      Value<DateTime?> pregnancyStartedAt,
+      Value<DateTime?> expectedBirthDate,
+      Value<String?> pregnancyNotes,
       Value<DateTime?> lastVaccinationAt,
       Value<String> status,
       Value<DateTime?> statusChangedAt,
@@ -14376,6 +16502,21 @@ class $$AnimalsTableFilterComposer
 
   ColumnFilters<bool> get isPregnant => $composableBuilder(
     column: $table.isPregnant,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get pregnancyStartedAt => $composableBuilder(
+    column: $table.pregnancyStartedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get expectedBirthDate => $composableBuilder(
+    column: $table.expectedBirthDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get pregnancyNotes => $composableBuilder(
+    column: $table.pregnancyNotes,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -14514,6 +16655,21 @@ class $$AnimalsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get pregnancyStartedAt => $composableBuilder(
+    column: $table.pregnancyStartedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get expectedBirthDate => $composableBuilder(
+    column: $table.expectedBirthDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get pregnancyNotes => $composableBuilder(
+    column: $table.pregnancyNotes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get lastVaccinationAt => $composableBuilder(
     column: $table.lastVaccinationAt,
     builder: (column) => ColumnOrderings(column),
@@ -14622,6 +16778,21 @@ class $$AnimalsTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<DateTime> get pregnancyStartedAt => $composableBuilder(
+    column: $table.pregnancyStartedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get expectedBirthDate => $composableBuilder(
+    column: $table.expectedBirthDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get pregnancyNotes => $composableBuilder(
+    column: $table.pregnancyNotes,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<DateTime> get lastVaccinationAt => $composableBuilder(
     column: $table.lastVaccinationAt,
     builder: (column) => column,
@@ -14692,6 +16863,9 @@ class $$AnimalsTableTableManager
                 Value<double?> weightKg = const Value.absent(),
                 Value<String?> color = const Value.absent(),
                 Value<bool> isPregnant = const Value.absent(),
+                Value<DateTime?> pregnancyStartedAt = const Value.absent(),
+                Value<DateTime?> expectedBirthDate = const Value.absent(),
+                Value<String?> pregnancyNotes = const Value.absent(),
                 Value<DateTime?> lastVaccinationAt = const Value.absent(),
                 Value<String> status = const Value.absent(),
                 Value<DateTime?> statusChangedAt = const Value.absent(),
@@ -14719,6 +16893,9 @@ class $$AnimalsTableTableManager
                 weightKg: weightKg,
                 color: color,
                 isPregnant: isPregnant,
+                pregnancyStartedAt: pregnancyStartedAt,
+                expectedBirthDate: expectedBirthDate,
+                pregnancyNotes: pregnancyNotes,
                 lastVaccinationAt: lastVaccinationAt,
                 status: status,
                 statusChangedAt: statusChangedAt,
@@ -14748,6 +16925,9 @@ class $$AnimalsTableTableManager
                 Value<double?> weightKg = const Value.absent(),
                 Value<String?> color = const Value.absent(),
                 Value<bool> isPregnant = const Value.absent(),
+                Value<DateTime?> pregnancyStartedAt = const Value.absent(),
+                Value<DateTime?> expectedBirthDate = const Value.absent(),
+                Value<String?> pregnancyNotes = const Value.absent(),
                 Value<DateTime?> lastVaccinationAt = const Value.absent(),
                 Value<String> status = const Value.absent(),
                 Value<DateTime?> statusChangedAt = const Value.absent(),
@@ -14775,6 +16955,9 @@ class $$AnimalsTableTableManager
                 weightKg: weightKg,
                 color: color,
                 isPregnant: isPregnant,
+                pregnancyStartedAt: pregnancyStartedAt,
+                expectedBirthDate: expectedBirthDate,
+                pregnancyNotes: pregnancyNotes,
                 lastVaccinationAt: lastVaccinationAt,
                 status: status,
                 statusChangedAt: statusChangedAt,
@@ -18989,6 +21172,884 @@ typedef $$RouteStopsTableProcessedTableManager =
       RouteStopRow,
       PrefetchHooks Function()
     >;
+typedef $$PaymentsTableCreateCompanionBuilder =
+    PaymentsCompanion Function({
+      required String id,
+      Value<int> version,
+      Value<DateTime?> lastModifiedAt,
+      Value<String?> originDeviceId,
+      Value<String?> clinicId,
+      Value<LocalSyncStatus> localSyncStatus,
+      Value<DateTime> localUpdatedAt,
+      Value<String?> lastError,
+      Value<bool> deletedLocal,
+      required String farmerId,
+      Value<int?> vetId,
+      required double amount,
+      Value<String> method,
+      required DateTime paidAt,
+      Value<String?> notes,
+      Value<int> rowid,
+    });
+typedef $$PaymentsTableUpdateCompanionBuilder =
+    PaymentsCompanion Function({
+      Value<String> id,
+      Value<int> version,
+      Value<DateTime?> lastModifiedAt,
+      Value<String?> originDeviceId,
+      Value<String?> clinicId,
+      Value<LocalSyncStatus> localSyncStatus,
+      Value<DateTime> localUpdatedAt,
+      Value<String?> lastError,
+      Value<bool> deletedLocal,
+      Value<String> farmerId,
+      Value<int?> vetId,
+      Value<double> amount,
+      Value<String> method,
+      Value<DateTime> paidAt,
+      Value<String?> notes,
+      Value<int> rowid,
+    });
+
+class $$PaymentsTableFilterComposer
+    extends Composer<_$AppDatabase, $PaymentsTable> {
+  $$PaymentsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastModifiedAt => $composableBuilder(
+    column: $table.lastModifiedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get originDeviceId => $composableBuilder(
+    column: $table.originDeviceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get clinicId => $composableBuilder(
+    column: $table.clinicId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<LocalSyncStatus, LocalSyncStatus, int>
+  get localSyncStatus => $composableBuilder(
+    column: $table.localSyncStatus,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<DateTime> get localUpdatedAt => $composableBuilder(
+    column: $table.localUpdatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get deletedLocal => $composableBuilder(
+    column: $table.deletedLocal,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get farmerId => $composableBuilder(
+    column: $table.farmerId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get vetId => $composableBuilder(
+    column: $table.vetId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get method => $composableBuilder(
+    column: $table.method,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get paidAt => $composableBuilder(
+    column: $table.paidAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$PaymentsTableOrderingComposer
+    extends Composer<_$AppDatabase, $PaymentsTable> {
+  $$PaymentsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastModifiedAt => $composableBuilder(
+    column: $table.lastModifiedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get originDeviceId => $composableBuilder(
+    column: $table.originDeviceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get clinicId => $composableBuilder(
+    column: $table.clinicId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get localSyncStatus => $composableBuilder(
+    column: $table.localSyncStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get localUpdatedAt => $composableBuilder(
+    column: $table.localUpdatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get deletedLocal => $composableBuilder(
+    column: $table.deletedLocal,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get farmerId => $composableBuilder(
+    column: $table.farmerId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get vetId => $composableBuilder(
+    column: $table.vetId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get method => $composableBuilder(
+    column: $table.method,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get paidAt => $composableBuilder(
+    column: $table.paidAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$PaymentsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $PaymentsTable> {
+  $$PaymentsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastModifiedAt => $composableBuilder(
+    column: $table.lastModifiedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get originDeviceId => $composableBuilder(
+    column: $table.originDeviceId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get clinicId =>
+      $composableBuilder(column: $table.clinicId, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<LocalSyncStatus, int> get localSyncStatus =>
+      $composableBuilder(
+        column: $table.localSyncStatus,
+        builder: (column) => column,
+      );
+
+  GeneratedColumn<DateTime> get localUpdatedAt => $composableBuilder(
+    column: $table.localUpdatedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get lastError =>
+      $composableBuilder(column: $table.lastError, builder: (column) => column);
+
+  GeneratedColumn<bool> get deletedLocal => $composableBuilder(
+    column: $table.deletedLocal,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get farmerId =>
+      $composableBuilder(column: $table.farmerId, builder: (column) => column);
+
+  GeneratedColumn<int> get vetId =>
+      $composableBuilder(column: $table.vetId, builder: (column) => column);
+
+  GeneratedColumn<double> get amount =>
+      $composableBuilder(column: $table.amount, builder: (column) => column);
+
+  GeneratedColumn<String> get method =>
+      $composableBuilder(column: $table.method, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get paidAt =>
+      $composableBuilder(column: $table.paidAt, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+}
+
+class $$PaymentsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $PaymentsTable,
+          PaymentRow,
+          $$PaymentsTableFilterComposer,
+          $$PaymentsTableOrderingComposer,
+          $$PaymentsTableAnnotationComposer,
+          $$PaymentsTableCreateCompanionBuilder,
+          $$PaymentsTableUpdateCompanionBuilder,
+          (
+            PaymentRow,
+            BaseReferences<_$AppDatabase, $PaymentsTable, PaymentRow>,
+          ),
+          PaymentRow,
+          PrefetchHooks Function()
+        > {
+  $$PaymentsTableTableManager(_$AppDatabase db, $PaymentsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$PaymentsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PaymentsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PaymentsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<DateTime?> lastModifiedAt = const Value.absent(),
+                Value<String?> originDeviceId = const Value.absent(),
+                Value<String?> clinicId = const Value.absent(),
+                Value<LocalSyncStatus> localSyncStatus = const Value.absent(),
+                Value<DateTime> localUpdatedAt = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
+                Value<bool> deletedLocal = const Value.absent(),
+                Value<String> farmerId = const Value.absent(),
+                Value<int?> vetId = const Value.absent(),
+                Value<double> amount = const Value.absent(),
+                Value<String> method = const Value.absent(),
+                Value<DateTime> paidAt = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => PaymentsCompanion(
+                id: id,
+                version: version,
+                lastModifiedAt: lastModifiedAt,
+                originDeviceId: originDeviceId,
+                clinicId: clinicId,
+                localSyncStatus: localSyncStatus,
+                localUpdatedAt: localUpdatedAt,
+                lastError: lastError,
+                deletedLocal: deletedLocal,
+                farmerId: farmerId,
+                vetId: vetId,
+                amount: amount,
+                method: method,
+                paidAt: paidAt,
+                notes: notes,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                Value<int> version = const Value.absent(),
+                Value<DateTime?> lastModifiedAt = const Value.absent(),
+                Value<String?> originDeviceId = const Value.absent(),
+                Value<String?> clinicId = const Value.absent(),
+                Value<LocalSyncStatus> localSyncStatus = const Value.absent(),
+                Value<DateTime> localUpdatedAt = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
+                Value<bool> deletedLocal = const Value.absent(),
+                required String farmerId,
+                Value<int?> vetId = const Value.absent(),
+                required double amount,
+                Value<String> method = const Value.absent(),
+                required DateTime paidAt,
+                Value<String?> notes = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => PaymentsCompanion.insert(
+                id: id,
+                version: version,
+                lastModifiedAt: lastModifiedAt,
+                originDeviceId: originDeviceId,
+                clinicId: clinicId,
+                localSyncStatus: localSyncStatus,
+                localUpdatedAt: localUpdatedAt,
+                lastError: lastError,
+                deletedLocal: deletedLocal,
+                farmerId: farmerId,
+                vetId: vetId,
+                amount: amount,
+                method: method,
+                paidAt: paidAt,
+                notes: notes,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$PaymentsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $PaymentsTable,
+      PaymentRow,
+      $$PaymentsTableFilterComposer,
+      $$PaymentsTableOrderingComposer,
+      $$PaymentsTableAnnotationComposer,
+      $$PaymentsTableCreateCompanionBuilder,
+      $$PaymentsTableUpdateCompanionBuilder,
+      (PaymentRow, BaseReferences<_$AppDatabase, $PaymentsTable, PaymentRow>),
+      PaymentRow,
+      PrefetchHooks Function()
+    >;
+typedef $$VaccineSchedulesTableCreateCompanionBuilder =
+    VaccineSchedulesCompanion Function({
+      required String id,
+      Value<int> version,
+      Value<DateTime?> lastModifiedAt,
+      Value<String?> originDeviceId,
+      Value<String?> clinicId,
+      Value<LocalSyncStatus> localSyncStatus,
+      Value<DateTime> localUpdatedAt,
+      Value<String?> lastError,
+      Value<bool> deletedLocal,
+      required String animalId,
+      required String drugId,
+      required int intervalDays,
+      required DateTime firstDueDate,
+      required DateTime nextDueDate,
+      Value<DateTime?> lastAdministeredAt,
+      Value<int> remindDaysBefore,
+      Value<bool> isActive,
+      Value<String?> notes,
+      Value<int> rowid,
+    });
+typedef $$VaccineSchedulesTableUpdateCompanionBuilder =
+    VaccineSchedulesCompanion Function({
+      Value<String> id,
+      Value<int> version,
+      Value<DateTime?> lastModifiedAt,
+      Value<String?> originDeviceId,
+      Value<String?> clinicId,
+      Value<LocalSyncStatus> localSyncStatus,
+      Value<DateTime> localUpdatedAt,
+      Value<String?> lastError,
+      Value<bool> deletedLocal,
+      Value<String> animalId,
+      Value<String> drugId,
+      Value<int> intervalDays,
+      Value<DateTime> firstDueDate,
+      Value<DateTime> nextDueDate,
+      Value<DateTime?> lastAdministeredAt,
+      Value<int> remindDaysBefore,
+      Value<bool> isActive,
+      Value<String?> notes,
+      Value<int> rowid,
+    });
+
+class $$VaccineSchedulesTableFilterComposer
+    extends Composer<_$AppDatabase, $VaccineSchedulesTable> {
+  $$VaccineSchedulesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastModifiedAt => $composableBuilder(
+    column: $table.lastModifiedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get originDeviceId => $composableBuilder(
+    column: $table.originDeviceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get clinicId => $composableBuilder(
+    column: $table.clinicId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<LocalSyncStatus, LocalSyncStatus, int>
+  get localSyncStatus => $composableBuilder(
+    column: $table.localSyncStatus,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<DateTime> get localUpdatedAt => $composableBuilder(
+    column: $table.localUpdatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get deletedLocal => $composableBuilder(
+    column: $table.deletedLocal,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get animalId => $composableBuilder(
+    column: $table.animalId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get drugId => $composableBuilder(
+    column: $table.drugId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get intervalDays => $composableBuilder(
+    column: $table.intervalDays,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get firstDueDate => $composableBuilder(
+    column: $table.firstDueDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get nextDueDate => $composableBuilder(
+    column: $table.nextDueDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastAdministeredAt => $composableBuilder(
+    column: $table.lastAdministeredAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get remindDaysBefore => $composableBuilder(
+    column: $table.remindDaysBefore,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$VaccineSchedulesTableOrderingComposer
+    extends Composer<_$AppDatabase, $VaccineSchedulesTable> {
+  $$VaccineSchedulesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastModifiedAt => $composableBuilder(
+    column: $table.lastModifiedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get originDeviceId => $composableBuilder(
+    column: $table.originDeviceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get clinicId => $composableBuilder(
+    column: $table.clinicId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get localSyncStatus => $composableBuilder(
+    column: $table.localSyncStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get localUpdatedAt => $composableBuilder(
+    column: $table.localUpdatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get deletedLocal => $composableBuilder(
+    column: $table.deletedLocal,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get animalId => $composableBuilder(
+    column: $table.animalId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get drugId => $composableBuilder(
+    column: $table.drugId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get intervalDays => $composableBuilder(
+    column: $table.intervalDays,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get firstDueDate => $composableBuilder(
+    column: $table.firstDueDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get nextDueDate => $composableBuilder(
+    column: $table.nextDueDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastAdministeredAt => $composableBuilder(
+    column: $table.lastAdministeredAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get remindDaysBefore => $composableBuilder(
+    column: $table.remindDaysBefore,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$VaccineSchedulesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $VaccineSchedulesTable> {
+  $$VaccineSchedulesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastModifiedAt => $composableBuilder(
+    column: $table.lastModifiedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get originDeviceId => $composableBuilder(
+    column: $table.originDeviceId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get clinicId =>
+      $composableBuilder(column: $table.clinicId, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<LocalSyncStatus, int> get localSyncStatus =>
+      $composableBuilder(
+        column: $table.localSyncStatus,
+        builder: (column) => column,
+      );
+
+  GeneratedColumn<DateTime> get localUpdatedAt => $composableBuilder(
+    column: $table.localUpdatedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get lastError =>
+      $composableBuilder(column: $table.lastError, builder: (column) => column);
+
+  GeneratedColumn<bool> get deletedLocal => $composableBuilder(
+    column: $table.deletedLocal,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get animalId =>
+      $composableBuilder(column: $table.animalId, builder: (column) => column);
+
+  GeneratedColumn<String> get drugId =>
+      $composableBuilder(column: $table.drugId, builder: (column) => column);
+
+  GeneratedColumn<int> get intervalDays => $composableBuilder(
+    column: $table.intervalDays,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get firstDueDate => $composableBuilder(
+    column: $table.firstDueDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get nextDueDate => $composableBuilder(
+    column: $table.nextDueDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get lastAdministeredAt => $composableBuilder(
+    column: $table.lastAdministeredAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get remindDaysBefore => $composableBuilder(
+    column: $table.remindDaysBefore,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get isActive =>
+      $composableBuilder(column: $table.isActive, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+}
+
+class $$VaccineSchedulesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $VaccineSchedulesTable,
+          VaccineScheduleRow,
+          $$VaccineSchedulesTableFilterComposer,
+          $$VaccineSchedulesTableOrderingComposer,
+          $$VaccineSchedulesTableAnnotationComposer,
+          $$VaccineSchedulesTableCreateCompanionBuilder,
+          $$VaccineSchedulesTableUpdateCompanionBuilder,
+          (
+            VaccineScheduleRow,
+            BaseReferences<
+              _$AppDatabase,
+              $VaccineSchedulesTable,
+              VaccineScheduleRow
+            >,
+          ),
+          VaccineScheduleRow,
+          PrefetchHooks Function()
+        > {
+  $$VaccineSchedulesTableTableManager(
+    _$AppDatabase db,
+    $VaccineSchedulesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$VaccineSchedulesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$VaccineSchedulesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$VaccineSchedulesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<DateTime?> lastModifiedAt = const Value.absent(),
+                Value<String?> originDeviceId = const Value.absent(),
+                Value<String?> clinicId = const Value.absent(),
+                Value<LocalSyncStatus> localSyncStatus = const Value.absent(),
+                Value<DateTime> localUpdatedAt = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
+                Value<bool> deletedLocal = const Value.absent(),
+                Value<String> animalId = const Value.absent(),
+                Value<String> drugId = const Value.absent(),
+                Value<int> intervalDays = const Value.absent(),
+                Value<DateTime> firstDueDate = const Value.absent(),
+                Value<DateTime> nextDueDate = const Value.absent(),
+                Value<DateTime?> lastAdministeredAt = const Value.absent(),
+                Value<int> remindDaysBefore = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => VaccineSchedulesCompanion(
+                id: id,
+                version: version,
+                lastModifiedAt: lastModifiedAt,
+                originDeviceId: originDeviceId,
+                clinicId: clinicId,
+                localSyncStatus: localSyncStatus,
+                localUpdatedAt: localUpdatedAt,
+                lastError: lastError,
+                deletedLocal: deletedLocal,
+                animalId: animalId,
+                drugId: drugId,
+                intervalDays: intervalDays,
+                firstDueDate: firstDueDate,
+                nextDueDate: nextDueDate,
+                lastAdministeredAt: lastAdministeredAt,
+                remindDaysBefore: remindDaysBefore,
+                isActive: isActive,
+                notes: notes,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                Value<int> version = const Value.absent(),
+                Value<DateTime?> lastModifiedAt = const Value.absent(),
+                Value<String?> originDeviceId = const Value.absent(),
+                Value<String?> clinicId = const Value.absent(),
+                Value<LocalSyncStatus> localSyncStatus = const Value.absent(),
+                Value<DateTime> localUpdatedAt = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
+                Value<bool> deletedLocal = const Value.absent(),
+                required String animalId,
+                required String drugId,
+                required int intervalDays,
+                required DateTime firstDueDate,
+                required DateTime nextDueDate,
+                Value<DateTime?> lastAdministeredAt = const Value.absent(),
+                Value<int> remindDaysBefore = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => VaccineSchedulesCompanion.insert(
+                id: id,
+                version: version,
+                lastModifiedAt: lastModifiedAt,
+                originDeviceId: originDeviceId,
+                clinicId: clinicId,
+                localSyncStatus: localSyncStatus,
+                localUpdatedAt: localUpdatedAt,
+                lastError: lastError,
+                deletedLocal: deletedLocal,
+                animalId: animalId,
+                drugId: drugId,
+                intervalDays: intervalDays,
+                firstDueDate: firstDueDate,
+                nextDueDate: nextDueDate,
+                lastAdministeredAt: lastAdministeredAt,
+                remindDaysBefore: remindDaysBefore,
+                isActive: isActive,
+                notes: notes,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$VaccineSchedulesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $VaccineSchedulesTable,
+      VaccineScheduleRow,
+      $$VaccineSchedulesTableFilterComposer,
+      $$VaccineSchedulesTableOrderingComposer,
+      $$VaccineSchedulesTableAnnotationComposer,
+      $$VaccineSchedulesTableCreateCompanionBuilder,
+      $$VaccineSchedulesTableUpdateCompanionBuilder,
+      (
+        VaccineScheduleRow,
+        BaseReferences<
+          _$AppDatabase,
+          $VaccineSchedulesTable,
+          VaccineScheduleRow
+        >,
+      ),
+      VaccineScheduleRow,
+      PrefetchHooks Function()
+    >;
 typedef $$SyncMetaTableCreateCompanionBuilder =
     SyncMetaCompanion Function({
       required String key,
@@ -19380,6 +22441,10 @@ class $AppDatabaseManager {
       $$RoutesTableTableManager(_db, _db.routes);
   $$RouteStopsTableTableManager get routeStops =>
       $$RouteStopsTableTableManager(_db, _db.routeStops);
+  $$PaymentsTableTableManager get payments =>
+      $$PaymentsTableTableManager(_db, _db.payments);
+  $$VaccineSchedulesTableTableManager get vaccineSchedules =>
+      $$VaccineSchedulesTableTableManager(_db, _db.vaccineSchedules);
   $$SyncMetaTableTableManager get syncMeta =>
       $$SyncMetaTableTableManager(_db, _db.syncMeta);
   $$SyncConflictsTableTableManager get syncConflicts =>

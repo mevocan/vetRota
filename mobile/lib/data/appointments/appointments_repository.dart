@@ -186,7 +186,7 @@ class AppointmentsRepository {
     String? villageId,
     required DateTime scheduledAt,
     String? reason,
-    String status = 'scheduled',
+    String status = 'planned',
   }) async {
     final clinicId = await _storage.readClinicId();
     final deviceId = await _storage.ensureDeviceId();
