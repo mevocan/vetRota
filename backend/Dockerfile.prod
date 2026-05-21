@@ -23,6 +23,11 @@ RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --no-in
 # Tum kodu kopyala
 COPY . .
 
+# .dockerignore storage/framework alt dizinlerini disladigi icin build
+# context'inde olmuyorlar; artisan komutlari (ozellikle view:clear) bunlari
+# bulamayinca patlar. Once olusturulurlar.
+RUN mkdir -p storage/framework/views storage/framework/cache/data storage/framework/sessions storage/logs bootstrap/cache
+
 # Autoload + Laravel optimize cache
 RUN composer dump-autoload --optimize --no-dev \
     && php artisan config:clear \
