@@ -44,9 +44,12 @@ class _AnimalFormScreenState extends ConsumerState<AnimalFormScreen> {
     ('other', 'Diger'),
   ];
 
+  // Backend gender'i zorunlu tutuyor (animals.gender NOT NULL). 'unknown'
+  // secenegi, cinsiyeti bilinmeyen hayvanlar icin gecerli bir deger saglar.
   static const _genderOptions = [
     ('male', 'Erkek'),
     ('female', 'Disi'),
+    ('unknown', 'Bilinmiyor'),
   ];
 
   @override
@@ -192,17 +195,14 @@ class _AnimalFormScreenState extends ConsumerState<AnimalFormScreen> {
               DropdownButtonFormField<String?>(
                 initialValue: _gender,
                 decoration: const InputDecoration(
-                  labelText: 'Cinsiyet (opsiyonel)',
+                  labelText: 'Cinsiyet',
                   border: OutlineInputBorder(),
                 ),
                 items: [
-                  const DropdownMenuItem<String?>(
-                    value: null,
-                    child: Text('-'),
-                  ),
                   for (final (value, label) in _genderOptions)
                     DropdownMenuItem<String?>(value: value, child: Text(label)),
                 ],
+                validator: (v) => v == null ? 'Cinsiyet secin' : null,
                 onChanged: (v) => setState(() => _gender = v),
               ),
               const SizedBox(height: 12),
