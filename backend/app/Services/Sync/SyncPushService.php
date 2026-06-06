@@ -16,6 +16,7 @@ use App\Services\Sync\TableProcessors\MedicalRecordProcessor;
 use App\Services\Sync\TableProcessors\PaymentProcessor;
 use App\Services\Sync\TableProcessors\StockMovementProcessor;
 use App\Services\Sync\TableProcessors\StockProcessor;
+use App\Services\Sync\TableProcessors\VaccineScheduleProcessor;
 use App\Services\Sync\TableProcessors\VillageProcessor;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -35,6 +36,10 @@ class SyncPushService
         'stocks'               => StockProcessor::class,
         'stock_movements'      => StockMovementProcessor::class,
         'payments'             => PaymentProcessor::class,
+        // vaccine_schedules animals + drugs'a bagli; ikisi de yukarida islendigi
+        // icin en sona eklendi (FK siralamasi). M9'da mobil push'a girmisti ama
+        // burada processor'i eksikti — asi planlari sessizce hic sync olmuyordu.
+        'vaccine_schedules'    => VaccineScheduleProcessor::class,
     ];
 
     public function execute(User $user, string $deviceId, string $clientSyncId, array $batch): array
